@@ -71,6 +71,7 @@ namespace Libuv
 				gchandles->callback.Free();
 			}
 			UV.Free((IntPtr)req);
+			UV.Free((IntPtr)gchandles);
 		}
 
 		unsafe internal void Send(IPAddress ipAddress, int port, byte[] buffer, Action<IntPtr, int> callback)
@@ -157,12 +158,13 @@ namespace Libuv
 			int n = (int)nread;
 
 			if (n == 0) {
-				UV.Free(buf.@base);
+				UV.Free(buf);
 				return;
 			}
 
 			byte[] data = new byte[n];
 			Marshal.Copy(buf.@base, data, 0, n);
+			UV.Free(buf);
 
 			if (OnMessage != null) {
 				OnMessage(data, UV.GetIPEndPoint(sockaddr));

@@ -211,14 +211,6 @@ namespace Libuv
 			}
 		}
 
-		unsafe internal static UnixBufferStruct Alloc(IntPtr handle, int size)
-		{
-			UnixBufferStruct buf;
-			buf.@base = Alloc(size);
-			buf.length = (IntPtr)size;
-			return buf;
-		}
-
 		static List<IntPtr> pointers = new List<IntPtr>();
 
 		internal static IntPtr Alloc(int size)
@@ -232,6 +224,25 @@ namespace Libuv
 		{
 			pointers.Remove(ptr);
 			Marshal.FreeHGlobal(ptr);
+		}
+
+		unsafe internal static UnixBufferStruct Alloc(IntPtr handle, int size)
+		{
+			UnixBufferStruct buf;
+			buf.@base = Alloc(size);
+			buf.length = (IntPtr)size;
+			return buf;
+		}
+
+		internal static void Free(UnixBufferStruct buf)
+		{
+			Free(buf.@base);
+		}
+
+		public static int PointerCount {
+			get {
+				return pointers.Count;
+			}
 		}
 	}
 }
