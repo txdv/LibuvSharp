@@ -28,7 +28,8 @@ namespace Libuv
 		public void Close(IntPtr callback)
 		{
 			if (handle != IntPtr.Zero) {
-				uv_close(handle, callback);
+				int r = uv_close(handle, callback);
+				UV.EnsureSuccess(r);
 			}
 			handle = IntPtr.Zero;
 		}

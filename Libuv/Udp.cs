@@ -26,7 +26,8 @@ namespace Libuv
 		public Udp(Loop loop)
 			: base(UvHandleType.Udp)
 		{
-			uv_udp_init(loop.ptr, handle);
+			int r = uv_udp_init(loop.ptr, handle);
+			UV.EnsureSuccess(r);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time
 			// happens in my case after 10 or 20 calls
@@ -93,11 +94,13 @@ namespace Libuv
 			buf[0].@base = reqgc->data.AddrOfPinnedObject();
 			buf[0].length = (IntPtr)buffer.Length;
 
+			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				uv_udp_send((IntPtr)req, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), send_callback);
+				r = uv_udp_send((IntPtr)req, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), send_callback);
 			} else {
-				uv_udp_send6((IntPtr)req, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), send_callback);
+				r = uv_udp_send6((IntPtr)req, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), send_callback);
 			}
+			UV.EnsureSuccess(r);
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<int> callback)
 		{
@@ -162,6 +165,8 @@ namespace Libuv
 				return;
 			}
 
+			// TODO: optimize this out, we can create a new byte[] from the very
+			// beginning and then just pass the pinned address of it
 			byte[] data = new byte[n];
 			Marshal.Copy(buf.@base, data, 0, n);
 			UV.Free(buf);
@@ -175,7 +180,8 @@ namespace Libuv
 		public void Receive(Action<byte[], IPEndPoint> callback)
 		{
 			if (!receive_init) {
-				uv_udp_recv_start(handle, UV.Alloc, recv_start_cb);
+				int r = uv_udp_recv_start(handle, UV.Alloc, recv_start_cb);
+				UV.EnsureSuccess(r);
 				receive_init = true;
 			}
 			OnMessage += callback;
