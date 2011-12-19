@@ -43,11 +43,6 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_accept(IntPtr server, IntPtr client);
 
-		public Tcp(IntPtr handle)
-			: base(handle)
-		{
-		}
-
 		public Loop Loop { get; private set; }
 
 		public Tcp()
