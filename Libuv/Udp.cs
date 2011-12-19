@@ -64,34 +64,19 @@ namespace Libuv
 		unsafe internal static void send_callback(IntPtr ptr, int status)
 		{
 			uv_req_t *req = (uv_req_t *)ptr;
-			req_gc_handles *gchandles = (req_gc_handles *)req->data;
-			gchandles->data.Free();
-			if (gchandles->cb) {
-				Action<IntPtr, int> cb = (Action<IntPtr, int>)gchandles->callback.Target;
-				cb(ptr, status);
-				gchandles->callback.Free();
-			}
+			UV.Finish(req->data, status);
 			UV.Free((IntPtr)req);
-			UV.Free((IntPtr)gchandles);
 		}
 
-		unsafe internal void Send(IPAddress ipAddress, int port, byte[] buffer, Action<IntPtr, int> callback)
+		unsafe public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<int> callback)
 		{
 			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.RequestSizeof(UvRequestType.UdpSend));
 
-			req_gc_handles *reqgc = (req_gc_handles *)UV.Alloc(sizeof(req_gc_handles));
-			req->data = (IntPtr)reqgc;
-
-			reqgc->data = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-			if (callback != null) {
-				reqgc->callback = GCHandle.Alloc(callback, GCHandleType.Pinned);
-				reqgc->cb = true;
-			} else {
-				reqgc->cb = false;
-			}
+			req_gc_handles *handles = UV.Create(buffer, callback);
+			req->data = (IntPtr)handles;
 
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0].@base = reqgc->data.AddrOfPinnedObject();
+			buf[0].@base = handles->data.AddrOfPinnedObject();
 			buf[0].length = (IntPtr)buffer.Length;
 
 			int r;
@@ -102,27 +87,15 @@ namespace Libuv
 			}
 			UV.EnsureSuccess(r);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<int> callback)
-		{
-			Send(ipAddress, port, buffer, (req, status) => {
-				callback(status);
-			});
-		}
 		public void Send(IPAddress ipAddress, int port, byte[] buffer, Action callback)
 		{
-			Send(ipAddress, port, buffer, (p, s) => {
-				callback();
-			});
+			Send(ipAddress, port, buffer, (status) => { callback(); });
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] buffer)
 		{
-			Send(ipAddress, port, buffer, (Action<IntPtr, int>)null);
+			Send(ipAddress, port, buffer, (Action<int>)null);
 		}
 
-		internal void Send(string ipAddress, int port, byte[] buffer, Action<IntPtr, int> callback)
-		{
-			Send(IPAddress.Parse(ipAddress), port, buffer, callback);
-		}
 		public void Send(string ipAddress, int port, byte[] buffer, Action<int> callback)
 		{
 			Send(IPAddress.Parse(ipAddress), port, buffer, callback);
@@ -136,10 +109,6 @@ namespace Libuv
 			Send(IPAddress.Parse(ipAddress), port, buffer);
 		}
 
-		internal void Send(IPEndPoint ep, byte[] buffer, Action<IntPtr, int> callback)
-		{
-			Send(ep.Address, ep.Port, buffer, callback);
-		}
 		public void Send(IPEndPoint ep, byte[] buffer, Action<int> callback)
 		{
 			Send(ep.Address, ep.Port, buffer, callback);

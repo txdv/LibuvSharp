@@ -6,8 +6,36 @@ using System.Collections.Generic;
 namespace Libuv
 {
 	[StructLayout(LayoutKind.Sequential)]
+	internal struct uv_connect_t
+	{
+		public UvRequestType type;
+		public IntPtr data;
+		/*
+		#if !__MonoCS__
+		NativeOverlapped overlapped;
+		IntPtr queued_bytes;
+		uv_err_t error;
+		IntPtr next_req;
+		#endif
+		*/
+		public IntPtr cb;
+		public IntPtr handle;
+	}
+
+
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct WindowsBufferStruct
 	{
+		internal WindowsBufferStruct(IntPtr @base, int length)
+			: this(@base, (ulong)length)
+		{
+		}
+
+		internal WindowsBufferStruct(IntPtr @base, ulong length)
+		{
+			this.@base = @base;
+			this.length = length;
+		}
 		internal ulong length;
 		internal IntPtr @base;
 	}
@@ -50,7 +78,7 @@ namespace Libuv
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct uv_req_t
 	{
-		public int type;
+		public UvRequestType type;
 		public IntPtr data;
 	}
 
@@ -180,6 +208,33 @@ namespace Libuv
 			}
 		}
 
+		unsafe static internal req_gc_handles *Create(byte[] data, Action<int> callback)
+		{
+			req_gc_handles *handles = (req_gc_handles *)UV.Alloc(sizeof(req_gc_handles));
+
+			handles->data = GCHandle.Alloc(data, GCHandleType.Pinned);
+			if (callback != null) {
+				handles->callback = GCHandle.Alloc(callback, GCHandleType.Pinned);
+				handles->cb = true;
+			} else {
+				handles->cb = false;
+			}
+
+			return handles;
+		}
+
+		unsafe static internal void Finish(IntPtr reqgc, int status)
+		{
+			req_gc_handles *handles = (req_gc_handles *)reqgc;
+			handles->data.Free();
+			if (handles->cb) {
+				Action<int> cb = (Action<int>)handles->callback.Target;
+				cb(status);
+				handles->callback.Free();
+			}
+			UV.Free((IntPtr)handles);
+		}
+
 		#region Memory
 
 		[DllImport("uv")]
@@ -210,13 +265,16 @@ namespace Libuv
 				return uv_hrtime();
 			}
 		}
-
+#if DEBUG
 		static List<IntPtr> pointers = new List<IntPtr>();
+#endif
 
 		internal static IntPtr Alloc(int size)
 		{
 			IntPtr ptr = Marshal.AllocHGlobal(size);
+#if DEBUG
 			pointers.Add(ptr);
+#endif
 			return ptr;
 		}
 
@@ -238,12 +296,13 @@ namespace Libuv
 		{
 			Free(buf.@base);
 		}
-
+#if DEBUG
 		public static int PointerCount {
 			get {
 				return pointers.Count;
 			}
 		}
+#endif
 	}
 }
 

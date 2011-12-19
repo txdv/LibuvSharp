@@ -57,8 +57,9 @@ namespace Test
 			Debug.Assert(cl_recv_cb_called == 1);
 			Debug.Assert(sv_send_cb_called == 1);
 			Debug.Assert(sv_recv_cb_called == 1);
-
+#if DEBUG
 			Debug.Assert(UV.PointerCount == 0);
+#endif
 		}
 	}
 }

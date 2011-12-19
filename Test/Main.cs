@@ -10,6 +10,7 @@ namespace Test
 		public static void Main (string[] args)
 		{
 			UdpTest.Run();
+			TcpTest.Run();
 
 			/*
 			new TcpServer(loop, (sock) => {

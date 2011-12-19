@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace Libuv
@@ -39,15 +40,27 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, Action<IntPtr, int> callback);
 
+		[DllImport("uv")]
+		internal static extern int uv_accept(IntPtr server, IntPtr client);
+
 		public Tcp(IntPtr handle)
 			: base(handle)
+		{
+		}
+
+		public Loop Loop { get; private set; }
+
+		public Tcp()
+			: this(Loop.Default)
 		{
 		}
 
 		public Tcp(Loop loop)
 			: base(UvHandleType.Tcp)
 		{
+			Loop = loop;
 			uv_tcp_init(loop.ptr, handle);
+			listen_cb = listen_callback;
 		}
 
 		public bool NoDelay {
@@ -104,27 +117,58 @@ namespace Libuv
 			}
 		}
 
-		unsafe public void Listen(int backlog, Action<IntPtr, int> callback)
+		unsafe public void Listen(int backlog, Action<Stream> callback)
 		{
-			uv_listen(handle, backlog, callback);
+			OnListen += callback;
+			uv_listen(handle, backlog, listen_cb);
 		}
 
+		Action<IntPtr, int> listen_cb;
+		internal void listen_callback(IntPtr req, int status)
+		{
+			Tcp stream = new Tcp(Loop);
+			uv_accept(req, stream.handle);
+			OnListen(new Stream(stream.handle));
+		}
+
+		Action<Stream> OnListen = null;
+
 		internal Action<Stream> connect_cb;
+
+		public void Connect(string ipAddress, int port, Action<Stream> callback)
+		{
+			Connect(IPAddress.Parse(ipAddress), port, callback);
+		}
+
+		public void Connect(IPEndPoint ep, Action<Stream> callback)
+		{
+			Connect(ep.Address, ep.Port, callback);
+		}
 
 		public void Connect(IPAddress ipAddress, int port, Action<Stream> callback)
 		{
 			connect_cb = callback;
-			IntPtr req = Marshal.AllocHGlobal(UV.Sizeof(UvRequestType.Connect));
+			IntPtr req = UV.Alloc(UV.Sizeof(UvRequestType.Connect));
+
+			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				uv_tcp_connect(req, handle, UV.uv_ip4_addr(ipAddress.ToString(), port), connect_callback);
+				r = uv_tcp_connect(req, handle, UV.uv_ip4_addr(ipAddress.ToString(), port), connect_callback);
 			} else {
-				uv_tcp_connect6(req, handle, UV.uv_ip6_addr(ipAddress.ToString(), port), connect_callback);
+				r = uv_tcp_connect6(req, handle, UV.uv_ip6_addr(ipAddress.ToString(), port), connect_callback);
+			}
+
+			try {
+				UV.EnsureSuccess(r);
+			} catch (Exception e) {
+				UV.Free(req);
+				throw e;
 			}
 		}
 
-		internal void connect_callback(IntPtr req, int status)
+		unsafe internal void connect_callback(IntPtr req, int status)
 		{
-			connect_cb(new Stream(handle));
+			uv_connect_t *connect_req = (uv_connect_t *)req;
+			connect_cb(new Stream((IntPtr)connect_req->handle));
 		}
 	}
 
@@ -137,7 +181,7 @@ namespace Libuv
 		internal static extern int uv_read_stop(IntPtr stream);
 
 		[DllImport("uv")]
-		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct bufs, int bufcnt, Action<IntPtr, int> callback);
+		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
 
 		public Stream(IntPtr handle)
 			: base(handle)
@@ -146,41 +190,89 @@ namespace Libuv
 
 		public void Start()
 		{
-			uv_read_start(handle, UV.Alloc, (stream, size, buf) => {
-				Console.WriteLine(size);
-			});
+			uv_read_start(handle, UV.Alloc, read_callback);
 		}
+
+		internal void read_callback(IntPtr stream, IntPtr size, UnixBufferStruct buf)
+		{
+			if (size.ToInt64() == 0) {
+				UV.Free(buf);
+				return;
+			} else if (size.ToInt64() < 0) {
+				return;
+			}
+
+			int length = (int)size;
+			byte[] data = new byte[length];
+			Marshal.Copy(buf.@base, data, 0, length);
+
+			if (OnRead != null) {
+				OnRead(data);
+			}
+		}
+
+		public void Read(Encoding enc, Action<string> callback)
+		{
+			OnRead += (data) => callback(enc.GetString(data));
+		}
+
+		public void Read(Action<byte[]> callback)
+		{
+			OnRead += callback;
+		}
+
+		private Action<byte[]> OnRead;
 
 		public void Stop()
 		{
 			uv_read_stop(handle);
 		}
 
-		public void Write(byte[] data)
+
+		unsafe public void Write(byte[] data, int length, Action<int> callback)
 		{
-			Write(data, data.Length);
+			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.Sizeof(UvRequestType.Write));
+
+			req_gc_handles *handles = UV.Create(data, callback);
+			req->data = (IntPtr)handles;
+
+			UnixBufferStruct[] buf = new UnixBufferStruct[1];
+			buf[0] = new UnixBufferStruct(handles->data.AddrOfPinnedObject(), length);
+
+			uv_write((IntPtr)req, handle, buf, 1, write_callback);
+		}
+		public void Write(byte[] data, Action<int> callback)
+		{
+			Write(data, data.Length, callback);
+		}
+		public void Write(byte[] data, Action callback)
+		{
+			Write(data, (status) => { callback(); });
+		}
+		public void Write(Encoding enc, string text, Action<int> callback)
+		{
+			Write(enc.GetBytes(text), callback);
+		}
+		public void Write(Encoding enc, string text, Action callback)
+		{
+			Write(enc, text, (status) => { callback(); });
 		}
 
-		public void Write(byte[] data, int length)
+		unsafe internal void write_callback(IntPtr req, int status)
 		{
-			IntPtr req = Marshal.AllocHGlobal(UV.Sizeof(UvRequestType.Write));
-			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-
-			UnixBufferStruct buf = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
-
-			uv_write(req, handle, buf, 1, write_callback);
-		}
-
-		internal void write_callback(IntPtr req, int status)
-		{
-			Marshal.FreeHGlobal(req);
+			uv_req_t *reqptr = (uv_req_t *)req;
+			UV.Finish(reqptr->data, status);
+			UV.Free(req);
 		}
 	}
 
 	public class TcpSocket
 	{
+		public Stream Stream { get; protected set; }
+
 		internal TcpSocket(IntPtr handle)
 		{
+			Stream = new Stream(handle);
 		}
 
 		public void Start()
@@ -202,8 +294,8 @@ namespace Libuv
 		public void Listen(IPAddress ipAddress, int port, int backlog)
 		{
 			tcp.Bind(ipAddress, port);
-			tcp.Listen(backlog, (stream, status) => {
-				callback(new TcpSocket(stream));
+			tcp.Listen(backlog, (stream) => {
+				//callback(socket);
 			});
 		}
 	}
