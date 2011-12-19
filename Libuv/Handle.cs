@@ -25,20 +25,28 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_close(IntPtr handle, IntPtr callback);
 
-		public void Close(Action callback)
+		public void Close(IntPtr callback)
 		{
 			if (handle != IntPtr.Zero) {
-				uv_close(handle, Marshal.GetFunctionPointerForDelegate(callback));
+				uv_close(handle, callback);
 			}
 			handle = IntPtr.Zero;
 		}
 
+		public void Close(Action callback)
+		{
+			Close(Marshal.GetFunctionPointerForDelegate(callback));
+		}
+
 		public void Close()
 		{
-			if (handle != IntPtr.Zero) {
-				uv_close(handle, IntPtr.Zero);
+			Close(IntPtr.Zero);
+		}
+
+		public bool Closed {
+			get {
+				return handle == IntPtr.Zero;
 			}
-			handle = IntPtr.Zero;
 		}
 
 		#region IDisposable implementation
