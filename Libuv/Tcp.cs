@@ -61,7 +61,10 @@ namespace Libuv
 			Loop = loop;
 			uv_tcp_init(loop.ptr, handle);
 			listen_cb = listen_callback;
+			DefaultBacklog = 128;
 		}
+
+		public int DefaultBacklog { get; set; }
 
 		public bool NoDelay {
 			set {
@@ -117,10 +120,40 @@ namespace Libuv
 			}
 		}
 
-		unsafe public void Listen(int backlog, Action<Stream> callback)
+		unsafe public void Listen(int backlog, Func<bool> accept, Action<Stream> callback)
 		{
 			OnListen += callback;
-			uv_listen(handle, backlog, listen_cb);
+			if (accept()) {
+				int r = uv_listen(handle, backlog, listen_cb);
+				UV.EnsureSuccess(r);
+			}
+		}
+
+		public void Listen(Func<bool> accept, Action<Stream> callback)
+		{
+			Listen(128, accept, callback);
+		}
+
+		public void Listen(int backlog, Action<Stream> callback)
+		{
+			Listen(backlog, alwaysAccept, callback);
+		}
+
+		public void Listen(Action<Stream> callback)
+		{
+			Listen(alwaysAccept, callback);
+		}
+
+		static Tcp()
+		{
+			alwaysAccept = AlwaysAccept;
+		}
+
+		private static Func<bool> alwaysAccept;
+
+		private static bool AlwaysAccept()
+		{
+			return true;
 		}
 
 		Action<IntPtr, int> listen_cb;
