@@ -208,7 +208,7 @@ namespace Libuv
 			}
 		}
 
-		unsafe static internal req_gc_handles *Create(byte[] data, Action<int> callback)
+		unsafe static internal req_gc_handles *Create(byte[] data, Action<bool> callback)
 		{
 			req_gc_handles *handles = (req_gc_handles *)UV.Alloc(sizeof(req_gc_handles));
 
@@ -223,13 +223,13 @@ namespace Libuv
 			return handles;
 		}
 
-		unsafe static internal void Finish(IntPtr reqgc, int status)
+		unsafe static internal void Finish(IntPtr reqgc, bool success)
 		{
 			req_gc_handles *handles = (req_gc_handles *)reqgc;
 			handles->data.Free();
 			if (handles->cb) {
-				Action<int> cb = (Action<int>)handles->callback.Target;
-				cb(status);
+				Action<bool> cb = (Action<bool>)handles->callback.Target;
+				cb(success);
 				handles->callback.Free();
 			}
 			UV.Free((IntPtr)handles);

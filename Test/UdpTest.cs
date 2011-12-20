@@ -32,13 +32,13 @@ namespace Test
 			server.Receive(Encoding.ASCII, (str, rinfo) => {
 				Assert.AreEqual(str, "PING");
 				sv_recv_cb_called++;
-				server.Send(rinfo, Encoding.ASCII.GetBytes("PONG"), () => {
+				server.Send(rinfo, Encoding.ASCII.GetBytes("PONG"), (s) => {
 					sv_send_cb_called++;
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
-			client.Send(ep, Encoding.ASCII.GetBytes("PING"), () => {
+			client.Send(ep, Encoding.ASCII.GetBytes("PING"), (s) => {
 				cl_send_cb_called++;
 				client.Receive(Encoding.ASCII, (str, rinfo) => {
 					Assert.AreEqual(str, "PONG");

@@ -32,7 +32,7 @@ namespace Test
 				stream.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", () => { sv_send_cb_called++; });
+					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					stream.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
@@ -42,7 +42,7 @@ namespace Test
 			Tcp client = new Tcp();
 			client.Connect(ep, (stream) => {
 				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
+				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				stream.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -105,7 +105,7 @@ namespace Test
 						sv_recv_cb_called++;
 						Assert.AreEqual(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
-							stream.Write(Encoding.ASCII, "PONG", () => { sv_send_cb_called++; });
+							stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
 						stream.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
@@ -116,7 +116,7 @@ namespace Test
 				client.Connect(ep, (stream) => {
 					stream.Resume();
 					for (int i = 0; i < times; i++) {
-						stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
+						stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 					}
 					stream.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
@@ -168,7 +168,7 @@ namespace Test
 				stream.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", () => { sv_send_cb_called++; });
+					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					stream.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
@@ -178,7 +178,7 @@ namespace Test
 			Tcp client = new Tcp();
 			client.Connect(ep, (stream) => {
 				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
+				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				stream.CloseEvent += () => { close_cb_called++; };
 				stream.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;

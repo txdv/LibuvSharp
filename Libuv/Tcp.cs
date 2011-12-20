@@ -267,7 +267,7 @@ namespace Libuv
 
 		private Action<byte[]> OnRead;
 
-		unsafe public void Write(byte[] data, int length, Action<int> callback)
+		unsafe public void Write(byte[] data, int length, Action<bool> callback)
 		{
 			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.Sizeof(UvRequestType.Write));
 
@@ -279,27 +279,33 @@ namespace Libuv
 
 			uv_write((IntPtr)req, handle, buf, 1, write_callback);
 		}
-		public void Write(byte[] data, Action<int> callback)
+		public void Write(byte[] data, int length)
+		{
+			Write(data, length, null);
+		}
+
+		public void Write(byte[] data, Action<bool> callback)
 		{
 			Write(data, data.Length, callback);
 		}
-		public void Write(byte[] data, Action callback)
+		public void Write(byte[] data)
 		{
-			Write(data, (status) => { callback(); });
+			Write(data, null);
 		}
-		public void Write(Encoding enc, string text, Action<int> callback)
+
+		public void Write(Encoding enc, string text, Action<bool> callback)
 		{
 			Write(enc.GetBytes(text), callback);
 		}
-		public void Write(Encoding enc, string text, Action callback)
+		public void Write(Encoding enc, string text)
 		{
-			Write(enc, text, (status) => { callback(); });
+			Write(enc, text, null);
 		}
 
 		unsafe internal void write_callback(IntPtr req, int status)
 		{
 			uv_req_t *reqptr = (uv_req_t *)req;
-			UV.Finish(reqptr->data, status);
+			UV.Finish(reqptr->data, status == 0);
 			UV.Free(req);
 		}
 	}

@@ -64,11 +64,11 @@ namespace Libuv
 		unsafe internal static void send_callback(IntPtr ptr, int status)
 		{
 			uv_req_t *req = (uv_req_t *)ptr;
-			UV.Finish(req->data, status);
+			UV.Finish(req->data, status == 0);
 			UV.Free((IntPtr)req);
 		}
 
-		unsafe public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<int> callback)
+		unsafe public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<bool> callback)
 		{
 			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.RequestSizeof(UvRequestType.UdpSend));
 
@@ -87,20 +87,12 @@ namespace Libuv
 			}
 			UV.EnsureSuccess(r);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] buffer, Action callback)
-		{
-			Send(ipAddress, port, buffer, (status) => { callback(); });
-		}
 		public void Send(IPAddress ipAddress, int port, byte[] buffer)
 		{
-			Send(ipAddress, port, buffer, (Action<int>)null);
+			Send(ipAddress, port, buffer, null);
 		}
 
-		public void Send(string ipAddress, int port, byte[] buffer, Action<int> callback)
-		{
-			Send(IPAddress.Parse(ipAddress), port, buffer, callback);
-		}
-		public void Send(string ipAddress, int port, byte[] buffer, Action callback)
+		public void Send(string ipAddress, int port, byte[] buffer, Action<bool> callback)
 		{
 			Send(IPAddress.Parse(ipAddress), port, buffer, callback);
 		}
@@ -109,14 +101,10 @@ namespace Libuv
 			Send(IPAddress.Parse(ipAddress), port, buffer);
 		}
 
-		public void Send(IPEndPoint ep, byte[] buffer, Action<int> callback)
+		public void Send(IPEndPoint ep, byte[] buffer, Action<bool> callback)
 		{
 			Send(ep.Address, ep.Port, buffer, callback);
 		}	
-		public void Send(IPEndPoint ep, byte[] buffer, Action callback)
-		{
-			Send(ep.Address, ep.Port, buffer, callback);
-		}
 		public void Send(IPEndPoint ep, byte[] buffer)
 		{
 			Send(ep.Address, ep.Port, buffer);

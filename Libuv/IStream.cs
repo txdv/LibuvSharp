@@ -11,10 +11,13 @@ namespace Libuv
 		void Read(Action<byte[]> callback);
 		void Read(Encoding enc, Action<string> callback);
 
-		void Write(byte[] data, int length, Action<int> callback);
-		void Write(byte[] data, Action<int> callback);
-		void Write(byte[] data, Action callback);
-		void Write(Encoding enc, string text, Action<int> callback);
-		void Write(Encoding enc, string text, Action callback);
+		void Write(byte[] data, int length, Action<bool> callback);
+		void Write(byte[] data, int length);
+
+		void Write(byte[] data, Action<bool> callback);
+		void Write(byte[] data);
+
+		void Write(Encoding enc, string text, Action<bool> callback);
+		void Write(Encoding enc, string text);
 	}
 }
