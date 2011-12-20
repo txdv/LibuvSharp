@@ -44,6 +44,7 @@
     <Compile Include="Udp.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
+    <Compile Include="IStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

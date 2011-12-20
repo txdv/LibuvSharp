@@ -45,6 +45,11 @@ namespace Libuv
 
 		public Loop Loop { get; private set; }
 
+		internal Tcp(IntPtr handle)
+			: base(handle)
+		{
+		}
+
 		public Tcp()
 			: this(Loop.Default)
 		{
@@ -115,7 +120,7 @@ namespace Libuv
 			}
 		}
 
-		unsafe public void Listen(int backlog, Func<bool> accept, Action<Stream> callback)
+		unsafe public void Listen(int backlog, Func<bool> accept, Action<TCPStream> callback)
 		{
 			OnListen += callback;
 			if (accept()) {
@@ -124,17 +129,17 @@ namespace Libuv
 			}
 		}
 
-		public void Listen(Func<bool> accept, Action<Stream> callback)
+		public void Listen(Func<bool> accept, Action<TCPStream> callback)
 		{
 			Listen(128, accept, callback);
 		}
 
-		public void Listen(int backlog, Action<Stream> callback)
+		public void Listen(int backlog, Action<TCPStream> callback)
 		{
 			Listen(backlog, alwaysAccept, callback);
 		}
 
-		public void Listen(Action<Stream> callback)
+		public void Listen(Action<TCPStream> callback)
 		{
 			Listen(alwaysAccept, callback);
 		}
@@ -156,24 +161,24 @@ namespace Libuv
 		{
 			Tcp stream = new Tcp(Loop);
 			uv_accept(req, stream.handle);
-			OnListen(new Stream(stream.handle));
+			OnListen(new TCPStream(stream.handle));
 		}
 
-		Action<Stream> OnListen = null;
+		Action<TCPStream> OnListen = null;
 
-		internal Action<Stream> connect_cb;
+		internal Action<TCPStream> connect_cb;
 
-		public void Connect(string ipAddress, int port, Action<Stream> callback)
+		public void Connect(string ipAddress, int port, Action<TCPStream> callback)
 		{
 			Connect(IPAddress.Parse(ipAddress), port, callback);
 		}
 
-		public void Connect(IPEndPoint ep, Action<Stream> callback)
+		public void Connect(IPEndPoint ep, Action<TCPStream> callback)
 		{
 			Connect(ep.Address, ep.Port, callback);
 		}
 
-		public void Connect(IPAddress ipAddress, int port, Action<Stream> callback)
+		public void Connect(IPAddress ipAddress, int port, Action<TCPStream> callback)
 		{
 			connect_cb = callback;
 			IntPtr req = UV.Alloc(UV.Sizeof(UvRequestType.Connect));
@@ -196,12 +201,12 @@ namespace Libuv
 		unsafe internal void connect_callback(IntPtr req, int status)
 		{
 			uv_connect_t *connect_req = (uv_connect_t *)req;
-			connect_cb(new Stream((IntPtr)connect_req->handle));
+			connect_cb(new TCPStream((IntPtr)connect_req->handle));
 			UV.Free(req);
 		}
 	}
 
-	public class Stream : Handle
+	public class TCPStream : Tcp, IStream
 	{
 		[DllImport ("uv")]
 		internal static extern int uv_read_start(IntPtr stream, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct> read_callback);
@@ -212,7 +217,7 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
 
-		public Stream(IntPtr handle)
+		public TCPStream(IntPtr handle)
 			: base(handle)
 		{
 		}
@@ -262,12 +267,6 @@ namespace Libuv
 
 		private Action<byte[]> OnRead;
 
-		public void Stop()
-		{
-			uv_read_stop(handle);
-		}
-
-
 		unsafe public void Write(byte[] data, int length, Action<int> callback)
 		{
 			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.Sizeof(UvRequestType.Write));
@@ -307,11 +306,11 @@ namespace Libuv
 
 	public class TcpSocket
 	{
-		public Stream Stream { get; protected set; }
+		public TCPStream Stream { get; protected set; }
 
 		internal TcpSocket(IntPtr handle)
 		{
-			Stream = new Stream(handle);
+			Stream = new TCPStream(handle);
 		}
 
 		public void Start()
