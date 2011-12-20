@@ -31,12 +31,20 @@ namespace Libuv
 				int r = uv_close(handle, callback);
 				UV.EnsureSuccess(r);
 			}
-			handle = IntPtr.Zero;
 		}
 
 		public void Close(Action callback)
 		{
-			Close(Marshal.GetFunctionPointerForDelegate(callback));
+			Action cb = null;
+			GCHandle gchandle = GCHandle.Alloc(cb, GCHandleType.Pinned);
+			cb = delegate {
+				callback();
+				gchandle.Free();
+				UV.Free(handle);
+				handle = IntPtr.Zero;
+			};
+
+			Close(Marshal.GetFunctionPointerForDelegate(cb));
 		}
 
 		public void Close()
