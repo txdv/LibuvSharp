@@ -22,10 +22,12 @@ namespace Libuv
 		{
 		}
 
+		public event Action CloseEvent;
+
 		[DllImport("uv")]
 		internal static extern int uv_close(IntPtr handle, IntPtr callback);
 
-		public void Close(IntPtr callback)
+		internal void Close(IntPtr callback)
 		{
 			if (handle != IntPtr.Zero) {
 				int r = uv_close(handle, callback);
@@ -39,6 +41,11 @@ namespace Libuv
 			GCHandle gchandle = GCHandle.Alloc(cb, GCHandleType.Pinned);
 			cb = delegate {
 				callback();
+
+				if (CloseEvent != null) {
+					CloseEvent();
+				}
+
 				gchandle.Free();
 				UV.Free(handle);
 				handle = IntPtr.Zero;
@@ -49,7 +56,7 @@ namespace Libuv
 
 		public void Close()
 		{
-			Close(IntPtr.Zero);
+			Close(() => { });
 		}
 
 		public bool Closed {

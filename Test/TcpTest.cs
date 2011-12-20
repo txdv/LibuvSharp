@@ -179,6 +179,7 @@ namespace Test
 			client.Connect(ep, (stream) => {
 				stream.Start();
 				stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
+				stream.CloseEvent += () => { close_cb_called++; };
 				stream.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -193,7 +194,7 @@ namespace Test
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(2, close_cb_called);
+			Assert.AreEqual(3, close_cb_called);
 			Assert.AreEqual(1, cl_send_cb_called);
 			Assert.AreEqual(1, cl_recv_cb_called);
 			Assert.AreEqual(1, sv_send_cb_called);
