@@ -197,6 +197,7 @@ namespace Libuv
 		{
 			uv_connect_t *connect_req = (uv_connect_t *)req;
 			connect_cb(new Stream((IntPtr)connect_req->handle));
+			UV.Free(req);
 		}
 	}
 
@@ -233,6 +234,7 @@ namespace Libuv
 			int length = (int)size;
 			byte[] data = new byte[length];
 			Marshal.Copy(buf.@base, data, 0, length);
+			UV.Free(buf);
 
 			if (OnRead != null) {
 				OnRead(data);
