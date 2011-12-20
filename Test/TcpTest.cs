@@ -11,7 +11,13 @@ namespace Test
 	public class TcpTest
 	{
 		[TestCase]
-		public static void Run()
+		public static void Simple()
+		{
+			Simple(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
+			Simple(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+		}
+
+		public static void Simple(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -20,7 +26,7 @@ namespace Test
 			int sv_recv_cb_called = 0;
 
 			Tcp server = new Tcp();
-			server.Bind("127.0.0.1", 8000);
+			server.Bind(ep);
 			server.Listen(128, (stream) => {
 				stream.Start();
 				stream.Read(Encoding.ASCII, (str) => {
@@ -34,7 +40,7 @@ namespace Test
 			});
 
 			Tcp client = new Tcp();
-			client.Connect("127.0.0.1", 8000, (stream) => {
+			client.Connect(ep, (stream) => {
 				stream.Start();
 				stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
 				stream.Read(Encoding.ASCII, (str) => {
