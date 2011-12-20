@@ -217,9 +217,16 @@ namespace Libuv
 		{
 		}
 
-		public void Start()
+		public void Resume()
 		{
-			uv_read_start(handle, UV.Alloc, read_callback);
+			int r = uv_read_start(handle, UV.Alloc, read_callback);
+			UV.EnsureSuccess(r);
+		}
+
+		public void Pause()
+		{
+			int r = uv_read_stop(handle);
+			UV.EnsureSuccess(r);
 		}
 
 		internal void read_callback(IntPtr stream, IntPtr size, UnixBufferStruct buf)
