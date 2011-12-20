@@ -302,6 +302,27 @@ namespace Libuv
 				return pointers.Count;
 			}
 		}
+
+		unsafe internal static UnixBufferStruct DebugAlloc(IntPtr handle, int size)
+		{
+			UnixBufferStruct tmp = UV.Alloc(handle, size);
+			Console.WriteLine (tmp.@base);
+			return tmp;
+		}
+
+		public static void PrintPointers()
+		{
+			var e = pointers.GetEnumerator();
+			Console.Write("[");
+			if (e.MoveNext()) {
+				Console.Write(e.Current);
+				while (e.MoveNext()) {
+					Console.Write(", ");
+					Console.Write(e.Current);
+				}
+			}
+			Console.Write("]");
+		}
 #endif
 	}
 }
