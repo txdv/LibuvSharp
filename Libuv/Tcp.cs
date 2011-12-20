@@ -303,39 +303,5 @@ namespace Libuv
 			UV.Free(req);
 		}
 	}
-
-	public class TcpSocket
-	{
-		public TCPStream Stream { get; protected set; }
-
-		internal TcpSocket(IntPtr handle)
-		{
-			Stream = new TCPStream(handle);
-		}
-
-		public void Start()
-		{
-		}
-	}
-
-	public class TcpServer
-	{
-		Tcp tcp;
-		Action<TcpSocket> callback;
-
-		public TcpServer(Loop loop, Action<TcpSocket> callback)
-		{
-			this.callback = callback;
-			tcp = new Tcp(loop);
-		}
-
-		public void Listen(IPAddress ipAddress, int port, int backlog)
-		{
-			tcp.Bind(ipAddress, port);
-			tcp.Listen(backlog, (stream) => {
-				//callback(socket);
-			});
-		}
-	}
 }
 
