@@ -3,10 +3,14 @@ using System.Text;
 using System.Net;
 using Libuv;
 
+using NUnit.Framework;
+
 namespace Test
 {
+	[TestFixture]
 	public class UdpTest
 	{
+		[Test]
 		public static void Run()
 		{
 			Run(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
@@ -26,7 +30,7 @@ namespace Test
 
 			server.Bind(ep);
 			server.Receive(Encoding.ASCII, (str, rinfo) => {
-				Debug.Assert(str == "PING");
+				Assert.AreEqual(str, "PING");
 				sv_recv_cb_called++;
 				server.Send(rinfo, Encoding.ASCII.GetBytes("PONG"), () => {
 					sv_send_cb_called++;
@@ -37,28 +41,28 @@ namespace Test
 			client.Send(ep, Encoding.ASCII.GetBytes("PING"), () => {
 				cl_send_cb_called++;
 				client.Receive(Encoding.ASCII, (str, rinfo) => {
-					Debug.Assert(str == "PONG");
+					Assert.AreEqual(str, "PONG");
 					cl_recv_cb_called++;
 					client.Close(() => { close_cb_called++; });
 				});
 			});
 
 
-			Debug.Assert(close_cb_called == 0);
-			Debug.Assert(cl_send_cb_called == 0);
-			Debug.Assert(cl_recv_cb_called == 0);
-			Debug.Assert(sv_send_cb_called == 0);
-			Debug.Assert(sv_recv_cb_called == 0);
+			Assert.AreEqual(0, close_cb_called);
+			Assert.AreEqual(0, cl_send_cb_called);
+			Assert.AreEqual(0, cl_recv_cb_called);
+			Assert.AreEqual(0, sv_send_cb_called);
+			Assert.AreEqual(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Debug.Assert(close_cb_called == 2);
-			Debug.Assert(cl_send_cb_called == 1);
-			Debug.Assert(cl_recv_cb_called == 1);
-			Debug.Assert(sv_send_cb_called == 1);
-			Debug.Assert(sv_recv_cb_called == 1);
+			Assert.AreEqual(2, close_cb_called);
+			Assert.AreEqual(1, cl_send_cb_called);
+			Assert.AreEqual(1, cl_recv_cb_called);
+			Assert.AreEqual(1, sv_send_cb_called);
+			Assert.AreEqual(1, sv_recv_cb_called);
 #if DEBUG
-			Debug.Assert(UV.PointerCount == 0);
+			Assert.AreEqual(0, UV.PointerCount);
 #endif
 		}
 	}

@@ -3,10 +3,14 @@ using Libuv;
 using System.Net;
 using System.Text;
 
+using NUnit.Framework;
+
 namespace Test
 {
+	[TestFixture]
 	public class TcpTest
 	{
+		[TestCase]
 		public static void Run()
 		{
 			int close_cb_called = 0;
@@ -21,7 +25,7 @@ namespace Test
 				stream.Start();
 				stream.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
-					Debug.Assert(str == "PING");
+					Assert.AreEqual("PING", str);
 					stream.Write(Encoding.ASCII, "PONG", () => { sv_send_cb_called++; });
 
 					stream.Close(() => { close_cb_called++; });
@@ -35,28 +39,28 @@ namespace Test
 				stream.Write(Encoding.ASCII, "PING", () => { cl_send_cb_called++; });
 				stream.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
-					Debug.Assert(str == "PONG");
+					Assert.AreEqual("PONG", str);
 					stream.Close(() => { close_cb_called++; });
 					//client.Close(() => { close_cb_called++; });
 				});
 			});
 
-
-			Debug.Assert(close_cb_called == 0);
-			Debug.Assert(cl_send_cb_called == 0);
-			Debug.Assert(cl_recv_cb_called == 0);
-			Debug.Assert(sv_send_cb_called == 0);
-			Debug.Assert(sv_recv_cb_called == 0);
+			Assert.AreEqual(0, close_cb_called);
+			Assert.AreEqual(0, cl_send_cb_called);
+			Assert.AreEqual(0, cl_recv_cb_called);
+			Assert.AreEqual(0, sv_send_cb_called);
+			Assert.AreEqual(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Debug.Assert(close_cb_called == 3);
-			Debug.Assert(cl_send_cb_called == 1);
-			Debug.Assert(cl_recv_cb_called == 1);
-			Debug.Assert(sv_send_cb_called == 1);
-			Debug.Assert(sv_recv_cb_called == 1);
+			Assert.AreEqual(3, close_cb_called);
+			Assert.AreEqual(1, cl_send_cb_called);
+			Assert.AreEqual(1, cl_recv_cb_called);
+			Assert.AreEqual(1, sv_send_cb_called);
+			Assert.AreEqual(1, sv_recv_cb_called);
+
 #if DEBUG
-			//Debug.Assert(UV.PointerCount == 0);
+			Assert.AreEqual(0, UV.PointerCount);
 #endif
 		}
 	}
