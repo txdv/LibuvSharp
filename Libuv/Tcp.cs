@@ -228,6 +228,8 @@ namespace Libuv
 				UV.Free(buf);
 				return;
 			} else if (size.ToInt64() < 0) {
+				UV.Free(buf);
+				Close();
 				return;
 			}
 
