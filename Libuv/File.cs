@@ -175,7 +175,6 @@ namespace Libuv
 			int r = uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, fsr.End);
 			UV.EnsureSuccess(r);
 		}
-
 		public void Send(Tcp tcp, int offset, int length, Action<Exception> callback)
 		{
 			Send(Loop.Default, tcp, offset, length, callback);
@@ -237,12 +236,10 @@ namespace Libuv
 			int r = uv_fs_chown(loop.ptr, fsr.Handle, path, uid, gid, fsr.End);
 			UV.EnsureSuccess(r);
 		}
-
 		public static void Chown(Loop loop, string path, int uid, int gid)
 		{
 			Chown(loop, path, uid, gid, null);
 		}
-
 		public static void Chown(string path, int uid, int gid, Action<Exception> callback)
 		{
 			Chown(Loop.Default, path, uid, gid, callback);
@@ -262,12 +259,10 @@ namespace Libuv
 			int r = uv_fs_fchown(loop.ptr, fsr.Handle, FileHandle, uid, gid, fsr.End);
 			UV.EnsureSuccess(r);
 		}
-
 		public void Chown(Loop loop, int uid, int gid)
 		{
 			Chown(loop, uid, gid, null);
 		}
-
 		public void Chown(int uid, int gid, Action<Exception> callback)
 		{
 			Chown(Loop.Default, uid, gid, callback);
@@ -291,7 +286,6 @@ namespace Libuv
 			int r = uv_fs_mkdir(loop.ptr, fsr.Handle, path, mode, fsr.End);
 			UV.EnsureSuccess(r);
 		}
-
 		public static void Create(Loop loop, string path, int mode)
 		{
 			Create(loop, path, mode, null);
