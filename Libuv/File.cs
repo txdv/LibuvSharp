@@ -179,6 +179,54 @@ namespace Libuv
 		{
 			Send(Loop.Default, tcp, offset, length, callback);
 		}
+
+		[DllImport("uv")]
+		private static extern int uv_fs_fchmod(IntPtr loop, IntPtr req, IntPtr file, int mode, Action<IntPtr> callback);
+
+		public void Chmod(Loop loop, int mode, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_fchmod(loop.ptr, fsr.Handle, FileHandle, mode, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+		public void Chmod(Loop loop, int mode)
+		{
+			Chmod(loop, mode, null);
+		}
+		public void Chmod(int mode, Action<Exception> callback)
+		{
+			Chmod(Loop.Default, mode, callback);
+		}
+		public void Chmod(int mode)
+		{
+			Chmod(mode, null);
+		}
+
+		[DllImport("uv")]
+		private static extern int uv_fs_chmod(IntPtr loop, IntPtr req, string path, int mode, Action<IntPtr> callback);
+
+		public static void Chmod(Loop loop, string path, int mode, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_chmod(loop.ptr, fsr.Handle, path, mode, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+		public static void Chmod(Loop loop, string path, int mode)
+		{
+			Chmod(loop, path, mode, null);
+		}
+		public static void Chmod(string path, int mode, Action<Exception> callback)
+		{
+			Chmod(Loop.Default, path, mode, callback);
+		}
+		public static void Chmod(string path, int mode)
+		{
+			Chmod(path, mode, null);
+		}
+
+
 	}
 
 	public class Directory
