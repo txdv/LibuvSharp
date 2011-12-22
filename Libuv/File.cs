@@ -172,7 +172,8 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, fsr.End);
+			int r = uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, fsr.End);
+			UV.EnsureSuccess(r);
 		}
 
 		public void Send(Tcp tcp, int offset, int length, Action<Exception> callback)
