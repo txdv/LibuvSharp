@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Libuv
@@ -412,6 +413,38 @@ namespace Libuv
 		{
 			Rename(path, newPath, null);
 		}
+
+		[DllImport("__Internal")]
+		private static extern int strlen(IntPtr ptr);
+
+		[DllImport("uv")]
+		private static extern int uv_fs_readdir(IntPtr loop, IntPtr req, string path, int flags, Action<IntPtr> callback);
+
+		unsafe public static void Read(Loop loop, string path, Action<Exception, List<string>> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => {
+				if (ex != null) {
+					callback(ex, null);
+					return;
+				}
+
+				int length = (int)fsr.Result;
+				List<string> list = new List<string>(length);
+				sbyte *ptr = (sbyte *)fsr.Pointer;
+				for (int i = 0; i < length; i++) {
+					list.Add(new string(ptr));
+					ptr += strlen((IntPtr)ptr) + 1;
+				}
+				callback(ex, list);
+			};
+			uv_fs_readdir(loop.ptr, fsr.Handle, path, 0, fsr.End);
+		}
+		public static void Read(string path, Action<Exception, List<string>> callback)
+		{
+			Read(Loop.Default, path, callback);
+		}
+
 	}
 }
 

@@ -153,6 +153,12 @@ namespace Libuv
 			}
 		}
 
+		public IntPtr Pointer {
+			get {
+				return fsrequest->ptr;
+			}
+		}
+
 		public void End(IntPtr ptr)
 		{
 			// good idea when you have only the pointer, but no need for it ...
