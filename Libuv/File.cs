@@ -143,6 +143,29 @@ namespace Libuv
 		}
 
 		[DllImport("uv")]
+		private static extern int uv_fs_fdatasync(IntPtr loop, IntPtr req, IntPtr file, Action<IntPtr> callback);
+
+		public void DataSync(Loop loop, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_fdatasync(loop.ptr, fsr.Handle, FileHandle, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+		public void DataSync(Loop loop)
+		{
+			DataSync(loop, null);
+		}
+		public void DataSync(Action<Exception> callback)
+		{
+			DataSync(Loop.Default, callback);
+		}
+		public void DataSync()
+		{
+			DataSync((Action<Exception>)null);
+		}
+
+		[DllImport("uv")]
 		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, IntPtr file, int offset, Action<IntPtr> callback);
 
 		public void Truncate(Loop loop, int offset, Action<Exception> callback)
