@@ -141,20 +141,20 @@ namespace Libuv
 			}
 		}
 
-		public static void End(IntPtr ptr)
+		public void End(IntPtr ptr)
 		{
-			var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
-
+			// good idea when you have only the pointer, but no need for it ...
+			// var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
 			Exception e = null;
-			if (fsr.Result == (IntPtr)(-1)) {
-				uv_err_t error = new uv_err_t(fsr.Error);
+			if (Result == (IntPtr)(-1)) {
+				uv_err_t error = new uv_err_t(Error);
 				e = new Exception(string.Format("{0}: {1}", error.Name, error.Description));
 			}
 
-			if (fsr.Callback != null) {
-				fsr.Callback(e, fsr);
+			if (Callback != null) {
+				Callback(e, this);
 			}
-			fsr.Free();
+			Free();
 		}
 	}
 

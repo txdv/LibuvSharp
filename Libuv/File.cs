@@ -34,7 +34,7 @@ namespace Libuv
 				}
 				callback(ex, file);
 			};
-			int r = uv_fs_open(loop.ptr, fsr.Handle, path, (int)access, 0, FileSystemRequest.End);
+			int r = uv_fs_open(loop.ptr, fsr.Handle, path, (int)access, 0, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public static void Open(string path, FileAccess access, Action<Exception, File> callback)
@@ -49,7 +49,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_close(loop.ptr, fsr.Handle, FileHandle, FileSystemRequest.End);
+			int r = uv_fs_close(loop.ptr, fsr.Handle, FileHandle, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public void Close(Loop loop)
@@ -76,7 +76,7 @@ namespace Libuv
 				callback(ex, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			int r = uv_fs_read(loop.ptr, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, FileSystemRequest.End);
+			int r = uv_fs_read(loop.ptr, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public void Read(byte[] data, int length, int offset, Action<Exception, int> callback)
@@ -99,7 +99,7 @@ namespace Libuv
 				Console.WriteLine (stats);
 				callback(ex);
 			};
-			int r = uv_fs_stat(loop.ptr, fsr.Handle, path, FileSystemRequest.End);
+			int r = uv_fs_stat(loop.ptr, fsr.Handle, path, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 
@@ -115,7 +115,7 @@ namespace Libuv
 				Console.WriteLine (stats);
 				callback(ex);
 			};
-			int r = uv_fs_fstat(loop.ptr, fsr.Handle, FileHandle, FileSystemRequest.End);
+			int r = uv_fs_fstat(loop.ptr, fsr.Handle, FileHandle, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 
@@ -126,7 +126,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_fsync(loop.ptr, fsr.Handle, FileHandle, FileSystemRequest.End);
+			int r = uv_fs_fsync(loop.ptr, fsr.Handle, FileHandle, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public void Sync(Loop loop)
@@ -149,7 +149,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_ftruncate(loop.ptr, fsr.Handle, FileHandle, offset, FileSystemRequest.End);
+			int r = uv_fs_ftruncate(loop.ptr, fsr.Handle, FileHandle, offset, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public void Truncate(Loop loop, int offset)
@@ -172,7 +172,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, FileSystemRequest.End);
+			uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, fsr.End);
 		}
 
 		public void Send(Tcp tcp, int offset, int length, Action<Exception> callback)
@@ -190,7 +190,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_mkdir(loop.ptr, fsr.Handle, path, mode, FileSystemRequest.End);
+			int r = uv_fs_mkdir(loop.ptr, fsr.Handle, path, mode, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 
@@ -214,7 +214,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_rmdir(loop.ptr, fsr.Handle, path, FileSystemRequest.End);
+			int r = uv_fs_rmdir(loop.ptr, fsr.Handle, path, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public static void Delete(Loop loop, string path)
@@ -237,7 +237,7 @@ namespace Libuv
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_rename(loop.ptr, fsr.Handle, path, newPath, FileSystemRequest.End);
+			int r = uv_fs_rename(loop.ptr, fsr.Handle, path, newPath, fsr.End);
 			UV.EnsureSuccess(r);
 		}
 		public static void Rename(Loop loop, string path, string newPath)
