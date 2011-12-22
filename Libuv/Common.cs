@@ -5,8 +5,7 @@ using System.Collections.Generic;
 
 namespace Libuv
 {
-
-	unsafe internal class Request<T> where T : struct
+	unsafe internal class Request<T> : IDisposable where T : struct
 	{
 		public IntPtr Handle { get; protected set; }
 
@@ -32,11 +31,6 @@ namespace Libuv
 			}
 		}
 
-		public Request(UvRequestType type)
-			: this(UV.Sizeof(type))
-		{
-		}
-
 		public Request(int size)
 			: this(size, true)
 		{
@@ -57,35 +51,46 @@ namespace Libuv
 			Handle = handle;
 			request = (uv_req_t *)handle;
 
+			Data = IntPtr.Zero;
+
 			if (allocate) {
 				Data = UV.Alloc(sizeof(T));
 			}
 		}
 
-		public bool HasData {
-			get {
-				return Data != IntPtr.Zero;
-			}
+		public virtual void Dispose()
+		{
+			Dispose(true);
 		}
 
-		public virtual void Free()
+		public virtual void Dispose(bool disposing)
 		{
-			if (HasData) {
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+
+			if (Data != IntPtr.Zero) {
 				UV.Free(Data);
 			}
 			UV.Free(Handle);
+
 		}
 	}
 
 	internal class PermaRequest : Request<GCHandle>
 	{
-		public PermaRequest()
-			: this(true)
+		public PermaRequest(int size)
+			: this(size, true)
 		{
 		}
 
-		public PermaRequest(bool allocate)
-			: base(UV.Sizeof(UvHandleType.File), allocate)
+		~PermaRequest()
+		{
+			Dispose(false);
+		}
+
+		public PermaRequest(int size, bool allocate)
+			: base(size, allocate)
 		{
 			Value = GCHandle.Alloc(this, GCHandleType.Pinned);
 		}
@@ -95,19 +100,26 @@ namespace Libuv
 		{
 		}
 
-		public override void Free()
+		public override void Dispose(bool disposing)
 		{
 			Value.Free();
-			base.Free();
+			base.Dispose(disposing);
 		}
 	}
 
 	unsafe internal class FileSystemRequest : PermaRequest
 	{
+		private static readonly int Size = UV.Sizeof(UvHandleType.File);
+
 		protected uv_fs_t *fsrequest;
 
 		public FileSystemRequest()
-			: base()
+			: this(true)
+		{
+		}
+
+		public FileSystemRequest(bool allocate)
+			: base(Size, allocate)
 		{
 			fsrequest = (uv_fs_t *)Handle;
 		}
@@ -123,10 +135,10 @@ namespace Libuv
 		[DllImport("uv")]
 		private static extern void uv_fs_req_cleanup(IntPtr req);
 
-		public override void Free()
+		public override void Dispose(bool disposing)
 		{
 			uv_fs_req_cleanup(Handle);
-			base.Free();
+			base.Dispose(disposing);
 		}
 
 		public IntPtr Result {
@@ -154,7 +166,7 @@ namespace Libuv
 			if (Callback != null) {
 				Callback(e, this);
 			}
-			Free();
+			Dispose();
 		}
 	}
 
