@@ -272,6 +272,51 @@ namespace Libuv
 			Chown(uid, gid, null);
 		}
 
+		[DllImport("uv")]
+		private static extern int uv_fs_unlink(IntPtr loop, IntPtr req, string path, Action<IntPtr> callback);
+
+		public static void Unlink(Loop loop, string path, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_unlink(loop.ptr, fsr.Handle, path, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+		public static void Unlink(Loop loop, string path)
+		{
+			Unlink(loop, path, null);
+		}
+		public static void Unlink(string path, Action<Exception> callback)
+		{
+			Unlink(Loop.Default, path, callback);
+		}
+		public static void Unlink(string path)
+		{
+			Unlink(path, null);
+		}
+
+		[DllImport("uv")]
+		private static extern int uv_fs_link(IntPtr loop, IntPtr req, string path, string newPath, Action<IntPtr> callback);
+
+		public static void Link(Loop loop, string path, string newPath, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_link(loop.ptr, fsr.Handle, path, newPath, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+		public static void Link(Loop loop, string path, string newPath)
+		{
+			Link(loop, path, newPath, null);
+		}
+		public static void Link(string path, string newPath, Action<Exception> callback)
+		{
+			Link(Loop.Default, path, newPath, callback);
+		}
+		public static void Link(string path, string newPath)
+		{
+			Link(path, newPath, null);
+		}
 	}
 
 	public class Directory
