@@ -5,6 +5,272 @@ using System.Collections.Generic;
 
 namespace Libuv
 {
+
+	unsafe internal class Request<T> where T : struct
+	{
+		public IntPtr Handle { get; protected set; }
+
+		protected uv_req_t *request;
+
+		public IntPtr Data {
+			get {
+				return request->data;
+			}
+			set {
+				request->data = value;
+			}
+		}
+
+		public T Value {
+			get {
+				T *p = (T *)Data;
+				return *p;
+			}
+			set {
+				T *p = (T *)Data;
+				*p = value;
+			}
+		}
+
+		public Request(UvRequestType type)
+			: this(UV.Sizeof(type))
+		{
+		}
+
+		public Request(int size)
+			: this(size, true)
+		{
+		}
+
+		public Request(int size, bool allocate)
+			: this(UV.Alloc(size), allocate)
+		{
+		}
+
+		public Request(IntPtr ptr)
+			: this(ptr, true)
+		{
+		}
+
+		protected Request(IntPtr handle, bool allocate)
+		{
+			Handle = handle;
+			request = (uv_req_t *)handle;
+
+			if (allocate) {
+				Data = UV.Alloc(sizeof(T));
+			}
+		}
+
+		public bool HasData {
+			get {
+				return Data != IntPtr.Zero;
+			}
+		}
+
+		public virtual void Free()
+		{
+			if (HasData) {
+				UV.Free(Data);
+			}
+			UV.Free(Handle);
+		}
+	}
+
+	internal class PermaRequest : Request<GCHandle>
+	{
+		public PermaRequest()
+			: this(true)
+		{
+		}
+
+		public PermaRequest(bool allocate)
+			: base(UV.Sizeof(UvHandleType.File), allocate)
+		{
+			Value = GCHandle.Alloc(this, GCHandleType.Pinned);
+		}
+
+		public PermaRequest(IntPtr ptr, bool allocate)
+			: base(ptr, allocate)
+		{
+		}
+
+		public override void Free()
+		{
+			Value.Free();
+			base.Free();
+		}
+	}
+
+	unsafe internal class FileSystemRequest : PermaRequest
+	{
+		protected uv_fs_t *fsrequest;
+
+		public FileSystemRequest()
+			: base()
+		{
+			fsrequest = (uv_fs_t *)Handle;
+		}
+
+		public FileSystemRequest(IntPtr ptr, bool allocate)
+			: base(ptr, allocate)
+		{
+			fsrequest = (uv_fs_t *)Handle;
+		}
+
+		public Action<Exception, FileSystemRequest> Callback { get; set; }
+
+		[DllImport("uv")]
+		private static extern void uv_fs_req_cleanup(IntPtr req);
+
+		public override void Free()
+		{
+			uv_fs_req_cleanup(Handle);
+			base.Free();
+		}
+
+		public IntPtr Result {
+			get {
+				return fsrequest->result;
+			}
+		}
+
+		public int Error {
+			get {
+				return fsrequest->error;
+			}
+		}
+
+		public static void End(IntPtr ptr)
+		{
+			var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
+
+			Exception e = null;
+			if (fsr.Result == (IntPtr)(-1)) {
+				uv_err_t error = new uv_err_t(fsr.Error);
+				e = new Exception(string.Format("{0}: {1}", error.Name, error.Description));
+			}
+
+			if (fsr.Callback != null) {
+				fsr.Callback(e, fsr);
+			}
+			fsr.Free();
+		}
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe public struct uv_err_t
+	{
+		public uv_err_t(int errorcode)
+		{
+			this.code = (uv_err_code)errorcode;
+			this.sys_errno_ = 0;
+		}
+
+		[DllImport("uv")]
+		private static extern sbyte *uv_strerror(uv_err_t error);
+
+		[DllImport("uv")]
+		private static extern sbyte *uv_err_name(uv_err_t error);
+
+		public uv_err_code code;
+		int sys_errno_;
+
+		public string Description {
+			get {
+				return new string(uv_strerror(this));
+			}
+		}
+
+		public string Name {
+			get {
+				return new string(uv_err_name(this));
+			}
+		}
+	}
+	public enum uv_err_code
+	{
+		UV_UNKNOWN = -1,
+		UV_OK = 0,
+		UV_EOF,
+		UV_EACCESS,
+		UV_EAGAIN,
+		UV_EADDRINUSE,
+		UV_EADDRNOTAVAIL,
+		UV_EAFNOSUPPORT,
+		UV_EALREADY,
+		UV_EBADF,
+		UV_EBUSY,
+		UV_ECONNABORTED,
+		UV_ECONNREFUSED,
+		UV_ECONNRESET,
+		UV_EDESTADDRREQ,
+		UV_EFAULT,
+		UV_EHOSTUNREACH,
+		UV_EINTR,
+		UV_EINVAL,
+		UV_EISCONN,
+		UV_EMFILE,
+		UV_ENETDOWN,
+		UV_ENETUNREACH,
+		UV_ENFILE,
+		UV_ENOBUFS,
+		UV_ENOMEM,
+		UV_ENONET,
+		UV_ENOPROTOOPT,
+		UV_ENOTCONN,
+		UV_ENOTSOCK,
+		UV_ENOTSUP,
+		UV_EPROTO,
+		UV_EPROTONOSUPPORT,
+		UV_EPROTOTYPE,
+		UV_ETIMEDOUT,
+		UV_ECHARSET,
+		UV_EAIFAMNOSUPPORT,
+		UV_EAINONAME,
+		UV_EAISERVICE,
+		UV_EAISOCKTYPE,
+		UV_ESHUTDOWN
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct uv_fs_t
+	{
+		public UvRequestType type;
+		public IntPtr data;
+
+		public IntPtr loop;
+		public int fs_type;
+		public IntPtr cb;
+		public IntPtr result;
+		public IntPtr ptr;
+		public IntPtr path;
+		public int error;
+	}
+
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct lin_stat
+	{
+		public long dev;
+		public uint ino;
+		public uint mode;
+		public uint nlink;
+		public uint uid;
+		public uint gid;
+		public ulong rdev;
+		public int size;
+		public int atime;
+		public int mtime;
+		public int ctime;
+
+		public override string ToString ()
+		{
+			return string.Format ("dev={0} ino={1} mode={2} nlink={3} uid={4} gid={5} rdev={6} size={7} atime={8} mtime={9} ctime={10}", dev, ino, mode, nlink, uid, gid, rdev, size, atime, mtime, ctime);
+		}
+
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct uv_connect_t
 	{
@@ -133,7 +399,15 @@ namespace Libuv
 	{
 		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
 		internal static bool IsUnix { get { return isUnix; } }
-		
+
+
+		[DllImport ("uv")]
+		public static extern uv_err_t uv_last_error(IntPtr loop);
+
+		[DllImport ("uv")]
+		public static extern string uv_strerror(uv_err_t err);
+
+
 		[DllImport("uv")]
 		internal extern static sockaddr_in uv_ip4_addr(string ip, int port);
 
@@ -208,6 +482,11 @@ namespace Libuv
 			}
 		}
 
+		internal static Exception GetLastError(Loop loop) {
+
+			return new Exception(uv_strerror(uv_last_error(loop.ptr)));
+		}
+
 		unsafe static internal req_gc_handles *Create(byte[] data, Action<bool> callback)
 		{
 			req_gc_handles *handles = (req_gc_handles *)UV.Alloc(sizeof(req_gc_handles));
@@ -268,6 +547,16 @@ namespace Libuv
 #if DEBUG
 		static List<IntPtr> pointers = new List<IntPtr>();
 #endif
+
+		internal static IntPtr Alloc(UvRequestType type)
+		{
+			return Alloc(UV.Sizeof(type));
+		}
+
+		internal static IntPtr Alloc(UvHandleType type)
+		{
+			return Alloc(UV.Sizeof(type));
+		}
 
 		internal static IntPtr Alloc(int size)
 		{
