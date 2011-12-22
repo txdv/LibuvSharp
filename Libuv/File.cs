@@ -227,6 +227,55 @@ namespace Libuv
 			Chmod(path, mode, null);
 		}
 
+		[DllImport("uv")]
+		private static extern int uv_fs_chown(IntPtr loop, IntPtr req, string path, int uid, int gid, Action<IntPtr> callback);
+
+		public static void Chown(Loop loop, string path, int uid, int gid, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_chown(loop.ptr, fsr.Handle, path, uid, gid, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+
+		public static void Chown(Loop loop, string path, int uid, int gid)
+		{
+			Chown(loop, path, uid, gid, null);
+		}
+
+		public static void Chown(string path, int uid, int gid, Action<Exception> callback)
+		{
+			Chown(Loop.Default, path, uid, gid, callback);
+		}
+		public static void Chown(string path, int uid, int gid)
+		{
+			Chown(path, uid, gid, null);
+		}
+
+		[DllImport("uv")]
+		private static extern int uv_fs_fchown(IntPtr loop, IntPtr req, IntPtr file, int uid, int gid, Action<IntPtr> callback);
+
+		public void Chown(Loop loop, int uid, int gid, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			int r = uv_fs_fchown(loop.ptr, fsr.Handle, FileHandle, uid, gid, fsr.End);
+			UV.EnsureSuccess(r);
+		}
+
+		public void Chown(Loop loop, int uid, int gid)
+		{
+			Chown(loop, uid, gid, null);
+		}
+
+		public void Chown(int uid, int gid, Action<Exception> callback)
+		{
+			Chown(Loop.Default, uid, gid, callback);
+		}
+		public void Chown(int uid, int gid)
+		{
+			Chown(uid, gid, null);
+		}
 
 	}
 
