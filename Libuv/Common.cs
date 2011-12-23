@@ -138,6 +138,23 @@ namespace Libuv
 		}
 	}
 
+	unsafe internal class ConnectRequest : CallbackPermaRequest
+	{
+		uv_connect_t *connect;
+
+		public ConnectRequest()
+			: base(UvRequestType.Connect)
+		{
+			connect = (uv_connect_t *)Handle;
+		}
+
+		public IntPtr ConnectHandle {
+			get {
+				return connect->handle;
+			}
+		}
+	}
+
 	unsafe internal class FileSystemRequest : PermaRequest
 	{
 		private static readonly int Size = UV.Sizeof(UvHandleType.File);

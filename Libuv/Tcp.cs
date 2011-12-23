@@ -166,8 +166,6 @@ namespace Libuv
 
 		Action<TCPStream> OnListen = null;
 
-		internal Action<TCPStream> connect_cb;
-
 		public void Connect(string ipAddress, int port, Action<TCPStream> callback)
 		{
 			Connect(IPAddress.Parse(ipAddress), port, callback);
@@ -180,29 +178,18 @@ namespace Libuv
 
 		public void Connect(IPAddress ipAddress, int port, Action<TCPStream> callback)
 		{
-			connect_cb = callback;
-			IntPtr req = UV.Alloc(UV.Sizeof(UvRequestType.Connect));
+			ConnectRequest cpr = new ConnectRequest();
+			cpr.Callback += (status, cpr2) => {
+				callback(status == 0 ? new TCPStream(cpr.ConnectHandle) : null);
+			};
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_tcp_connect(req, handle, UV.uv_ip4_addr(ipAddress.ToString(), port), connect_callback);
+				r = uv_tcp_connect(cpr.Handle, handle, UV.uv_ip4_addr(ipAddress.ToString(), port), cpr.End);
 			} else {
-				r = uv_tcp_connect6(req, handle, UV.uv_ip6_addr(ipAddress.ToString(), port), connect_callback);
+				r = uv_tcp_connect6(cpr.Handle, handle, UV.uv_ip6_addr(ipAddress.ToString(), port), cpr.End);
 			}
-
-			try {
-				UV.EnsureSuccess(r);
-			} catch (Exception e) {
-				UV.Free(req);
-				throw e;
-			}
-		}
-
-		unsafe internal void connect_callback(IntPtr req, int status)
-		{
-			uv_connect_t *connect_req = (uv_connect_t *)req;
-			connect_cb(new TCPStream((IntPtr)connect_req->handle));
-			UV.Free(req);
+			UV.EnsureSuccess(r);
 		}
 	}
 
