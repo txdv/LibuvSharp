@@ -11,6 +11,12 @@ namespace Libuv
 		ReadWrite = 3,
 	}
 
+	// TODO:
+	// 1. fix stat
+	// 2. uv_fs_SYMLINK
+	// 3. uv_fs_readlink
+	// 4. uv_fs_utime uv_fs_futime
+
 	public class File
 	{
 		public File(Loop loop, IntPtr handle)
