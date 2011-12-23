@@ -18,6 +18,8 @@ namespace Libuv
 
 		internal Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> recv_start_cb;
 
+		ByteBuffer buffer = new ByteBuffer();
+
 		public Udp()
 			: this(Loop.Default)
 		{
@@ -137,18 +139,11 @@ namespace Libuv
 			int n = (int)nread;
 
 			if (n == 0) {
-				UV.Free(buf);
 				return;
 			}
 
-			// TODO: optimize this out, we can create a new byte[] from the very
-			// beginning and then just pass the pinned address of it
-			byte[] data = new byte[n];
-			Marshal.Copy(buf.@base, data, 0, n);
-			UV.Free(buf);
-
 			if (OnMessage != null) {
-				OnMessage(data, UV.GetIPEndPoint(sockaddr));
+				OnMessage(buffer.Get(n), UV.GetIPEndPoint(sockaddr));
 			}
 		}
 
@@ -156,7 +151,7 @@ namespace Libuv
 		public void Receive(Action<byte[], IPEndPoint> callback)
 		{
 			if (!receive_init) {
-				int r = uv_udp_recv_start(handle, UV.Alloc, recv_start_cb);
+				int r = uv_udp_recv_start(handle, buffer.Alloc, recv_start_cb);
 				UV.EnsureSuccess(r);
 				receive_init = true;
 			}

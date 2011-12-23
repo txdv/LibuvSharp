@@ -204,6 +204,8 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
 
+		ByteBuffer buffer = new ByteBuffer();
+
 		public TCPStream(IntPtr handle)
 			: base(handle)
 		{
@@ -211,7 +213,7 @@ namespace Libuv
 
 		public void Resume()
 		{
-			int r = uv_read_start(handle, UV.Alloc, read_callback);
+			int r = uv_read_start(handle, buffer.Alloc, read_callback);
 			UV.EnsureSuccess(r);
 		}
 
@@ -224,21 +226,16 @@ namespace Libuv
 		internal void read_callback(IntPtr stream, IntPtr size, UnixBufferStruct buf)
 		{
 			if (size.ToInt64() == 0) {
-				UV.Free(buf);
 				return;
 			} else if (size.ToInt64() < 0) {
-				UV.Free(buf);
 				Close();
 				return;
 			}
 
 			int length = (int)size;
-			byte[] data = new byte[length];
-			Marshal.Copy(buf.@base, data, 0, length);
-			UV.Free(buf);
 
 			if (OnRead != null) {
-				OnRead(data);
+				OnRead(buffer.Get(length));
 			}
 		}
 
