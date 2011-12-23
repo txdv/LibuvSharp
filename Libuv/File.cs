@@ -86,6 +86,65 @@ namespace Libuv
 		}
 
 		[DllImport("uv")]
+		private static extern int uv_fs_write(IntPtr loop, IntPtr req, IntPtr file, IntPtr buf, int length, int offset);
+
+		public void Write(Loop loop, byte[] data, int length, int offset, Action<Exception, int> callback)
+		{
+			var datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			var fsr = new FileSystemRequest();
+			fsr.Callback += (ex, fsr2) => {
+				callback(ex, (int)fsr.Result);
+				datagchandle.Free();
+			};
+			int r = uv_fs_write(loop.ptr, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), length, offset);
+			UV.EnsureSuccess(r);
+		}
+		public void Write(Loop loop, byte[] data, int length, int offset)
+		{
+			Write(loop, data, length, offset, null);
+		}
+		public void Write(Loop loop, byte[] data, int length)
+		{
+			Write(loop, data, length, -1);
+		}
+		public void Write(Loop loop, byte[] data)
+		{
+			Write(loop, data, data.Length);
+		}
+		public void Write(Loop loop, byte[] data, int length, Action<Exception, int> callback)
+		{
+			Write(loop, data, length, -1, callback);
+		}
+		public void Write(Loop loop, byte[] data, Action<Exception, int> callback)
+		{
+			Write(loop, data, data.Length, callback);
+		}
+		public void Write(byte[] data, int length, int offset, Action<Exception, int> callback)
+		{
+			Write(Loop.Default, data, length, offset, callback);
+		}
+		public void Write(byte[] data, int length, int offset)
+		{
+			Write(data, length, offset, null);
+		}
+		public void Write(byte[] data, int length)
+		{
+			Write(data, length, -1);
+		}
+		public void Write(byte[] data)
+		{
+			Write(data, data.Length);
+		}
+		public void Write(byte[] data, int length, Action<Exception, int> callback)
+		{
+			Write(data, length, -1, callback);
+		}
+		public void Write(byte[] data, Action<Exception, int> callback)
+		{
+			Write(data, data.Length, callback);
+		}
+
+		[DllImport("uv")]
 		unsafe private static extern void uv_fs_req_stat(IntPtr req, lin_stat *stat);
 
 		[DllImport("uv")]
