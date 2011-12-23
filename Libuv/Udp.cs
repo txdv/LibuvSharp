@@ -61,53 +61,72 @@ namespace Libuv
 		[DllImport("uv")]
 		internal extern static int uv_udp_send6(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, Action<IntPtr, int> cb);
 
-		unsafe internal static void send_callback(IntPtr ptr, int status)
+		public void Send(IPAddress ipAddress, int port, byte[] data, int length, Action<bool> callback)
 		{
-			uv_req_t *req = (uv_req_t *)ptr;
-			UV.Finish(req->data, status == 0);
-			UV.Free((IntPtr)req);
-		}
-
-		unsafe public void Send(IPAddress ipAddress, int port, byte[] buffer, Action<bool> callback)
-		{
-			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.RequestSizeof(UvRequestType.UdpSend));
-
-			req_gc_handles *handles = UV.Create(buffer, callback);
-			req->data = (IntPtr)handles;
-
+			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UdpSend);
+			cpr.Callback += (status, cpr2) => {
+				datagchandle.Free();
+				if (callback != null) {
+					callback(status == 0);
+				}
+			};
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0].@base = handles->data.AddrOfPinnedObject();
-			buf[0].length = (IntPtr)buffer.Length;
+			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_udp_send((IntPtr)req, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), send_callback);
+				r = uv_udp_send(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), cpr.End);
 			} else {
-				r = uv_udp_send6((IntPtr)req, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), send_callback);
+				r = uv_udp_send6(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), cpr.End);
 			}
 			UV.EnsureSuccess(r);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] buffer)
+		public void Send(IPAddress ipAddress, int port, byte[] data, Action<bool> callback)
 		{
-			Send(ipAddress, port, buffer, null);
+			Send(ipAddress, port, data, data.Length, callback);
+		}
+		public void Send(IPAddress ipAddress, int port, byte[] data, int length)
+		{
+			Send(ipAddress, port, data, length, null);
+		}
+		public void Send(IPAddress ipAddress, int port, byte[] data)
+		{
+			Send(ipAddress, port, data, data.Length);
 		}
 
-		public void Send(string ipAddress, int port, byte[] buffer, Action<bool> callback)
+		public void Send(string ipAddress, int port, byte[] data, int length, Action<bool> callback)
 		{
-			Send(IPAddress.Parse(ipAddress), port, buffer, callback);
+			Send(IPAddress.Parse(ipAddress), port, data, length, callback);
 		}
-		public void Send(string ipAddress, int port, byte[] buffer)
+		public void Send(string ipAddress, int port, byte[] data, Action<bool> callback)
 		{
-			Send(IPAddress.Parse(ipAddress), port, buffer);
+			Send(ipAddress, port, data, data.Length, callback);
+		}
+		public void Send(string ipAddress, int port, byte[] data, int length)
+		{
+			Send(IPAddress.Parse(ipAddress), port, data, length);
+		}
+		public void Send(string ipAddress, int port, byte[] data)
+		{
+			Send(IPAddress.Parse(ipAddress), port, data);
 		}
 
-		public void Send(IPEndPoint ep, byte[] buffer, Action<bool> callback)
+		public void Send(IPEndPoint ep, byte[] data, int length, Action<bool> callback)
 		{
-			Send(ep.Address, ep.Port, buffer, callback);
-		}	
-		public void Send(IPEndPoint ep, byte[] buffer)
+			Send(ep.Address, ep.Port, data, length, callback);
+		}
+		public void Send(IPEndPoint ep, byte[] data, Action<bool> callback)
 		{
-			Send(ep.Address, ep.Port, buffer);
+			Send(ep.Address, ep.Port, data, data.Length, callback);
+		}
+		public void Send(IPEndPoint ep, byte[] data, int length)
+		{
+			Send(ep.Address, ep.Port, data, length);
+		}
+		public void Send(IPEndPoint ep, byte[] data)
+		{
+			Send(ep.Address, ep.Port, data);
 		}
 
 		[DllImport("uv")]
