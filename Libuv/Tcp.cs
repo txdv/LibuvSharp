@@ -256,15 +256,20 @@ namespace Libuv
 
 		unsafe public void Write(byte[] data, int length, Action<bool> callback)
 		{
-			uv_req_t *req = (uv_req_t *)UV.Alloc(UV.Sizeof(UvRequestType.Write));
-
-			req_gc_handles *handles = UV.Create(data, callback);
-			req->data = (IntPtr)handles;
+			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.Write);
+			cpr.Callback += (status, cpr2) => {
+				datagchandle.Free();
+				if (callback != null) {
+					callback(status == 0);
+				}
+			};
 
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(handles->data.AddrOfPinnedObject(), length);
+			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
-			uv_write((IntPtr)req, handle, buf, 1, write_callback);
+			int r = uv_write(cpr.Handle, handle, buf, 1, cpr.End);
+			UV.EnsureSuccess(r);
 		}
 		public void Write(byte[] data, int length)
 		{
@@ -287,13 +292,6 @@ namespace Libuv
 		public void Write(Encoding enc, string text)
 		{
 			Write(enc, text, null);
-		}
-
-		unsafe internal void write_callback(IntPtr req, int status)
-		{
-			uv_req_t *reqptr = (uv_req_t *)req;
-			UV.Finish(reqptr->data, status == 0);
-			UV.Free(req);
 		}
 	}
 }

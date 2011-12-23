@@ -414,13 +414,6 @@ namespace Libuv
 		public IntPtr data;
 	}
 
-	internal struct req_gc_handles
-	{
-		public GCHandle data;
-		public GCHandle callback;
-		public bool cb;
-	}
-
 	internal enum UvType : int
 	{
 		Loop
@@ -551,33 +544,6 @@ namespace Libuv
 		internal static Exception GetLastError(Loop loop) {
 
 			return new Exception(uv_strerror(uv_last_error(loop.ptr)));
-		}
-
-		unsafe static internal req_gc_handles *Create(byte[] data, Action<bool> callback)
-		{
-			req_gc_handles *handles = (req_gc_handles *)UV.Alloc(sizeof(req_gc_handles));
-
-			handles->data = GCHandle.Alloc(data, GCHandleType.Pinned);
-			if (callback != null) {
-				handles->callback = GCHandle.Alloc(callback, GCHandleType.Pinned);
-				handles->cb = true;
-			} else {
-				handles->cb = false;
-			}
-
-			return handles;
-		}
-
-		unsafe static internal void Finish(IntPtr reqgc, bool success)
-		{
-			req_gc_handles *handles = (req_gc_handles *)reqgc;
-			handles->data.Free();
-			if (handles->cb) {
-				Action<bool> cb = (Action<bool>)handles->callback.Target;
-				cb(success);
-				handles->callback.Free();
-			}
-			UV.Free((IntPtr)handles);
 		}
 
 		#region Memory
