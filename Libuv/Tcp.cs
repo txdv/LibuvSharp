@@ -125,32 +125,50 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, Action<IntPtr, int> callback);
 
-		public void Connect(string ipAddress, int port, Action<TcpSocket> callback)
-		{
-			Connect(IPAddress.Parse(ipAddress), port, callback);
-		}
 
-		public void Connect(IPEndPoint ep, Action<TcpSocket> callback)
-		{
-			Connect(ep.Address, ep.Port, callback);
-		}
-
-		public void Connect(IPAddress ipAddress, int port, Action<TcpSocket> callback)
+		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<TcpSocket> callback)
 		{
 			ConnectRequest cpr = new ConnectRequest();
+			TcpSocket socket = new TcpSocket(loop);
+
 			cpr.Callback = (status, cpr2) => {
-				callback(status == 0 ? new TcpSocket(Loop, cpr.ConnectHandle) : null);
+				if (status == 0) {
+					callback(socket);
+				} else {
+					socket.Close();
+					socket.Dispose();
+					callback(null);
+				}
 			};
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_tcp_connect(cpr.Handle, handle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect(cpr.Handle, socket.handle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			} else {
-				r = uv_tcp_connect6(cpr.Handle, handle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect6(cpr.Handle, socket.handle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
 			UV.EnsureSuccess(r);
 		}
-
+		public static void Connect(Loop loop, string ipAddress, int port, Action<TcpSocket> callback)
+		{
+			Connect(loop, IPAddress.Parse(ipAddress), port, callback);
+		}
+		public static void Connect(Loop loop, IPEndPoint ep, Action<TcpSocket> callback)
+		{
+			Connect(loop, ep.Address, ep.Port, callback);
+		}
+		public static void Connect(IPAddress ipAddress, int port, Action<TcpSocket> callback)
+		{
+			Connect(Loop.Default, ipAddress, port, callback);
+		}
+		public static void Connect(string ipAddress, int port, Action<TcpSocket> callback)
+		{
+			Connect(Loop.Default, ipAddress, port, callback);
+		}
+		public static void Connect(IPEndPoint ep, Action<TcpSocket> callback)
+		{
+			Connect(Loop.Default, ep, callback);
+		}
 
 		[DllImport("uv")]
 		internal static extern int uv_tcp_nodelay(IntPtr handle, int enable);
