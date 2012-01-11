@@ -21,7 +21,7 @@ namespace Libuv
 			: base(UvHandleType.Tcp)
 		{
 			Loop = loop;
-			uv_tcp_init(loop.ptr, handle);
+			uv_tcp_init(loop.Handle, handle);
 		}
 	}
 

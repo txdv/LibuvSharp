@@ -6,44 +6,44 @@ namespace Libuv
 	public class Loop : IDisposable
 	{
 		[DllImport("uv")]
-		internal static extern IntPtr uv_default_loop();
+		static extern IntPtr uv_default_loop();
 
 		[DllImport("uv")]
-		internal static extern IntPtr uv_loop_new();
+		static extern IntPtr uv_loop_new();
 
 		[DllImport("uv")]
-		internal static extern void uv_loop_delete(IntPtr ptr);
+		static extern void uv_loop_delete(IntPtr ptr);
 
 		[DllImport("uv")]
-		internal static extern void uv_run(IntPtr loop);
+		static extern void uv_run(IntPtr loop);
 
 		[DllImport("uv")]
-		internal static extern void uv_run_once(IntPtr loop);
+		static extern void uv_run_once(IntPtr loop);
 
 		[DllImport("uv")]
-		internal static extern void uv_ref(IntPtr loop);
+		static extern void uv_ref(IntPtr loop);
 
 		[DllImport("uv")]
-		internal static extern void uv_unref(IntPtr loop);
+		static extern void uv_unref(IntPtr loop);
 
 		[DllImport("uv")]
-		internal static extern void uv_update_time(IntPtr loop);
+		static extern void uv_update_time(IntPtr loop);
 
 		[DllImport("uv")]
-		internal static extern long uv_now(IntPtr loop);
+		static extern long uv_now(IntPtr loop);
 
-		internal static Loop @default = new Loop(uv_default_loop());
+		static Loop @default = new Loop(uv_default_loop());
 		public static Loop Default {
 			get {
 				return @default;
 			}
 		}
 
-		internal IntPtr ptr;
+		internal IntPtr Handle { get; set; }
 
-		internal Loop(IntPtr ptr)
+		internal Loop(IntPtr handle)
 		{
-			this.ptr = ptr;
+			Handle = handle;
 		}
 
 		public Loop()
@@ -53,41 +53,55 @@ namespace Libuv
 
 		public void Run()
 		{
-			uv_run(ptr);
+			uv_run(Handle);
 		}
 
 		public void RunOnce()
 		{
-			uv_run_once(ptr);
+			uv_run_once(Handle);
 		}
 
 		public void Ref()
 		{
-			uv_ref(ptr);
+			uv_ref(Handle);
 		}
 
 		public void Unref()
 		{
-			uv_unref(ptr);
+			uv_unref(Handle);
 		}
 
 		public void UpdateTime()
 		{
-			uv_update_time(ptr);
+			uv_update_time(Handle);
 		}
 
 		public long Now {
 			get {
-				return uv_now(ptr);
+				return uv_now(Handle);
 			}
 		}
 
-		#region IDisposable implementation
+		~Loop()
+		{
+			Dispose(false);
+		}
+
 		public void Dispose()
 		{
-			//uv_loop_delete(ptr);
+			Dispose(true);
 		}
-		#endregion
+
+		public void Dispose(bool disposing)
+		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+
+			if (Handle != Default.Handle) {
+				uv_loop_delete(Handle);
+			}
+		}
 	}
 }
 

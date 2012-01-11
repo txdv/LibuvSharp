@@ -544,7 +544,7 @@ namespace Libuv
 
 		internal static Exception GetLastError(Loop loop) {
 
-			return new Exception(uv_strerror(uv_last_error(loop.ptr)));
+			return new Exception(uv_strerror(uv_last_error(loop.Handle)));
 		}
 
 		#region Memory

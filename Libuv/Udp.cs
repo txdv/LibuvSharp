@@ -27,7 +27,7 @@ namespace Libuv
 		public Udp(Loop loop)
 			: base(UvHandleType.Udp)
 		{
-			int r = uv_udp_init(loop.ptr, handle);
+			int r = uv_udp_init(loop.Handle, handle);
 			UV.EnsureSuccess(r);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time

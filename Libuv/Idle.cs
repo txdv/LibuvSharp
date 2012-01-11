@@ -22,7 +22,7 @@ namespace Libuv
 		public Idle(Loop loop)
 			: base(UvHandleType.Idle)
 		{
-			int err = uv_idle_init(loop.ptr, handle);
+			int err = uv_idle_init(loop.Handle, handle);
 			UV.EnsureSuccess(err);
 		}
 

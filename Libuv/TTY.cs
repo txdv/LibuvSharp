@@ -27,7 +27,7 @@ namespace Libuv
 		{
 			Loop = loop;
 			FileDescriptor = fd;
-			int r = uv_tty_init(loop.ptr, handle, fd, readable);
+			int r = uv_tty_init(loop.Handle, handle, fd, readable);
 			UV.EnsureSuccess(r);
 			Stream = new Stream(handle);
 		}

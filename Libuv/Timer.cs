@@ -33,7 +33,7 @@ namespace Libuv
 		public Timer(Loop loop)
 			: base(UvHandleType.Timer)
 		{
-			uv_timer_init(loop.ptr, handle);
+			uv_timer_init(loop.Handle, handle);
 		}
 
 		public long LongRepeat {

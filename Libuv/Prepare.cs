@@ -22,7 +22,7 @@ namespace Libuv
 		public Prepare(Loop loop)
 			: base(UvHandleType.Prepare)
 		{
-			int err = uv_prepare_init(loop.ptr, handle);
+			int err = uv_prepare_init(loop.Handle, handle);
 			UV.EnsureSuccess(err);
 		}
 
