@@ -62,6 +62,7 @@ namespace Libuv
 				Stop();
 			}
 			Running = true;
+			LongRepeat = repeat;
 			uv_timer_start(handle, callback, timeout, repeat);
 		}
 
@@ -129,8 +130,10 @@ namespace Libuv
 
 		public void Stop()
 		{
+			if (Running) {
+				uv_timer_stop(handle);
+			}
 			Running = false;
-			uv_timer_stop(handle);
 		}
 
 		public void Again()
