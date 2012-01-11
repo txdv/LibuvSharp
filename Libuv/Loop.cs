@@ -18,6 +18,9 @@ namespace Libuv
 		internal static extern void uv_run(IntPtr loop);
 
 		[DllImport("uv")]
+		internal static extern void uv_run_once(IntPtr loop);
+
+		[DllImport("uv")]
 		internal static extern void uv_ref(IntPtr loop);
 
 		[DllImport("uv")]
@@ -51,6 +54,11 @@ namespace Libuv
 		public void Run()
 		{
 			uv_run(ptr);
+		}
+
+		public void RunOnce()
+		{
+			uv_run_once(ptr);
 		}
 
 		public void Ref()
