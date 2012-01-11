@@ -7,6 +7,14 @@ namespace Libuv
 	{
 		public IntPtr Buffer { get; protected set; }
 		public int Size { get; protected set; }
+		public Func<IntPtr, int, UnixBufferStruct> AllocCallback { get; protected set; }
+		GCHandle GCHandle { get; set; }
+
+		public ByteBuffer()
+		{
+			AllocCallback = Alloc;
+			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
+		}
 
 		~ByteBuffer()
 		{
@@ -18,13 +26,16 @@ namespace Libuv
 			Dispose(true);
 		}
 
-		public void Dispose(bool disposing)
+		protected void Dispose(bool disposing)
 		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
 			Free();
-			GC.SuppressFinalize(this);
+			GCHandle.Free();
 		}
 
-		public IntPtr Alloc(int size)
+		IntPtr Alloc(int size)
 		{
 			if (Buffer == IntPtr.Zero) {
 				Buffer = Marshal.AllocHGlobal(size);
@@ -37,7 +48,7 @@ namespace Libuv
 			return Buffer;
 		}
 
-		public UnixBufferStruct Alloc(IntPtr data, int size)
+		UnixBufferStruct Alloc(IntPtr data, int size)
 		{
 			return new UnixBufferStruct(Alloc(size), size);
 		}

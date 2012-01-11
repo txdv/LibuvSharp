@@ -257,16 +257,16 @@ namespace Libuv
 		[DllImport("uv")]
 		private static extern int uv_fs_sendfile(IntPtr loop, IntPtr req, IntPtr out_fd, IntPtr in_fd, int offset, int length, Action<IntPtr> callback);
 
-		public void Send(Loop loop, Tcp tcp, int offset, int length, Action<Exception, int> callback)
+		public void Send(Loop loop, TcpSocket socket, int offset, int length, Action<Exception, int> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex, (int)fsr.Result); };
-			int r = uv_fs_sendfile(loop.ptr, fsr.Handle, tcp.handle, FileHandle, offset, length, fsr.End);
+			int r = uv_fs_sendfile(loop.ptr, fsr.Handle, socket.handle, FileHandle, offset, length, fsr.End);
 			UV.EnsureSuccess(r);
 		}
-		public void Send(Tcp tcp, int offset, int length, Action<Exception, int> callback)
+		public void Send(TcpSocket socket, int offset, int length, Action<Exception, int> callback)
 		{
-			Send(Loop.Default, tcp, offset, length, callback);
+			Send(Loop.Default, socket, offset, length, callback);
 		}
 
 		[DllImport("uv")]

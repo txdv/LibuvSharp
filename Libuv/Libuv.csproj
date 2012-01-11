@@ -47,6 +47,8 @@
     <Compile Include="IStream.cs" />
     <Compile Include="File.cs" />
     <Compile Include="ByteBuffer.cs" />
+    <Compile Include="TTY.cs" />
+    <Compile Include="Stream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -16,8 +16,7 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_udp_bind6(IntPtr handle, sockaddr_in6 sockaddr, short flags);
 
-		internal Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> recv_start_cb;
-
+		Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> recv_start_cb;
 		ByteBuffer buffer = new ByteBuffer();
 
 		public Udp()
@@ -73,14 +72,15 @@ namespace Libuv
 					callback(status == 0);
 				}
 			};
+
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
 			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_udp_send(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), cpr.End);
+				r = uv_udp_send(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			} else {
-				r = uv_udp_send6(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), cpr.End);
+				r = uv_udp_send6(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
 			UV.EnsureSuccess(r);
 		}
@@ -134,7 +134,7 @@ namespace Libuv
 		[DllImport("uv")]
 		internal extern static int uv_udp_recv_start(IntPtr handle, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> callback);
 
-		unsafe internal void recv_start_callback(IntPtr handle, IntPtr nread, UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
+		internal void recv_start_callback(IntPtr handle, IntPtr nread, UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
 			int n = (int)nread;
 
@@ -151,7 +151,7 @@ namespace Libuv
 		public void Receive(Action<byte[], IPEndPoint> callback)
 		{
 			if (!receive_init) {
-				int r = uv_udp_recv_start(handle, buffer.Alloc, recv_start_cb);
+				int r = uv_udp_recv_start(handle, buffer.AllocCallback, recv_start_cb);
 				UV.EnsureSuccess(r);
 				receive_init = true;
 			}

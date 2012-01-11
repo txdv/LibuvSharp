@@ -5,11 +5,12 @@ namespace Libuv
 {
 	public interface IStream
 	{
-		void Resume();
 		void Pause();
 
+		event Action<byte[]> OnRead;
 		void Read(Action<byte[]> callback);
 		void Read(Encoding enc, Action<string> callback);
+		void Resume();
 
 		void Write(byte[] data, int length, Action<bool> callback);
 		void Write(byte[] data, int length);

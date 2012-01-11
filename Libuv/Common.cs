@@ -72,8 +72,8 @@ namespace Libuv
 			if (Data != IntPtr.Zero) {
 				UV.Free(Data);
 			}
-			UV.Free(Handle);
 
+			UV.Free(Handle);
 		}
 	}
 
@@ -95,15 +95,17 @@ namespace Libuv
 			Value = GCHandle.Alloc(this, GCHandleType.Pinned);
 		}
 
-		public PermaRequest(IntPtr ptr, bool allocate)
-			: base(ptr, allocate)
-		{
-		}
-
 		public override void Dispose(bool disposing)
 		{
 			Value.Free();
 			base.Dispose(disposing);
+		}
+
+		unsafe public static T GetObject<T>(IntPtr ptr) where T : class
+		{
+			uv_req_t *req = (uv_req_t *)ptr.ToPointer();
+			GCHandle *gchandle = (GCHandle *)req->data;
+			return (gchandle->Target as T);
 		}
 	}
 
@@ -131,10 +133,15 @@ namespace Libuv
 
 		public Action<int, CallbackPermaRequest> Callback { get; set; }
 
-		public void End(IntPtr ptr, int status)
+		protected void End(IntPtr ptr, int status)
 		{
 			Callback(status, this);
 			Dispose();
+		}
+
+		static public void StaticEnd(IntPtr ptr, int status)
+		{
+			PermaRequest.GetObject<CallbackPermaRequest>(ptr).End(ptr, status);
 		}
 	}
 
@@ -168,12 +175,6 @@ namespace Libuv
 
 		public FileSystemRequest(bool allocate)
 			: base(Size, allocate)
-		{
-			fsrequest = (uv_fs_t *)Handle;
-		}
-
-		public FileSystemRequest(IntPtr ptr, bool allocate)
-			: base(ptr, allocate)
 		{
 			fsrequest = (uv_fs_t *)Handle;
 		}
@@ -601,7 +602,9 @@ namespace Libuv
 
 		internal static void Free(IntPtr ptr)
 		{
+#if DEBUG
 			pointers.Remove(ptr);
+#endif
 			Marshal.FreeHGlobal(ptr);
 		}
 

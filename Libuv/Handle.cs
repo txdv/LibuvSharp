@@ -3,18 +3,56 @@ using System.Runtime.InteropServices;
 
 namespace Libuv
 {
+	internal class PermaCallback : IDisposable
+	{
+		public Action Callback { get; protected set; }
+
+		GCHandle GCHandle { get; set; }
+		Action cb;
+
+		public PermaCallback(Action callback)
+		{
+			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
+			cb = callback;
+			Callback = PrivateCallback;
+		}
+
+		void PrivateCallback()
+		{
+			cb();
+			Dispose();
+		}
+
+		~PermaCallback()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		protected void Dispose(bool disposing)
+		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+
+			GCHandle.Free();
+		}
+
+	}
+
 	public class Handle : IDisposable
 	{
+		GCHandle GCHandle { get; set; }
 		internal IntPtr handle;
 
 		internal Handle(IntPtr handle)
 		{
 			this.handle = handle;
-		}
-
-		internal Handle(UvHandleType type)
-			: this(UV.Sizeof(type))
-		{
+			GCHandle = GCHandle.Alloc(this);
 		}
 
 		internal Handle(int size)
@@ -22,41 +60,41 @@ namespace Libuv
 		{
 		}
 
+		internal Handle(UvHandleType type)
+			: this(UV.Sizeof(type))
+		{
+		}
+
 		public event Action CloseEvent;
 
 		[DllImport("uv")]
-		internal static extern int uv_close(IntPtr handle, IntPtr callback);
-
-		internal void Close(IntPtr callback)
-		{
-			if (handle != IntPtr.Zero) {
-				int r = uv_close(handle, callback);
-				UV.EnsureSuccess(r);
-			}
-		}
+		internal static extern int uv_close(IntPtr handle, Action callback);
 
 		public void Close(Action callback)
 		{
-			Action cb = null;
-			GCHandle gchandle = GCHandle.Alloc(cb, GCHandleType.Pinned);
-			cb = delegate {
-				callback();
+			if (handle == IntPtr.Zero) {
+				return;
+			}
 
+			PermaCallback pc = new PermaCallback(() => {
 				if (CloseEvent != null) {
 					CloseEvent();
 				}
 
-				gchandle.Free();
-				UV.Free(handle);
-				handle = IntPtr.Zero;
-			};
+				if (callback != null) {
+					callback();
+				}
 
-			Close(Marshal.GetFunctionPointerForDelegate(cb));
+				Dispose();
+			});
+
+			int r = uv_close(handle, pc.Callback);
+			UV.EnsureSuccess(r);
 		}
 
 		public void Close()
 		{
-			Close(() => { });
+			Close(null);
 		}
 
 		public bool Closed {
@@ -65,12 +103,20 @@ namespace Libuv
 			}
 		}
 
-		#region IDisposable implementation
 		public void Dispose()
 		{
-			Close();
+			Dispose(true);
 		}
-		#endregion
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+
+			UV.Free(handle);
+			GCHandle.Free();
+		}
 	}
 }
 
