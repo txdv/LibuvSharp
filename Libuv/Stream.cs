@@ -22,9 +22,11 @@ namespace Libuv
 
 		internal IntPtr Handle { get; set; }
 		GCHandle GCHandle { get; set; }
+		public Loop Loop { get; protected set; }
 
-		public Stream(IntPtr handle)
+		public Stream(Loop loop, IntPtr handle)
 		{
+			Loop = loop;
 			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
 			Handle = handle;
 			read_cb = read_callback;
@@ -60,11 +62,18 @@ namespace Libuv
 		Action<IntPtr, IntPtr, UnixBufferStruct> read_cb;
 		internal void read_callback(IntPtr stream, IntPtr size, UnixBufferStruct buf)
 		{
-			if (size.ToInt64() == 0) {
+			long nread = size.ToInt64();
+			if (nread == 0) {
 				return;
-			} else if (size.ToInt64() < 0) {
-				// TODO: figure out what to do
-				return;
+			} else if (nread < 0) {
+				if (nread == -1) {
+					OnEndOfStream();
+					return;
+				} else {
+					OnError(new UVException(Loop));
+					return;
+				}
+
 			}
 
 			int length = (int)size;
@@ -73,6 +82,24 @@ namespace Libuv
 				OnRead(buffer.Get(length));
 			}
 		}
+
+		protected void OnEndOfStream()
+		{
+			if (EndOfStream != null) {
+				EndOfStream();
+			}
+		}
+
+		public event Action EndOfStream;
+
+		protected void OnError(UVException exception)
+		{
+			if (Error != null) {
+				Error(exception);
+			}
+		}
+
+		public event Action<UVException> Error;
 
 		public event Action<byte[]> OnRead;
 

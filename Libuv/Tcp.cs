@@ -232,7 +232,7 @@ namespace Libuv
 		public TcpSocket(Loop loop)
 			: base(loop)
 		{
-			Stream = new Stream(handle);
+			Stream = new Stream(loop, handle);
 		}
 
 		public TcpSocket(Loop loop, IntPtr handle)

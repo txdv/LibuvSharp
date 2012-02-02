@@ -29,7 +29,7 @@ namespace Libuv
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.Handle, handle, fd, readable);
 			UV.EnsureSuccess(r);
-			Stream = new Stream(handle);
+			Stream = new Stream(loop, handle);
 		}
 
 		[DllImport("uv")]

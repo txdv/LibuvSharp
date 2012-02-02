@@ -464,10 +464,6 @@ namespace Libuv
 		[DllImport ("uv")]
 		public static extern uv_err_t uv_last_error(IntPtr loop);
 
-		[DllImport ("uv")]
-		public static extern string uv_strerror(uv_err_t err);
-
-
 		[DllImport("uv")]
 		internal extern static sockaddr_in uv_ip4_addr(string ip, int port);
 
@@ -540,11 +536,6 @@ namespace Libuv
 			if (errorCode < 0) {
 				throw new Exception(errorCode.ToString());
 			}
-		}
-
-		internal static Exception GetLastError(Loop loop) {
-
-			return new Exception(uv_strerror(uv_last_error(loop.Handle)));
 		}
 
 		#region Memory

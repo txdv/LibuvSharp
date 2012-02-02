@@ -181,7 +181,8 @@ namespace Test
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
 				});
-				client.CloseEvent += () => {
+
+				stream.EndOfStream += () => {
 					close_cb_called++;
 					client.Close();
 				};

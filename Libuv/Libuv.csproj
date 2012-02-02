@@ -49,6 +49,7 @@
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="TTY.cs" />
     <Compile Include="Stream.cs" />
+    <Compile Include="Exceptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

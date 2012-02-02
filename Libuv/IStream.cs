@@ -5,9 +5,14 @@ namespace Libuv
 {
 	public interface IStream
 	{
+		Loop Loop { get; }
+
 		void Pause();
 
+		event Action EndOfStream;
+		event Action<UVException> Error;
 		event Action<byte[]> OnRead;
+
 		void Read(Action<byte[]> callback);
 		void Read(Encoding enc, Action<string> callback);
 		void Resume();
