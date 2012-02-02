@@ -92,7 +92,7 @@ namespace Libuv
 		public PermaRequest(int size, bool allocate)
 			: base(size, allocate)
 		{
-			Value = GCHandle.Alloc(this, GCHandleType.Pinned);
+			Value = GCHandle.Alloc(this, GCHandleType.Normal);
 		}
 
 		public override void Dispose(bool disposing)
