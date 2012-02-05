@@ -56,7 +56,7 @@ namespace Libuv
 		}
 
 		internal Handle(int size)
-			: this(Marshal.AllocHGlobal(size))
+			: this(UV.Alloc(size))
 		{
 		}
 
