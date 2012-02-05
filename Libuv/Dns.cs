@@ -317,19 +317,19 @@ namespace Libuv
 			cb.End(null, he);
 		}
 
-		public static void Callback4(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		static void Callback4(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
 		{
 			var cb = Callback.GetObject<AresCallback<Hostent>>(arg);
 			Parse(cb, ares_parse_a_reply, buf, alen);
 		}
 
-		public static void Callback6(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		static void Callback6(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
 		{
 			var cb = Callback.GetObject<AresCallback<Hostent>>(arg);
 			Parse(cb, ares_parse_aaaa_reply, buf, alen);
 		}
 
-		unsafe public static void CallbackMx(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		static void CallbackMx(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
 		{
 			var cb = Callback.GetObject<AresCallback<MailExchange[]>>(arg);
 			IntPtr reply;
