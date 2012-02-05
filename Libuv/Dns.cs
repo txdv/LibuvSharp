@@ -217,14 +217,20 @@ namespace Libuv
 		[DllImport("uv")]
 		static extern void ares_free_data(IntPtr data);
 
+		[DllImport("uv")]
+		unsafe static extern sbyte *ares_version(IntPtr ptr);
+
 		public Loop Loop { get; protected set; }
 
 		IntPtr channel;
 		IntPtr options;
 
-		static Dns()
+		public static string Version { get; private set; }
+
+		unsafe static Dns()
 		{
 			ares_library_init(LibraryInit.All);
+			Version = new string(ares_version(IntPtr.Zero));
 		}
 
 		public Dns(Loop loop)
