@@ -20,6 +20,18 @@ namespace Libuv
 		public string[] Aliases { get; protected set; }
 	}
 
+	public class MailExchange
+	{
+		public MailExchange(string host, int priority)
+		{
+			Host = host;
+			Priority = priority;
+		}
+
+		public string Host { get; protected set; }
+		public int Priority { get; protected set; }
+	}
+
 	public class Dns
 	{
 		enum LibraryInit
@@ -160,6 +172,24 @@ namespace Libuv
 			public int nsort;
 		}
 
+		unsafe struct ares_mx_reply {
+			public ares_mx_reply *next;
+			public sbyte *host;
+			public ushort priority;
+
+			public static MailExchange[] ToMailExchange(IntPtr reply)
+			{
+				List<MailExchange> list = new List<MailExchange>();
+				ares_mx_reply *mx_reply = (ares_mx_reply *)reply;
+				while (mx_reply != (ares_mx_reply *)0) {
+					list.Add(new MailExchange(new string(mx_reply->host), mx_reply->priority));
+
+					mx_reply = mx_reply->next;
+				}
+				return list.ToArray();
+			}
+		}
+
 		[DllImport("uv")]
 		static extern int ares_library_init(LibraryInit flags);
 
@@ -180,6 +210,12 @@ namespace Libuv
 
 		[DllImport("uv")]
 		static extern void ares_free_hostent(IntPtr host);
+
+		[DllImport("uv")]
+		unsafe static extern int ares_parse_mx_reply(IntPtr abuf, int alen, ref IntPtr mx_out);
+
+		[DllImport("uv")]
+		static extern void ares_free_data(IntPtr data);
 
 		public Loop Loop { get; protected set; }
 
@@ -234,54 +270,71 @@ namespace Libuv
 
 			public static T GetObject<T>(IntPtr arg) where T : class
 			{
+				if (arg == IntPtr.Zero) {
+					return default(T);
+				}
+
 				var handle = *((GCHandle *)arg.ToPointer());
 				return handle.Target as T;
 			}
 		}
 
-		class AresCallback : Callback
+		class AresCallback<T> : Callback where T : class
 		{
-			Action<Exception, Hostent> cb;
+			Action<Exception, T> cb;
 
-			public AresCallback(Action<Exception, Hostent> callback)
+			public AresCallback(Action<Exception, T> callback)
 			{
 				cb = callback;
 			}
 
-			void End(Exception exception, Hostent hostent)
+			public void End(Exception exception, T arg1)
 			{
 				if (cb != null) {
-					cb(exception, hostent);
+					cb(exception, arg1);
 				}
 				Dispose();
 			}
+		}
 
-			delegate int AresParseDelegate(IntPtr buf, int alen, ref IntPtr host, IntPtr addrttls, IntPtr naddrttls);
+		delegate int AresParseDelegate(IntPtr buf, int alen, ref IntPtr host, IntPtr addrttls, IntPtr naddrttls);
 
-			void Parse(AresParseDelegate ares_parse, IntPtr buf, int alen)
-			{
-				IntPtr host;
-				int r = ares_parse(buf, alen, ref host, IntPtr.Zero, IntPtr.Zero);
-				if (r != 0) {
-					End(new Exception(string.Format("the parse method returned {0}", r)), null);
-					return;
-				}
-				var he = hostent.GetHostent(host);
-				ares_free_hostent(host);
-				End(null, he);
+		static void Parse(AresCallback<Hostent> cb, AresParseDelegate ares_parse, IntPtr buf, int alen)
+		{
+			IntPtr host;
+			int r = ares_parse(buf, alen, ref host, IntPtr.Zero, IntPtr.Zero);
+			if (r != 0) {
+				cb.End(new Exception(string.Format("the parse method returned {0}", r)), null);
+				return;
 			}
+			var he = hostent.GetHostent(host);
+			cb.End(null, he);
+		}
 
-			public static void Callback(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
-			{
-				var cb = GetObject<AresCallback>(arg);
-				cb.Parse(ares_parse_a_reply, buf, alen);
-			}
+		public static void Callback4(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		{
+			var cb = Callback.GetObject<AresCallback<Hostent>>(arg);
+			Parse(cb, ares_parse_a_reply, buf, alen);
+		}
 
-			public static void Callback6(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
-			{
-				var cb = GetObject<AresCallback>(arg);
-				cb.Parse(ares_parse_aaaa_reply, buf, alen);
+		public static void Callback6(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		{
+			var cb = Callback.GetObject<AresCallback<Hostent>>(arg);
+			Parse(cb, ares_parse_aaaa_reply, buf, alen);
+		}
+
+		unsafe public static void CallbackMx(IntPtr arg, int status, int timeouts, IntPtr buf, int alen)
+		{
+			var cb = Callback.GetObject<AresCallback<MailExchange[]>>(arg);
+			IntPtr reply;
+			int r = ares_parse_mx_reply(buf, alen, ref reply);
+			if (r != 0) {
+				cb.End(new Exception(string.Format("the parse method returned {0}", r)), null);
+				return;
 			}
+			var me = ares_mx_reply.ToMailExchange(reply);
+			ares_free_data(reply);
+			cb.End(null, me);
 		}
 
 		public void Resolve(string host, AddressFamily addressFamily, Action<Exception, Hostent> callback)
@@ -289,13 +342,11 @@ namespace Libuv
 			switch (addressFamily) {
 			case AddressFamily.InterNetwork:
 			case AddressFamily.InterNetworkV6:
-				var cb = new AresCallback((exception, address) => {
-					callback(exception, address);
-				});
+				var cb = new AresCallback<Hostent>(callback);
 				if (addressFamily == AddressFamily.InterNetwork) {
-					ares_query(channel, host, 1, 1, AresCallback.Callback, cb.Handle);
+					ares_query(channel, host, 1, 1, Callback4, cb.Handle);
 				} else {
-					ares_query(channel, host, 1, 28, AresCallback.Callback6, cb.Handle);
+					ares_query(channel, host, 1, 28, Callback6, cb.Handle);
 				}
 				break;
 			default:
@@ -312,6 +363,12 @@ namespace Libuv
 		public void Resolve6(string host, Action<Exception, Hostent> callback)
 		{
 			Resolve(host, AddressFamily.InterNetworkV6, callback);
+		}
+
+		public void ResolveMx(string host, Action<Exception, MailExchange[]> callback)
+		{
+			AresCallback<MailExchange[]> cb = new AresCallback<MailExchange[]>(callback);
+			ares_query(channel, host, 1, 15, CallbackMx, cb.Handle);
 		}
 	}
 }
