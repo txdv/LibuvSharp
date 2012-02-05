@@ -197,28 +197,30 @@ namespace Libuv
 		}
 
 		[DllImport("uv")]
-		unsafe internal static extern int uv_tcp_getsockname(IntPtr handle, sockaddr_in6 *name, IntPtr length);
+		internal static extern int uv_tcp_getsockname(IntPtr handle, IntPtr addr, ref int length);
 
 		[DllImport("uv")]
-		unsafe internal static extern int uv_tcp_getpeername(IntPtr handle, sockaddr_in6 *name, IntPtr length);
+		internal static extern int uv_tcp_getpeername(IntPtr handle, IntPtr addr, ref int length);
 
 		unsafe public IPEndPoint Sockname {
 			get {
 				sockaddr_in6 addr;
-				sockaddr_in6 *addrptr = &addr;
-				IntPtr length;
-				uv_tcp_getsockname(handle, addrptr, length);
-				return UV.GetIPEndPoint((IntPtr)addrptr);
+				IntPtr ptr = new IntPtr(&addr);
+				int length = sizeof(sockaddr_in6);
+				int r = uv_tcp_getsockname(handle, ptr, ref length);
+				UV.EnsureSuccess(r);
+				return UV.GetIPEndPoint(ptr);
 			}
 		}
 
 		unsafe public IPEndPoint Peername {
 			get {
 				sockaddr_in6 addr;
-				sockaddr_in6 *addrptr = &addr;
-				IntPtr length;
-				uv_tcp_getpeername(handle, addrptr, length);
-				return UV.GetIPEndPoint((IntPtr)addrptr);
+				IntPtr ptr = new IntPtr(&addr);
+				int length = sizeof(sockaddr_in6);
+				int r = uv_tcp_getpeername(handle, ptr, ref length);
+				UV.EnsureSuccess(r);
+				return UV.GetIPEndPoint(ptr);
 			}
 		}
 
