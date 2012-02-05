@@ -50,6 +50,7 @@
     <Compile Include="TTY.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="Dns.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

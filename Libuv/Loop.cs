@@ -39,11 +39,14 @@ namespace Libuv
 			}
 		}
 
+		public Dns Dns { get; protected set; }
+
 		internal IntPtr Handle { get; set; }
 
 		internal Loop(IntPtr handle)
 		{
 			Handle = handle;
+			Dns = new Dns(this);
 		}
 
 		public Loop()

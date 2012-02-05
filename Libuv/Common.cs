@@ -417,7 +417,9 @@ namespace Libuv
 
 	internal enum UvType : int
 	{
-		Loop
+		Loop,
+		AresChannel,
+		AresOptions
 	}
 
 	internal enum UvHandleType : int
