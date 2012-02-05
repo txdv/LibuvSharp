@@ -109,7 +109,7 @@ namespace Libuv
 			{
 				List<IPAddress> list = new List<IPAddress>();
 				int size = 128;
-				IntPtr dst = Marshal.AllocHGlobal(size);
+				IntPtr dst = UV.Alloc(size);
 
 				var that = this;
 
@@ -119,7 +119,7 @@ namespace Libuv
 					list.Add(IPAddress.Parse(ip));
 				});
 
-				Marshal.FreeHGlobal(dst);
+				UV.Free(dst);
 				return list.ToArray();
 			}
 
@@ -236,7 +236,7 @@ namespace Libuv
 		public Dns(Loop loop)
 		{
 			Loop = loop;
-			options = Marshal.AllocHGlobal(UV.Sizeof(UvType.AresOptions));
+			options = UV.Alloc(UvType.AresOptions);
 			int r = uv_ares_init_options(loop.Handle, ref channel, options, 0);
 			UV.EnsureSuccess(r);
 		}
@@ -244,7 +244,7 @@ namespace Libuv
 		~Dns()
 		{
 			uv_ares_destroy(Loop.Handle, channel);
-			Marshal.FreeHGlobal(options);
+			UV.Free(options);
 		}
 
 		unsafe class Callback : IDisposable
@@ -262,7 +262,7 @@ namespace Libuv
 
 			public Callback()
 			{
-				Handle = Marshal.AllocHGlobal(sizeof(GCHandle));
+				Handle = UV.Alloc(sizeof(GCHandle));
 				GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
 			}
 

@@ -574,14 +574,19 @@ namespace Libuv
 		static List<IntPtr> pointers = new List<IntPtr>();
 #endif
 
+		internal static IntPtr Alloc(UvType type)
+		{
+			return Alloc(Sizeof(type));
+		}
+
 		internal static IntPtr Alloc(UvRequestType type)
 		{
-			return Alloc(UV.Sizeof(type));
+			return Alloc(Sizeof(type));
 		}
 
 		internal static IntPtr Alloc(UvHandleType type)
 		{
-			return Alloc(UV.Sizeof(type));
+			return Alloc(Sizeof(type));
 		}
 
 		internal static IntPtr Alloc(int size)
