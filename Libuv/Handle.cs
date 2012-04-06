@@ -41,7 +41,6 @@ namespace Libuv
 
 			GCHandle.Free();
 		}
-
 	}
 
 	public class Handle : IDisposable
@@ -119,6 +118,42 @@ namespace Libuv
 
 			UV.Free(handle);
 			GCHandle.Free();
+		}
+
+		[DllImport("uv")]
+		internal static extern int uv_is_active(IntPtr handle);
+
+		public bool Active {
+			get {
+				return uv_is_active(handle) != 0;
+			}
+		}
+
+		[DllImport("uv")]
+		internal static extern int uv_is_readable(IntPtr handle);
+
+		public bool Readable {
+			get {
+				return uv_is_readable(handle) != 0;
+			}
+		}
+
+		[DllImport("uv")]
+		internal static extern int uv_is_writable(IntPtr handle);
+
+		public bool Writeable {
+			get {
+				return uv_is_writable(handle) != 0;
+			}
+		}
+
+		[DllImport("uv")]
+		internal static extern int uv_is_closing(IntPtr handle);
+
+		public bool Closing {
+			get {
+				return uv_is_closing(handle) != 0;
+			}
 		}
 	}
 }
