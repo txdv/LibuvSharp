@@ -101,6 +101,8 @@ namespace Libuv
 				GC.SuppressFinalize(this);
 			}
 
+			Dns.Dispose();
+
 			if (Handle != Default.Handle) {
 				uv_loop_delete(Handle);
 			}

@@ -32,7 +32,7 @@ namespace Libuv
 		public int Priority { get; protected set; }
 	}
 
-	public class Dns
+	public class Dns : IDisposable
 	{
 		enum LibraryInit
 		{
@@ -236,15 +236,35 @@ namespace Libuv
 		public Dns(Loop loop)
 		{
 			Loop = loop;
-			options = UV.Alloc(UvType.AresOptions);
+			options = UV.Alloc(1000);
 			int r = uv_ares_init_options(loop.Handle, ref channel, options, 0);
 			UV.EnsureSuccess(r);
 		}
 
 		~Dns()
 		{
-			uv_ares_destroy(Loop.Handle, channel);
-			UV.Free(options);
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (disposing) {
+				GC.SuppressFinalize(this);
+			}
+			if (Loop.Handle != IntPtr.Zero) {
+				uv_ares_destroy(Loop.Handle, channel);
+				Loop.Handle = IntPtr.Zero;
+			}
+
+			if (options != IntPtr.Zero) {
+				UV.Free(options);
+				options = IntPtr.Zero;
+			}
 		}
 
 		unsafe class Callback : IDisposable

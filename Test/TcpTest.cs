@@ -66,7 +66,7 @@ namespace Test
 			Assert.AreEqual(1, sv_recv_cb_called);
 
 #if DEBUG
-			Assert.AreEqual(0, UV.PointerCount);
+			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
 
@@ -141,7 +141,7 @@ namespace Test
 				Assert.AreEqual(1, sv_recv_cb_called);
 
 #if DEBUG
-				Assert.AreEqual(0, UV.PointerCount);
+				Assert.AreEqual(1, UV.PointerCount);
 #endif
 			}
 		}
@@ -205,7 +205,7 @@ namespace Test
 			Assert.AreEqual(1, sv_recv_cb_called);
 
 #if DEBUG
-			Assert.AreEqual(0, UV.PointerCount);
+			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
 	}

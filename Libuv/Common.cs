@@ -415,46 +415,42 @@ namespace Libuv
 		public IntPtr data;
 	}
 
-	internal enum UvType : int
-	{
-		Loop,
-		AresChannel,
-		AresOptions
-	}
-
 	internal enum UvHandleType : int
 	{
 		Unknown,
-		Tcp,
-		Udp,
-		NamedPipe,
-		TTY,
-		File,
-		Timer,
-		Prepare,
-		Check,
-		Idle,
-		Async,
+
 		AresTask,
-		AresEvent,
+		Async,
+		Check,
+		FSEvent,
+		Idle,
+		NamedPipe,
+		Prepare,
 		Process,
-		FSEvent
+		Tcp,
+		Timer,
+		TTY,
+		Udp,
+
+		File,
+		Private,
+		Max,
 	};
 
 	internal enum UvRequestType : int
 	{
 		Unknown,
+
 		Connect,
-		Accept,
-		Read,
 		Write,
 		Shutdown,
-		Wakeup,
 		UdpSend,
 		FileSystem,
 		Work,
 		GetAddrInfo,
+
 		Private,
+		Max,
 	}
 
 	public static class UV
@@ -505,32 +501,19 @@ namespace Libuv
 		}
 
 		[DllImport("uv")]
-		internal static extern int uv_sizeof(UvType type);
+		internal static extern int uv_handle_size(UvHandleType type);
+
 		[DllImport("uv")]
-
-		internal static extern int uv_sizeof_handle(UvHandleType type);
-		[DllImport("uv")]
-
-		internal static extern int uv_sizeof_req(UvRequestType type);
-
-		internal static int Sizeof(UvType type)
-		{
-			return uv_sizeof(type);
-		}
+		internal static extern int uv_req_size(UvRequestType type);
 
 		internal static int Sizeof(UvHandleType type)
 		{
-			return uv_sizeof_handle(type);
+			return uv_handle_size(type);
 		}
 
 		internal static int Sizeof(UvRequestType type)
 		{
-			return uv_sizeof_req(type);
-		}
-
-		internal static int RequestSizeof(UvRequestType type)
-		{
-			return uv_sizeof_req(type);
+			return uv_req_size(type);
 		}
 
 		internal static void EnsureSuccess(int errorCode)
@@ -573,11 +556,6 @@ namespace Libuv
 #if DEBUG
 		static List<IntPtr> pointers = new List<IntPtr>();
 #endif
-
-		internal static IntPtr Alloc(UvType type)
-		{
-			return Alloc(Sizeof(type));
-		}
 
 		internal static IntPtr Alloc(UvRequestType type)
 		{
