@@ -7,18 +7,16 @@ namespace Libuv
 {
 	public abstract class Tcp : Handle
 	{
-		public Loop Loop { get; protected set; }
-
 		[DllImport("uv")]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
 
 		public Tcp(IntPtr handle)
-			: base(handle)
+			: base(Loop.Default, handle)
 		{
 		}
 
 		public Tcp(Loop loop)
-			: base(UvHandleType.Tcp)
+			: base(loop, UvHandleType.Tcp)
 		{
 			Loop = loop;
 			uv_tcp_init(loop.Handle, handle);

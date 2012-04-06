@@ -25,7 +25,7 @@ namespace Libuv
 		}
 
 		public Udp(Loop loop)
-			: base(UvHandleType.Udp)
+			: base(loop, UvHandleType.Udp)
 		{
 			int r = uv_udp_init(loop.Handle, handle);
 			UV.EnsureSuccess(r);

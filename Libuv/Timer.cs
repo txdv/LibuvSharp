@@ -31,7 +31,7 @@ namespace Libuv
 		}
 
 		public Timer(Loop loop)
-			: base(UvHandleType.Timer)
+			: base(loop, UvHandleType.Timer)
 		{
 			uv_timer_init(loop.Handle, handle);
 		}

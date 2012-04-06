@@ -46,22 +46,25 @@ namespace Libuv
 
 	public class Handle : IDisposable
 	{
+		public Loop Loop { get; protected set; }
+
 		GCHandle GCHandle { get; set; }
 		internal IntPtr handle;
 
-		internal Handle(IntPtr handle)
+		internal Handle(Loop loop, IntPtr handle)
 		{
 			this.handle = handle;
 			GCHandle = GCHandle.Alloc(this);
+			Loop = loop;
 		}
 
-		internal Handle(int size)
-			: this(UV.Alloc(size))
+		internal Handle(Loop loop, int size)
+			: this(loop, UV.Alloc(size))
 		{
 		}
 
-		internal Handle(UvHandleType type)
-			: this(UV.Sizeof(type))
+		internal Handle(Loop loop, UvHandleType type)
+			: this(loop, UV.Sizeof(type))
 		{
 		}
 

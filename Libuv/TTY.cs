@@ -15,15 +15,13 @@ namespace Libuv
 
 		public GCHandle StreamGCHandle { get; private set; }
 
-		public Loop Loop { get; private set; }
-
 		public IntPtr FileDescriptor { get; private set; }
 
 		[DllImport("uv")]
 		static extern int uv_tty_init(IntPtr loop, IntPtr tty, IntPtr fd, int readable);
 
 		public TTY(Loop loop, IntPtr fd, int readable)
-			: base(UvHandleType.TTY)
+			: base(loop, UvHandleType.TTY)
 		{
 			Loop = loop;
 			FileDescriptor = fd;
