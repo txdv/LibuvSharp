@@ -23,7 +23,6 @@ namespace Libuv
 		public TTY(Loop loop, IntPtr fd, int readable)
 			: base(loop, UvHandleType.TTY)
 		{
-			Loop = loop;
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.Handle, handle, fd, readable);
 			UV.EnsureSuccess(r);

@@ -18,7 +18,6 @@ namespace Libuv
 		public Tcp(Loop loop)
 			: base(loop, UvHandleType.Tcp)
 		{
-			Loop = loop;
 			uv_tcp_init(loop.Handle, handle);
 		}
 	}
