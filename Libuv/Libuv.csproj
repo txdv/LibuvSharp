@@ -58,6 +58,7 @@
     <Compile Include="Pipe.cs" />
     <Compile Include="Internal\PermaCallback.cs" />
     <Compile Include="IStreamable.cs" />
+    <Compile Include="DynamicLibrary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
