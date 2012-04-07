@@ -457,15 +457,6 @@ namespace Libuv
 
 	public static class UV
 	{
-		[DllImport("uv")]
-		internal static extern ulong uv_hrtime();
-
-		public static ulong HourTime {
-			get {
-				return uv_hrtime();
-			}
-		}
-
 		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
 		internal static bool IsUnix { get { return isUnix; } }
 

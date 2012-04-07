@@ -25,6 +25,16 @@ namespace Libuv
 				}
 			}
 		}
+
+		[DllImport("uv")]
+		internal static extern ulong uv_hrtime();
+
+		public static ulong HighResolutionTime {
+			get {
+				return uv_hrtime();
+			}
+		}
+
 	}
 }
 
