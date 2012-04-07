@@ -13,8 +13,6 @@ namespace Libuv
 	{
 		public Stream Stream { get; private set; }
 
-		public GCHandle StreamGCHandle { get; private set; }
-
 		public IntPtr FileDescriptor { get; private set; }
 
 		[DllImport("uv")]
