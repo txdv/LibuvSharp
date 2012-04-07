@@ -45,6 +45,12 @@ namespace Libuv
 					return uv_get_total_memory();
 				}
 			}
+
+			public static long Used {
+				get {
+					return Total - Free;
+				}
+			}
 		}
 
 		[DllImport("uv")]
