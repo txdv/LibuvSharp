@@ -170,6 +170,15 @@ namespace Libuv
 		{
 			Listen(AlwaysAcceptCallback, callback);
 		}
+
+		[DllImport("uv")]
+		internal static extern int uv_pipe_pending_instances(IntPtr handle, int count);
+
+		public int PendingInstances {
+			set {
+				uv_pipe_pending_instances(handle, value);
+			}
+		}
 	}
 
 }
