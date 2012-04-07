@@ -16,7 +16,7 @@ namespace Libuv
 		}
 	}
 
-	public class Pipe : BasePipe
+	public class Pipe : BasePipe, IStreamable
 	{
 		public Stream Stream { get; protected set; }
 

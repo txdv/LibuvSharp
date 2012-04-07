@@ -114,7 +114,7 @@ namespace Libuv
 		}
 	}
 
-	public class TcpSocket : Tcp
+	public class TcpSocket : Tcp, IStreamable
 	{
 		[DllImport("uv")]
 		internal static extern int uv_tcp_connect(IntPtr req, IntPtr handle, sockaddr_in addr, Action<IntPtr, int> callback);

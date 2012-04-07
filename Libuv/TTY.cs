@@ -9,7 +9,7 @@ namespace Libuv
 		Raw
 	}
 
-	public class TTY : Handle
+	public class TTY : Handle, IStreamable
 	{
 		public Stream Stream { get; private set; }
 
