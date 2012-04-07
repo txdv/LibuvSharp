@@ -20,11 +20,26 @@ namespace Libuv
 		[DllImport("uv")]
 		static extern int uv_tty_init(IntPtr loop, IntPtr tty, IntPtr fd, int readable);
 
-		public TTY(Loop loop, IntPtr fd, int readable)
+		public TTY(Loop loop, int fd)
+			: this(loop, fd, true)
+		{
+		}
+
+		public TTY(Loop loop, IntPtr fd)
+			: this(loop, fd, true)
+		{
+		}
+
+		public TTY(Loop loop, int fd, bool readable)
+			: this(loop, (IntPtr)fd, readable)
+		{
+		}
+
+		public TTY(Loop loop, IntPtr fd, bool readable)
 			: base(loop, UvHandleType.TTY)
 		{
 			FileDescriptor = fd;
-			int r = uv_tty_init(loop.Handle, handle, fd, readable);
+			int r = uv_tty_init(loop.Handle, handle, fd, (readable ? 1 : 0));
 			UV.EnsureSuccess(r);
 			Stream = new Stream(loop, handle);
 		}
