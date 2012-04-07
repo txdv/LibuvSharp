@@ -223,20 +223,10 @@ namespace Libuv
 
 		public Stream Stream { get; protected set; }
 
-		public TcpSocket()
-			: this(Loop.Default)
-		{
-		}
-
-		public TcpSocket(Loop loop)
+		internal TcpSocket(Loop loop)
 			: base(loop)
 		{
 			Stream = new Stream(loop, handle);
-		}
-
-		public TcpSocket(Loop loop, IntPtr handle)
-			: base(handle)
-		{
 		}
 
 		protected override void Dispose(bool disposing)
