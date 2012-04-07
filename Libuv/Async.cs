@@ -104,6 +104,15 @@ namespace Libuv
 			async.Send();
 		}
 
+		public void Send(IEnumerable<T> data) {
+			lock (queue) {
+				foreach (var dataitem in data) {
+					queue.Enqueue(dataitem);
+				}
+			}
+			async.Send();
+		}
+
 		public void OnCallback(T item)
 		{
 			if (Callback != null) {

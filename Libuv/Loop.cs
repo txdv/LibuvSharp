@@ -117,6 +117,11 @@ namespace Libuv
 			callback.Send(cb);
 		}
 
+		public void Sync(System.Collections.Generic.IEnumerable<Action> callbacks)
+		{
+			callback.Send(callbacks);
+		}
+
 		~Loop()
 		{
 			Dispose(false);
