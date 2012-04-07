@@ -3,6 +3,27 @@ using System.Runtime.InteropServices;
 
 namespace Libuv
 {
+	unsafe public class LoadAverage
+	{
+		[DllImport("uv")]
+		internal static extern void uv_loadavg(IntPtr avg);
+
+		internal LoadAverage()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal(sizeof(double) * 3);
+			uv_loadavg(ptr);
+			Last = *((double *)ptr);
+			Five = *((double *)(ptr + sizeof(double)));
+			Fifteen = *((double *)(ptr + sizeof(double) * 2));
+			Marshal.FreeHGlobal(ptr);
+		}
+
+		public double Last { get; protected set; }
+		public double Five { get; protected set; }
+		public double Fifteen { get; protected set; }
+
+	}
+
 	public static class Computer
 	{
 		public static class Memory
@@ -35,6 +56,11 @@ namespace Libuv
 			}
 		}
 
+		public static LoadAverage Load {
+			get {
+				return new LoadAverage();
+			}
+		}
 	}
 }
 
