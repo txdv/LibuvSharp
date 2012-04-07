@@ -51,6 +51,8 @@
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
+    <Compile Include="Mutex.cs" />
+    <Compile Include="BaseHandle.cs" />
     <Compile Include="Pipe.cs" />
     <Compile Include="Internal\PermaCallback.cs" />
     <Compile Include="IStreamable.cs" />
