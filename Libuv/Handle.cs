@@ -3,46 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace Libuv
 {
-	internal class PermaCallback : IDisposable
-	{
-		public Action Callback { get; protected set; }
-
-		GCHandle GCHandle { get; set; }
-		Action cb;
-
-		public PermaCallback(Action callback)
-		{
-			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
-			cb = callback;
-			Callback = PrivateCallback;
-		}
-
-		void PrivateCallback()
-		{
-			cb();
-			Dispose();
-		}
-
-		~PermaCallback()
-		{
-			Dispose(false);
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
-		protected void Dispose(bool disposing)
-		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
-			GCHandle.Free();
-		}
-	}
-
 	public class Handle : IDisposable
 	{
 		public Loop Loop { get; protected set; }

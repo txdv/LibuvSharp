@@ -52,6 +52,10 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
     <Compile Include="Pipe.cs" />
+    <Compile Include="Internal\PermaCallback.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Internal\" />
+  </ItemGroup>
 </Project>
