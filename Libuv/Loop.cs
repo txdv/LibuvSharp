@@ -43,10 +43,14 @@ namespace Libuv
 
 		internal IntPtr Handle { get; set; }
 
+		AsyncCallback callback;
+
 		internal Loop(IntPtr handle)
 		{
 			Handle = handle;
 			Dns = new Dns(this);
+
+			callback = new AsyncCallback(this);
 		}
 
 		public Loop()
@@ -108,6 +112,11 @@ namespace Libuv
 			UV.EnsureSuccess(r);
 		}
 
+		public void Sync(Action cb)
+		{
+			callback.Send(cb);
+		}
+
 		~Loop()
 		{
 			Dispose(false);
@@ -125,6 +134,11 @@ namespace Libuv
 			}
 
 			Dns.Dispose();
+
+			if (callback != null) {
+				callback = null;
+				callback.Close();
+			}
 
 			if (Handle != Default.Handle) {
 				uv_loop_delete(Handle);

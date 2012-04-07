@@ -60,6 +60,7 @@
     <Compile Include="IStreamable.cs" />
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />
+    <Compile Include="Async.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
