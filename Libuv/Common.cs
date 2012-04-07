@@ -457,6 +457,8 @@ namespace Libuv
 
 	public static class UV
 	{
+		unsafe internal static readonly int PointerSize = sizeof(IntPtr) / 4;
+
 		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
 		internal static bool IsUnix { get { return isUnix; } }
 
