@@ -198,6 +198,17 @@ namespace Libuv
 				return CpuInformation.GetInfo();
 			}
 		}
+
+		[DllImport("uv")]
+		internal static extern uv_err_t uv_uptime(out double uptime);
+
+		public static double Uptime {
+			get {
+				double uptime;
+				UV.EnsureSuccess(uv_uptime(out uptime));
+				return uptime;
+			}
+		}
 	}
 }
 
