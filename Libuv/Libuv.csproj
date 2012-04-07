@@ -54,6 +54,7 @@
     <Compile Include="Lock.cs" />
     <Compile Include="Mutex.cs" />
     <Compile Include="Guard.cs" />
+    <Compile Include="Process.cs" />
     <Compile Include="BaseHandle.cs" />
     <Compile Include="Pipe.cs" />
     <Compile Include="Internal\PermaCallback.cs" />
