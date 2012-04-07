@@ -71,9 +71,13 @@ namespace Libuv
 
 			if (Data != IntPtr.Zero) {
 				UV.Free(Data);
+				Data = IntPtr.Zero;
 			}
 
-			UV.Free(Handle);
+			if (Handle != IntPtr.Zero) {
+				UV.Free(Handle);
+				Handle = IntPtr.Zero;
+			}
 		}
 	}
 
@@ -315,7 +319,6 @@ namespace Libuv
 		public int error;
 	}
 
-
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct lin_stat
 	{
@@ -354,7 +357,6 @@ namespace Libuv
 		public IntPtr cb;
 		public IntPtr handle;
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct WindowsBufferStruct
@@ -455,11 +457,19 @@ namespace Libuv
 
 	public static class UV
 	{
+		[DllImport("uv")]
+		internal static extern ulong uv_hrtime();
+
+		public static ulong HourTime {
+			get {
+				return uv_hrtime();
+			}
+		}
+
 		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
 		internal static bool IsUnix { get { return isUnix; } }
 
-
-		[DllImport ("uv")]
+		[DllImport("uv")]
 		public static extern uv_err_t uv_last_error(IntPtr loop);
 
 		[DllImport("uv")]
@@ -523,36 +533,18 @@ namespace Libuv
 			}
 		}
 
-		#region Memory
+		internal static void EnsureSuccess(uv_err_t error)
+		{
+			EnsureSuccess(error.code);
+		}
 
-		[DllImport("uv")]
-		internal static extern long uv_get_free_memory();
-
-		public static long FreeMemory {
-			get {
-				return uv_get_free_memory();
+		internal static void EnsureSuccess(uv_err_code code)
+		{
+			if (code != uv_err_code.UV_OK) {
+				throw new Exception(string.Format("{0}:{1}", (int)code, code));
 			}
 		}
 
-		[DllImport("uv")]
-		internal static extern long uv_get_total_memory();
-
-		public static long TotalMemory {
-			get {
-				return uv_get_total_memory();
-			}
-		}
-
-		#endregion
-
-		[DllImport("uv")]
-		internal static extern ulong uv_hrtime();
-
-		public static ulong HourTime {
-			get {
-				return uv_hrtime();
-			}
-		}
 #if DEBUG
 		static List<IntPtr> pointers = new List<IntPtr>();
 #endif
@@ -579,9 +571,15 @@ namespace Libuv
 		internal static void Free(IntPtr ptr)
 		{
 #if DEBUG
-			pointers.Remove(ptr);
-#endif
+			if (pointers.Contains(ptr)) {
+				pointers.Remove(ptr);
+				Marshal.FreeHGlobal(ptr);
+			} else {
+				Console.WriteLine("{0} not allocated", ptr);
+			}
+#else
 			Marshal.FreeHGlobal(ptr);
+#endif
 		}
 
 		unsafe internal static UnixBufferStruct Alloc(IntPtr handle, int size)
@@ -621,7 +619,7 @@ namespace Libuv
 					Console.Write(e.Current);
 				}
 			}
-			Console.Write("]");
+			Console.WriteLine("]");
 		}
 #endif
 	}
