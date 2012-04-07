@@ -51,6 +51,7 @@
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
+    <Compile Include="Lock.cs" />
     <Compile Include="Mutex.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="BaseHandle.cs" />
