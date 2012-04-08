@@ -233,10 +233,15 @@ namespace Libuv
 			Version = new string(ares_version(IntPtr.Zero));
 		}
 
-		public Dns(Loop loop)
+		internal Dns(Loop loop)
 		{
+			if (loop != Loop.Default) {
+				return;
+			}
+
 			Loop = loop;
 			options = UV.Alloc(1000);
+
 			int r = uv_ares_init_options(loop.Handle, ref channel, options, 0);
 			UV.EnsureSuccess(r);
 		}
