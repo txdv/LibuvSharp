@@ -52,6 +52,10 @@ namespace Libuv
 			Dns = new Dns(this);
 			callback = new AsyncCallback(this);
 
+			// this fixes a strange bug, where you can't send async
+			// stuff from other threads
+			Sync (() => { });
+
 			Unref(); // ignore our allocated resources
 		}
 
