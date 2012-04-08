@@ -48,9 +48,11 @@ namespace Libuv
 		internal Loop(IntPtr handle)
 		{
 			Handle = handle;
-			Dns = new Dns(this);
 
+			Dns = new Dns(this);
 			callback = new AsyncCallback(this);
+
+			Unref(); // ignore our allocated resources
 		}
 
 		public Loop()
