@@ -231,6 +231,12 @@ namespace Libuv
 			Kill((int)signum);
 		}
 
+		public void CloseStreams()
+		{
+			Stdin.Close();
+			Stdout.Close();
+			Stderr.Close();
+		}
 	}
 }
 
