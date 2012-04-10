@@ -126,7 +126,7 @@ namespace Libuv
 				i++;
 				p = Marshal.ReadIntPtr(ptr, i * sizeof(IntPtr));
 			}
-			Marshal.FreeHGlobal(p);
+			Marshal.FreeHGlobal(ptr);
 		}
 	}
 
@@ -204,8 +204,8 @@ namespace Libuv
 			process.Stderr = new Pipe(loop, false);
 
 			uv_process_options_t options_t = new uv_process_options_t(options, (exit_status, term_status) => {
-				options_t.Dispose();
 				exitCallback(process, exit_status, term_status);
+				options_t.Dispose();
 			});
 
 			options_t.stdin_stream = process.Stdin.handle;
