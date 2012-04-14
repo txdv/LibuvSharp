@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Test</RootNamespace>
     <AssemblyName>Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,8 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="nunit.framework">
       <HintPath>..\dlls\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -44,9 +42,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\Libuv\Libuv.csproj">
+    <ProjectReference Include="..\LibuvSharp\LibuvSharp.csproj">
       <Project>{281B560A-E3B1-437C-9274-DD655E860E6E}</Project>
-      <Name>Libuv</Name>
+      <Name>LibuvSharp</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
