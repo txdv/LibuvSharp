@@ -5,7 +5,7 @@ namespace Libuv
 {
 	internal class ByteBuffer : IDisposable
 	{
-		public IntPtr Buffer { get; protected set; }
+		public byte[] Buffer { get; protected set; }
 		public int Size { get; protected set; }
 		public Func<IntPtr, int, UnixBufferStruct> AllocCallback { get; protected set; }
 		GCHandle GCHandle { get; set; }
@@ -13,7 +13,6 @@ namespace Libuv
 		public ByteBuffer()
 		{
 			AllocCallback = Alloc;
-			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
 		}
 
 		~ByteBuffer()
@@ -37,15 +36,17 @@ namespace Libuv
 
 		IntPtr Alloc(int size)
 		{
-			if (Buffer == IntPtr.Zero) {
-				Buffer = Marshal.AllocHGlobal(size);
+			if (Buffer == null) {
+				Buffer = new byte[size];
 				Size = size;
+				GCHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
 			} else if (Size < size) {
 				Free();
-				Buffer = Marshal.AllocHGlobal(size);
+				Buffer = new byte[size];
 				Size = size;
+				GCHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
 			}
-			return Buffer;
+			return GCHandle.AddrOfPinnedObject();
 		}
 
 		UnixBufferStruct Alloc(IntPtr data, int size)
@@ -55,16 +56,16 @@ namespace Libuv
 
 		void Free()
 		{
-			Marshal.FreeHGlobal(Buffer);
-			Buffer = IntPtr.Zero;
+			GCHandle.Free();
+			Buffer = null;
 			Size = 0;
 		}
 
 		public byte[] Get(int size)
 		{
-			byte[] data = new byte[size];
-			Marshal.Copy(Buffer, data, 0, size);
-			return data;
+			byte[] ret = new byte[size];
+			Array.Copy(Buffer, 0, ret, 0, size);
+			return ret;
 		}
 	}
 }
