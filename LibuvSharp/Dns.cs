@@ -203,16 +203,16 @@ namespace Libuv
 		static extern int ares_query(IntPtr channel, string name, int dnsclass, int type, Action<IntPtr, int, int, IntPtr, int> callback, IntPtr arg);
 
 		[DllImport("uv")]
-		static extern int ares_parse_a_reply(IntPtr buf, int alen, ref IntPtr host, IntPtr addrttls, IntPtr naddrttls);
+		static extern int ares_parse_a_reply(IntPtr buf, int alen, out IntPtr host, IntPtr addrttls, IntPtr naddrttls);
 
 		[DllImport("uv")]
-		static extern int ares_parse_aaaa_reply(IntPtr buf, int alen, ref IntPtr host, IntPtr addrttls, IntPtr naddrttls);
+		static extern int ares_parse_aaaa_reply(IntPtr buf, int alen, out IntPtr host, IntPtr addrttls, IntPtr naddrttls);
 
 		[DllImport("uv")]
 		static extern void ares_free_hostent(IntPtr host);
 
 		[DllImport("uv")]
-		unsafe static extern int ares_parse_mx_reply(IntPtr abuf, int alen, ref IntPtr mx_out);
+		unsafe static extern int ares_parse_mx_reply(IntPtr abuf, int alen, out IntPtr mx_out);
 
 		[DllImport("uv")]
 		static extern void ares_free_data(IntPtr data);
@@ -328,12 +328,12 @@ namespace Libuv
 			}
 		}
 
-		delegate int AresParseDelegate(IntPtr buf, int alen, ref IntPtr host, IntPtr addrttls, IntPtr naddrttls);
+		delegate int AresParseDelegate(IntPtr buf, int alen, out IntPtr host, IntPtr addrttls, IntPtr naddrttls);
 
 		static void Parse(AresCallback<Hostent> cb, AresParseDelegate ares_parse, IntPtr buf, int alen)
 		{
 			IntPtr host;
-			int r = ares_parse(buf, alen, ref host, IntPtr.Zero, IntPtr.Zero);
+			int r = ares_parse(buf, alen, out host, IntPtr.Zero, IntPtr.Zero);
 			if (r != 0) {
 				cb.End(new Exception(string.Format("the parse method returned {0}", r)), null);
 				return;
@@ -358,7 +358,7 @@ namespace Libuv
 		{
 			var cb = Callback.GetObject<AresCallback<MailExchange[]>>(arg);
 			IntPtr reply;
-			int r = ares_parse_mx_reply(buf, alen, ref reply);
+			int r = ares_parse_mx_reply(buf, alen, out reply);
 			if (r != 0) {
 				cb.End(new Exception(string.Format("the parse method returned {0}", r)), null);
 				return;

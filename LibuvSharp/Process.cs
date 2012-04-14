@@ -205,7 +205,8 @@ namespace Libuv
 
 			uv_process_options_t options_t = new uv_process_options_t(options, (exit_status, term_status) => {
 				exitCallback(process, exit_status, term_status);
-				options_t.Dispose();
+				// TODO: somehow dispose this
+				// options_t.Dispose();
 			});
 
 			options_t.stdin_stream = process.Stdin.handle;
