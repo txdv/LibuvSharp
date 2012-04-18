@@ -61,6 +61,7 @@
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="Async.cs" />
+    <Compile Include="HttpParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
