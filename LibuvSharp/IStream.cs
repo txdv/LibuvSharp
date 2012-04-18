@@ -25,5 +25,8 @@ namespace Libuv
 
 		void Write(Encoding enc, string text, Action<bool> callback);
 		void Write(Encoding enc, string text);
+
+		void Shutdown(Action callback);
+		void Shutdown();
 	}
 }

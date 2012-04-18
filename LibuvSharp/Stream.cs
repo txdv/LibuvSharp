@@ -18,6 +18,9 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
 
+		[DllImport("uv")]
+		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, Action<IntPtr, int> callback);
+
 		ByteBuffer buffer = new ByteBuffer();
 
 		internal IntPtr Handle { get; set; }
@@ -151,6 +154,22 @@ namespace Libuv
 		public void Write(Encoding enc, string text)
 		{
 			Write(enc, text, null);
+		}
+
+		public void Shutdown(Action callback)
+		{
+			var cbr = new CallbackPermaRequest(UvRequestType.Shutdown);
+			cbr.Callback = (status, _) => {
+				if (callback != null) {
+					callback();
+				}
+			};
+			uv_shutdown(cbr.Handle, Handle, CallbackPermaRequest.StaticEnd);
+		}
+
+		public void Shutdown()
+		{
+			Shutdown(null);
 		}
 	}
 }
