@@ -39,7 +39,12 @@ namespace Libuv
 			}
 		}
 
-		public Dns Dns { get; protected set; }
+		Lazy<Dns> dns;
+		public Dns Dns {
+			get {
+				return dns.Value;
+			}
+		}
 
 		internal IntPtr Handle { get; set; }
 
@@ -49,7 +54,7 @@ namespace Libuv
 		{
 			Handle = handle;
 
-			Dns = new Dns(this);
+			dns = new Lazy<Libuv.Dns>(() => new Dns(this));
 			callback = new AsyncCallback(this);
 
 			// this fixes a strange bug, where you can't send async
