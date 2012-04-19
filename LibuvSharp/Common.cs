@@ -359,41 +359,6 @@ namespace Libuv
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct WindowsBufferStruct
-	{
-		internal WindowsBufferStruct(IntPtr @base, int length)
-			: this(@base, (ulong)length)
-		{
-		}
-
-		internal WindowsBufferStruct(IntPtr @base, ulong length)
-		{
-			this.@base = @base;
-			this.length = length;
-		}
-		internal ulong length;
-		internal IntPtr @base;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct UnixBufferStruct
-	{
-		internal UnixBufferStruct(IntPtr @base, int length)
-			: this(@base, (IntPtr)length)
-		{
-		}
-
-		internal UnixBufferStruct(IntPtr @base, IntPtr length)
-		{
-			this.@base = @base;
-			this.length = length;
-		}
-
-		internal IntPtr @base;
-		internal IntPtr length;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
 	internal struct sockaddr
 	{
 		public short sin_family;
