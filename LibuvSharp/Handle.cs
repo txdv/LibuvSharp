@@ -38,7 +38,7 @@ namespace Libuv
 				return;
 			}
 
-			PermaCallback pc = new PermaCallback(() => {
+			CAction ca = new CAction(() => {
 				if (CloseEvent != null) {
 					CloseEvent();
 				}
@@ -50,7 +50,7 @@ namespace Libuv
 				Dispose();
 			});
 
-			int r = uv_close(handle, pc.Callback);
+			int r = uv_close(handle, ca.Callback);
 			UV.EnsureSuccess(r);
 		}
 

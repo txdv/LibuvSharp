@@ -15,7 +15,7 @@ namespace Libuv
 
 		public void Once(Action callback)
 		{
-			var cb = new PermaCallback(callback);
+			var cb = new CAction(callback);
 			uv_once(Handle, cb.Callback);
 		}
 	}

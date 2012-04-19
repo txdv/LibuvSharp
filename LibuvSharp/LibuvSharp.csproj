@@ -56,13 +56,13 @@
     <Compile Include="Process.cs" />
     <Compile Include="BaseHandle.cs" />
     <Compile Include="Pipe.cs" />
-    <Compile Include="Internal\PermaCallback.cs" />
     <Compile Include="IStreamable.cs" />
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="HttpParser.cs" />
     <Compile Include="Internal\BufferPin.cs" />
+    <Compile Include="Internal\CAction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

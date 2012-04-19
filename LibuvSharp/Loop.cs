@@ -111,15 +111,15 @@ namespace Libuv
 		public void QueueWork(Action callback, Action after)
 		{
 			var pr = new PermaRequest(UV.Sizeof(UvRequestType.Work));
-			var permaCallback = new PermaCallback<IntPtr>((ptr) => callback());
-			var permaAfter = new PermaCallback<IntPtr>((ptr) => {
+			var before = new CAction<IntPtr>((ptr) => callback());
+			var cafter = new CAction<IntPtr>((ptr) => {
 				pr.Dispose();
 				if (after != null) {
 					after();
 				}
 			});
 
-			int r = uv_queue_work(Handle, pr.Handle, permaCallback.Callback, permaAfter.Callback);
+			int r = uv_queue_work(Handle, pr.Handle, before.Callback, cafter.Callback);
 			UV.EnsureSuccess(r);
 		}
 

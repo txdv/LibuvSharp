@@ -80,7 +80,7 @@ namespace Libuv
 			stdout_stream = IntPtr.Zero;
 			stderr_stream = IntPtr.Zero;
 
-			exit_cb = new PermaCallback<IntPtr, int, int>((handle, exit_status, term_signal) => {
+			exit_cb = new CAction<IntPtr, int, int>((handle, exit_status, term_signal) => {
 				exitCallback(exit_status, term_signal);
 			}).Callback;
 		}
