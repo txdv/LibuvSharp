@@ -62,6 +62,7 @@
     <Compile Include="Computer.cs" />
     <Compile Include="Async.cs" />
     <Compile Include="HttpParser.cs" />
+    <Compile Include="Internal\BufferPin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

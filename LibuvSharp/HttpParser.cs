@@ -134,37 +134,6 @@ namespace Libuv
 		HPE_UNKNOWN
 	}
 
-	class DataBuffer : IDisposable
-	{
-		public byte[] Data { get; protected set; }
-		public GCHandle GCHandle { get; protected set; }
-		public IntPtr Pointer {
-			get {
-				return GCHandle.AddrOfPinnedObject();
-			}
-		}
-		public int Start {
-			get {
-				return (int)Pointer;
-			}
-		}
-		public int Position(IntPtr at)
-		{
-			return (int)at - Start;
-		}
-
-		public DataBuffer(byte[] data)
-		{
-			Data = data;
-			GCHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-		}
-
-		public void Dispose()
-		{
-			GCHandle.Free();
-		}
-	}
-
 	unsafe public class HttpParser : IDisposable
 	{
 		http_parser *parser;
@@ -178,7 +147,7 @@ namespace Libuv
 		Func<IntPtr, IntPtr, IntPtr, int> onBody;
 		Func<IntPtr, int>                 onMessageComplete;
 
-		DataBuffer buffer;
+		BufferPin buffer;
 
 		public HttpParser()
 			: this(http_parser_type.HTTP_BOTH)
@@ -232,15 +201,15 @@ namespace Libuv
 		}
 		int OnUrl(IntPtr ptr, IntPtr at, IntPtr length)
 		{
-			return OnUrl(buffer.Data, buffer.Position(at), (int)length);
+			return OnUrl(buffer.Buffer, buffer.GetOffset(at).ToInt32(), (int)length);
 		}
 		int OnHeaderField(IntPtr ptr, IntPtr at, IntPtr length)
 		{
-			return OnHeaderField(buffer.Data, buffer.Position(at), (int)length);
+			return OnHeaderField(buffer.Buffer, buffer.GetOffset(at).ToInt32(), (int)length);
 		}
 		int OnHeaderValue(IntPtr ptr, IntPtr at, IntPtr length)
 		{
-			return OnHeaderValue(buffer.Data, buffer.Position(at), (int)length);
+			return OnHeaderValue(buffer.Buffer, buffer.GetOffset(at).ToInt32(), (int)length);
 		}
 		int OnHeadersComplete(IntPtr ptr)
 		{
@@ -248,7 +217,7 @@ namespace Libuv
 		}
 		int OnBody(IntPtr ptr, IntPtr at, IntPtr length)
 		{
-			return OnBody(buffer.Data, buffer.Position(at), (int)length);
+			return OnBody(buffer.Buffer, buffer.GetOffset(at).ToInt32(), (int)length);
 		}
 		int OnMessageComplete(IntPtr ptr)
 		{
@@ -351,7 +320,7 @@ namespace Libuv
 
 		public void Execute(byte[] data, int length)
 		{
-			using (buffer = new DataBuffer(data))
+			using (buffer = new BufferPin(data))
 			{
 				var handle = GCHandle.Alloc(settings, GCHandleType.Pinned);
 				http_parser_execute(ParserPointer, handle.AddrOfPinnedObject(), buffer.Pointer, (IntPtr)length);
