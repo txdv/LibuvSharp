@@ -32,6 +32,8 @@ namespace Libuv
 		[DllImport("uv")]
 		static extern long uv_now(IntPtr loop);
 
+		internal ByteBuffer buffer = new ByteBuffer();
+
 		static Loop @default = new Loop(uv_default_loop());
 		public static Loop Default {
 			get {
@@ -158,6 +160,11 @@ namespace Libuv
 
 			if (Handle != Default.Handle) {
 				uv_loop_delete(Handle);
+			}
+
+			if (buffer != null) {
+				buffer.Dispose();
+				buffer = null;
 			}
 		}
 	}

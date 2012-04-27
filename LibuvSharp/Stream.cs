@@ -21,8 +21,6 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, Action<IntPtr, int> callback);
 
-		ByteBuffer buffer = new ByteBuffer();
-
 		internal IntPtr Handle { get; set; }
 		GCHandle GCHandle { get; set; }
 		public Loop Loop { get; protected set; }
@@ -47,12 +45,11 @@ namespace Libuv
 			}
 
 			GCHandle.Free();
-			buffer.Dispose();
 		}
 
 		public void Resume()
 		{
-			int r = uv_read_start(Handle, buffer.AllocCallback, read_cb);
+			int r = uv_read_start(Handle, Loop.buffer.AllocCallback, read_cb);
 			UV.EnsureSuccess(r);
 		}
 
@@ -82,7 +79,7 @@ namespace Libuv
 			int length = (int)size;
 
 			if (OnRead != null) {
-				OnRead(buffer.Get(length));
+				OnRead(Loop.buffer.Get(length));
 			}
 		}
 

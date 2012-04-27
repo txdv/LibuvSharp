@@ -17,7 +17,6 @@ namespace Libuv
 		internal static extern int uv_udp_bind6(IntPtr handle, sockaddr_in6 sockaddr, short flags);
 
 		Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> recv_start_cb;
-		ByteBuffer buffer = new ByteBuffer();
 
 		public Udp()
 			: this(Loop.Default)
@@ -143,7 +142,7 @@ namespace Libuv
 			}
 
 			if (OnMessage != null) {
-				OnMessage(buffer.Get(n), UV.GetIPEndPoint(sockaddr));
+				OnMessage(Loop.buffer.Get(n), UV.GetIPEndPoint(sockaddr));
 			}
 		}
 
@@ -151,7 +150,7 @@ namespace Libuv
 		public void Receive(Action<byte[], IPEndPoint> callback)
 		{
 			if (!receive_init) {
-				int r = uv_udp_recv_start(handle, buffer.AllocCallback, recv_start_cb);
+				int r = uv_udp_recv_start(handle, Loop.buffer.AllocCallback, recv_start_cb);
 				UV.EnsureSuccess(r);
 				receive_init = true;
 			}
