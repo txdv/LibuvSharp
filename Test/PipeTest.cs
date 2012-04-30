@@ -24,15 +24,14 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new PipeServer();
+			var server = new PipeListener();
 			server.Bind(name);
 			server.Listen((pipe) => {
-				var stream = pipe.Stream;
-				stream.Resume();
-				stream.Read(Encoding.ASCII, (str) => {
+				pipe.Resume();
+				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
@@ -40,10 +39,9 @@ namespace Test
 			});
 
 			Pipe.Connect(name, (client) => {
-				var stream = client.Stream;
-				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
-				stream.Read(Encoding.ASCII, (str) => {
+				client.Resume();
+				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
 					client.Close(() => { close_cb_called++; });
@@ -94,16 +92,15 @@ namespace Test
 				int sv_send_cb_called = 0;
 				int sv_recv_cb_called = 0;
 
-				var server = new PipeServer();
+				var server = new PipeListener();
 				server.Bind(name);
 				server.Listen((pipe) => {
-					var stream = pipe.Stream;
-					stream.Resume();
-					stream.Read(Encoding.ASCII, (str) => {
+					pipe.Resume();
+					pipe.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
 						Assert.AreEqual(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
-							stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+							pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
 						pipe.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
@@ -111,12 +108,11 @@ namespace Test
 				});
 
 				Pipe.Connect(name, (client) => {
-					var stream = client.Stream;
-					stream.Resume();
+					client.Resume();
 					for (int i = 0; i < times; i++) {
-						stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 					}
-					stream.Read(Encoding.ASCII, (str) => {
+					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
 						Assert.AreEqual(Times("PONG", times), str);
 						client.Close(() => { close_cb_called++; });
@@ -157,33 +153,30 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new PipeServer();
+			var server = new PipeListener();
 			server.Bind(name);
 			server.Listen((pipe) => {
-				var stream = pipe.Stream;
-				stream.Resume();
-				stream.Read(Encoding.ASCII, (str) => {
+				pipe.Resume();
+				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
 			Pipe.Connect(name, (client) => {
-				var stream = client.Stream;
-				stream.Read(Encoding.ASCII, (str) => {
+				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
 				});
 
-				stream.EndOfStream += () => {
+				client.EndOfStream += () => {
 					close_cb_called++;
-					client.Close();
 				};
-				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Resume();
+				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
 
 			Assert.AreEqual(0, close_cb_called);

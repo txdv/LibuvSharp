@@ -25,26 +25,24 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new TcpServer();
+			var server = new TcpListener();
 			server.Bind(ep);
 			server.Listen((socket) => {
-				var stream = socket.Stream;
-				stream.Resume();
-				stream.Read(Encoding.ASCII, (str) => {
+				socket.Resume();
+				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					socket.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
-			TcpSocket.Connect(Loop.Default, ep, (client) => {
-				var stream = client.Stream;
-				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
-				stream.Read(Encoding.ASCII, (str) => {
+			Tcp.Connect(Loop.Default, ep, (client) => {
+				client.Resume();
+				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
 					client.Close(() => { close_cb_called++; });
@@ -97,29 +95,27 @@ namespace Test
 				int sv_send_cb_called = 0;
 				int sv_recv_cb_called = 0;
 
-				var server = new TcpServer();
+				var server = new TcpListener();
 				server.Bind(ep);
 				server.Listen((socket) => {
-					var stream = socket.Stream;
-					stream.Resume();
-					stream.Read(Encoding.ASCII, (str) => {
+					socket.Resume();
+					socket.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
 						Assert.AreEqual(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
-							stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+							socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
 						socket.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
 					});
 				});
 
-				TcpSocket.Connect(ep, (client) => {
-					var stream = client.Stream;
-					stream.Resume();
+				Tcp.Connect(ep, (client) => {
+					client.Resume();
 					for (int i = 0; i < times; i++) {
-						stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 					}
-					stream.Read(Encoding.ASCII, (str) => {
+					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
 						Assert.AreEqual(Times("PONG", times), str);
 						client.Close(() => { close_cb_called++; });
@@ -161,33 +157,30 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new TcpServer();
+			var server = new TcpListener();
 			server.Bind(ep);
 			server.Listen((socket) => {
-				var stream = socket.Stream;
-				stream.Resume();
-				stream.Read(Encoding.ASCII, (str) => {
+				socket.Resume();
+				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					stream.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 					socket.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
-			TcpSocket.Connect(ep, (client) => {
-				var stream = client.Stream;
-				stream.Read(Encoding.ASCII, (str) => {
+			Tcp.Connect(ep, (client) => {
+				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
 				});
 
-				stream.EndOfStream += () => {
+				client.EndOfStream += () => {
 					close_cb_called++;
-					client.Close();
 				};
-				stream.Resume();
-				stream.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Resume();
+				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
 
 			Assert.AreEqual(0, close_cb_called);

@@ -9,10 +9,8 @@ namespace Libuv
 		Raw
 	}
 
-	public class TTY : Handle, IStreamable
+	public class TTY : Stream
 	{
-		public Stream Stream { get; private set; }
-
 		public IntPtr FileDescriptor { get; private set; }
 
 		[DllImport("uv")]
@@ -39,7 +37,6 @@ namespace Libuv
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.Handle, handle, fd, (readable ? 1 : 0));
 			UV.EnsureSuccess(r);
-			Stream = new Stream(loop, handle);
 		}
 
 		[DllImport("uv")]

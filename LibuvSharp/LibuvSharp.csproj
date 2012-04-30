@@ -43,20 +43,15 @@
     <Compile Include="Udp.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
-    <Compile Include="IStream.cs" />
     <Compile Include="File.cs" />
     <Compile Include="ByteBuffer.cs" />
-    <Compile Include="TTY.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
     <Compile Include="Lock.cs" />
     <Compile Include="Mutex.cs" />
     <Compile Include="Guard.cs" />
-    <Compile Include="Process.cs" />
     <Compile Include="BaseHandle.cs" />
-    <Compile Include="Pipe.cs" />
-    <Compile Include="IStreamable.cs" />
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="Async.cs" />
@@ -65,6 +60,12 @@
     <Compile Include="Internal\CAction.cs" />
     <Compile Include="Internal\BufferStruct.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
+    <Compile Include="IStream.cs" />
+    <Compile Include="Listener.cs" />
+    <Compile Include="Pipe.cs" />
+    <Compile Include="TTY.cs" />
+    <Compile Include="IListener.cs" />
+    <Compile Include="Process.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

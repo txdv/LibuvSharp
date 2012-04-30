@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Libuv
 {
-	public class Handle : IDisposable
+	public abstract class Handle : IDisposable
 	{
 		public Loop Loop { get; protected set; }
 

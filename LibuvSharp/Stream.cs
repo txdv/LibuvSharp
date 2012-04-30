@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Libuv
 {
-	public class Stream : IStream, IDisposable
+	public abstract class Stream : Handle, IStream
 	{
 		[DllImport ("uv")]
 		internal static extern int uv_read_start(IntPtr stream, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct> read_callback);
@@ -21,41 +21,31 @@ namespace Libuv
 		[DllImport("uv")]
 		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, Action<IntPtr, int> callback);
 
-		internal IntPtr Handle { get; set; }
-		GCHandle GCHandle { get; set; }
-		public Loop Loop { get; protected set; }
-
-		public Stream(Loop loop, IntPtr handle)
+		internal Stream(Loop loop, IntPtr handle)
+			: base(loop, handle)
 		{
-			Loop = loop;
-			GCHandle = GCHandle.Alloc(this, GCHandleType.Pinned);
-			Handle = handle;
 			read_cb = read_callback;
 		}
 
-		public void Dispose()
+		internal Stream(Loop loop, int size)
+			: this(loop, UV.Alloc(size))
 		{
-			Dispose(true);
 		}
 
-		public void Dispose(bool disposing)
+		internal Stream(Loop loop, UvHandleType type)
+			: this(loop, UV.Sizeof(type))
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
-			GCHandle.Free();
 		}
 
 		public void Resume()
 		{
-			int r = uv_read_start(Handle, Loop.buffer.AllocCallback, read_cb);
+			int r = uv_read_start(handle, Loop.buffer.AllocCallback, read_cb);
 			UV.EnsureSuccess(r);
 		}
 
 		public void Pause()
 		{
-			int r = uv_read_stop(Handle);
+			int r = uv_read_stop(handle);
 			UV.EnsureSuccess(r);
 		}
 
@@ -67,19 +57,15 @@ namespace Libuv
 				return;
 			} else if (nread < 0) {
 				if (nread == -1) {
-					OnEndOfStream();
-					return;
+					Close(EndOfStream);
 				} else {
 					OnError(new UVException(Loop));
-					return;
+					Close();
 				}
-
-			}
-
-			int length = (int)size;
-
-			if (OnRead != null) {
-				OnRead(Loop.buffer.Get(length));
+			} else {
+				if (OnRead != null) {
+					OnRead(Loop.buffer.Get(size.ToInt32()));
+				}
 			}
 		}
 
@@ -127,7 +113,7 @@ namespace Libuv
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
 			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
-			int r = uv_write(cpr.Handle, Handle, buf, 1, CallbackPermaRequest.StaticEnd);
+			int r = uv_write(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
 			UV.EnsureSuccess(r);
 		}
 		public void Write(byte[] data, int length)
@@ -157,11 +143,9 @@ namespace Libuv
 		{
 			var cbr = new CallbackPermaRequest(UvRequestType.Shutdown);
 			cbr.Callback = (status, _) => {
-				if (callback != null) {
-					callback();
-				}
+				Close(callback);
 			};
-			uv_shutdown(cbr.Handle, Handle, CallbackPermaRequest.StaticEnd);
+			uv_shutdown(cbr.Handle, handle, CallbackPermaRequest.StaticEnd);
 		}
 
 		public void Shutdown()
