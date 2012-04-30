@@ -200,6 +200,24 @@ namespace Test
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
+
+		[Test]
+		public static void TakenPort()
+		{
+			TcpListener s1 = new TcpListener();
+			TcpListener s2 = new TcpListener();
+
+			s1.Bind(IPAddress.Any, 8000);
+			s1.Listen((_) => {});
+
+			Assert.Throws<UVException>(() => {
+				s2.Bind(IPAddress.Any, 8000);
+				s2.Listen((_) => {});
+			});
+
+			s1.Close();
+			s2.Close();
+		}
 	}
 }
 
