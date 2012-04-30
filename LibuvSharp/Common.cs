@@ -259,50 +259,6 @@ namespace Libuv
 			}
 		}
 	}
-	public enum uv_err_code
-	{
-		UV_UNKNOWN = -1,
-		UV_OK = 0,
-		UV_EOF,
-		UV_EACCESS,
-		UV_EAGAIN,
-		UV_EADDRINUSE,
-		UV_EADDRNOTAVAIL,
-		UV_EAFNOSUPPORT,
-		UV_EALREADY,
-		UV_EBADF,
-		UV_EBUSY,
-		UV_ECONNABORTED,
-		UV_ECONNREFUSED,
-		UV_ECONNRESET,
-		UV_EDESTADDRREQ,
-		UV_EFAULT,
-		UV_EHOSTUNREACH,
-		UV_EINTR,
-		UV_EINVAL,
-		UV_EISCONN,
-		UV_EMFILE,
-		UV_ENETDOWN,
-		UV_ENETUNREACH,
-		UV_ENFILE,
-		UV_ENOBUFS,
-		UV_ENOMEM,
-		UV_ENONET,
-		UV_ENOPROTOOPT,
-		UV_ENOTCONN,
-		UV_ENOTSOCK,
-		UV_ENOTSUP,
-		UV_EPROTO,
-		UV_EPROTONOSUPPORT,
-		UV_EPROTOTYPE,
-		UV_ETIMEDOUT,
-		UV_ECHARSET,
-		UV_EAIFAMNOSUPPORT,
-		UV_EAINONAME,
-		UV_EAISERVICE,
-		UV_EAISOCKTYPE,
-		UV_ESHUTDOWN
-	}
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct uv_fs_t
@@ -500,6 +456,13 @@ namespace Libuv
 		{
 			if (code != uv_err_code.UV_OK) {
 				throw new Exception(string.Format("{0}:{1}", (int)code, code));
+			}
+		}
+
+		internal static void EnsureSuccess(int errorCode, Loop loop)
+		{
+			if (errorCode < 0) {
+				EnsureSuccess(uv_last_error(loop.Handle));
 			}
 		}
 

@@ -64,6 +64,7 @@
     <Compile Include="Internal\BufferPin.cs" />
     <Compile Include="Internal\CAction.cs" />
     <Compile Include="Internal\BufferStruct.cs" />
+    <Compile Include="Internal\uv_err_code.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

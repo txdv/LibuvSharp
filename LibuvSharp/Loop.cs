@@ -56,12 +56,13 @@ namespace Libuv
 		{
 			Handle = handle;
 
-			dns = new Lazy<Libuv.Dns>(() => new Dns(this));
+			var that = this;
+			dns = new Lazy<Libuv.Dns>(() => new Dns(that));
 			callback = new AsyncCallback(this);
 
 			// this fixes a strange bug, where you can't send async
 			// stuff from other threads
-			Sync (() => { });
+			Sync(() => { });
 
 			Unref(); // ignore our allocated resources
 		}
@@ -145,17 +146,14 @@ namespace Libuv
 			Dispose(true);
 		}
 
-		public void Dispose(bool disposing)
+		protected void Dispose(bool disposing)
 		{
 			if (disposing) {
 				GC.SuppressFinalize(this);
 			}
 
-			Dns.Dispose();
-
-			if (callback != null) {
-				callback = null;
-				callback.Close();
+			if (dns.IsValueCreated) {
+				dns.Value.Dispose();
 			}
 
 			if (Handle != Default.Handle) {

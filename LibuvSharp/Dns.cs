@@ -235,15 +235,12 @@ namespace Libuv
 
 		internal Dns(Loop loop)
 		{
-			if (loop != Loop.Default) {
-				return;
-			}
-
 			Loop = loop;
 			options = UV.Alloc(1000);
+			channel = IntPtr.Zero;
 
 			int r = uv_ares_init_options(loop.Handle, ref channel, options, 0);
-			UV.EnsureSuccess(r);
+			UV.EnsureSuccess(r, loop);
 		}
 
 		~Dns()
