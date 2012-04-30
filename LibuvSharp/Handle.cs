@@ -78,6 +78,7 @@ namespace Libuv
 
 			UV.Free(handle);
 			GCHandle.Free();
+			handle = IntPtr.Zero;
 		}
 
 		[DllImport("uv")]
