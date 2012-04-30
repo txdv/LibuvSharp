@@ -24,7 +24,7 @@ namespace Libuv
 
 		public DynamicLibrary()
 		{
-			UV.EnsureSuccess(uv_dlopen(IntPtr.Zero, out handle));
+			Ensure.Success(uv_dlopen(IntPtr.Zero, out handle));
 		}
 
 		public DynamicLibrary(string str)
@@ -32,7 +32,7 @@ namespace Libuv
 			var ptr = Marshal.StringToHGlobalAnsi(str);
 			var error = uv_dlopen(ptr, out handle);
 			Marshal.FreeHGlobal(ptr);
-			UV.EnsureSuccess(error);
+			Ensure.Success(error);
 		}
 
 		void Close()
@@ -51,7 +51,7 @@ namespace Libuv
 		public IntPtr GetSymbol(string name)
 		{
 			IntPtr ptr;
-			UV.EnsureSuccess(uv_dlsym(handle, name, out ptr));
+			Ensure.Success(uv_dlsym(handle, name, out ptr));
 			return ptr;
 		}
 	}

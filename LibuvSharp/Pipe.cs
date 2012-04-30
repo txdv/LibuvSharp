@@ -43,7 +43,7 @@ namespace Libuv
 		public void Bind(string name)
 		{
 			int r = uv_pipe_bind(handle, name);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 	}
 

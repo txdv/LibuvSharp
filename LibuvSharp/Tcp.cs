@@ -93,7 +93,7 @@ namespace Libuv
 			} else {
 				r = uv_tcp_connect6(cpr.Handle, socket.handle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
-			UV.EnsureSuccess(r, loop);
+			Ensure.Success(r, loop);
 		}
 		public static void Connect(Loop loop, string ipAddress, int port, Action<Tcp> callback)
 		{
@@ -154,7 +154,7 @@ namespace Libuv
 				IntPtr ptr = new IntPtr(&addr);
 				int length = sizeof(sockaddr_in6);
 				int r = uv_tcp_getsockname(handle, ptr, ref length);
-				UV.EnsureSuccess(r);
+				Ensure.Success(r, Loop);
 				return UV.GetIPEndPoint(ptr);
 			}
 		}
@@ -165,7 +165,7 @@ namespace Libuv
 				IntPtr ptr = new IntPtr(&addr);
 				int length = sizeof(sockaddr_in6);
 				int r = uv_tcp_getpeername(handle, ptr, ref length);
-				UV.EnsureSuccess(r);
+				Ensure.Success(r, Loop);
 				return UV.GetIPEndPoint(ptr);
 			}
 		}

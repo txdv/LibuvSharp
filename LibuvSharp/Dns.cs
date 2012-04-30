@@ -240,7 +240,7 @@ namespace Libuv
 			channel = IntPtr.Zero;
 
 			int r = uv_ares_init_options(loop.Handle, ref channel, options, 0);
-			UV.EnsureSuccess(r, loop);
+			Ensure.Success(r, loop);
 		}
 
 		~Dns()

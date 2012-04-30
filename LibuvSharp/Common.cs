@@ -384,9 +384,6 @@ namespace Libuv
 		internal static bool IsUnix { get { return isUnix; } }
 
 		[DllImport("uv")]
-		public static extern uv_err_t uv_last_error(IntPtr loop);
-
-		[DllImport("uv")]
 		internal extern static sockaddr_in uv_ip4_addr(string ip, int port);
 
 		[DllImport("uv")]
@@ -438,32 +435,6 @@ namespace Libuv
 		internal static int Sizeof(UvRequestType type)
 		{
 			return uv_req_size(type);
-		}
-
-		internal static void EnsureSuccess(int errorCode)
-		{
-			if (errorCode < 0) {
-				throw new Exception(errorCode.ToString());
-			}
-		}
-
-		internal static void EnsureSuccess(uv_err_t error)
-		{
-			EnsureSuccess(error.code);
-		}
-
-		internal static void EnsureSuccess(uv_err_code code)
-		{
-			if (code != uv_err_code.UV_OK) {
-				throw new Exception(string.Format("{0}:{1}", (int)code, code));
-			}
-		}
-
-		internal static void EnsureSuccess(int errorCode, Loop loop)
-		{
-			if (errorCode < 0) {
-				EnsureSuccess(uv_last_error(loop.Handle));
-			}
 		}
 
 #if DEBUG

@@ -9,7 +9,7 @@ namespace Libuv
 		public string Name { get; protected set; }
 
 		internal UVException(Loop loop)
-			: this(UV.uv_last_error(loop.Handle))
+			: this(Ensure.uv_last_error(loop.Handle))
 		{
 		}
 

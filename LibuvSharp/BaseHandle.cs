@@ -27,7 +27,7 @@ namespace Libuv
 			Handle = UV.Alloc(size);
 			if (init != null) {
 				int r = init(Handle);
-				UV.EnsureSuccess(r);
+				Ensure.Success(r);
 			}
 
 			this.destroy = destroy;

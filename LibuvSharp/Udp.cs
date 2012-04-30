@@ -27,7 +27,7 @@ namespace Libuv
 			: base(loop, UvHandleType.Udp)
 		{
 			int r = uv_udp_init(loop.Handle, handle);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, loop);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time
 			// happens in my case after 10 or 20 calls
@@ -44,7 +44,7 @@ namespace Libuv
 			} else {
 				r = uv_udp_bind6(handle, UV.uv_ip6_addr(ipAddress.ToString(), port), 0);
 			}
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 		public void Bind(string ipAddress, int port)
 		{
@@ -81,7 +81,7 @@ namespace Libuv
 			} else {
 				r = uv_udp_send6(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] data, Action<bool> callback)
 		{
@@ -151,7 +151,7 @@ namespace Libuv
 		{
 			if (!receive_init) {
 				int r = uv_udp_recv_start(handle, Loop.buffer.AllocCallback, recv_start_cb);
-				UV.EnsureSuccess(r);
+				Ensure.Success(r, Loop);
 				receive_init = true;
 			}
 			OnMessage += callback;

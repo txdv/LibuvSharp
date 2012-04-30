@@ -23,7 +23,7 @@ namespace Libuv
 			: base(loop, UvHandleType.Prepare)
 		{
 			int err = uv_prepare_init(loop.Handle, handle);
-			UV.EnsureSuccess(err);
+			Ensure.Success(err, Loop);
 		}
 
 		Action<IntPtr, int> cb;
@@ -49,13 +49,13 @@ namespace Libuv
 		internal void Start(IntPtr callback)
 		{
 			int err = uv_prepare_start(handle, callback);
-			UV.EnsureSuccess(err);
+			Ensure.Success(err, Loop);
 		}
 
 		public void Stop()
 		{
 			int err = uv_prepare_stop(handle);
-			UV.EnsureSuccess(err);
+			Ensure.Success(err, Loop);
 		}
 	}
 }

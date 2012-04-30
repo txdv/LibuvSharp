@@ -71,7 +71,7 @@ namespace Libuv
 			}
 
 			uv_free_cpu_info(info, count);
-			UV.EnsureSuccess(error);
+			Ensure.Success(error);
 			return ret;
 		}
 	}
@@ -117,7 +117,7 @@ namespace Libuv
 			}
 
 			uv_free_interface_addresses(interfaces, count);
-			UV.EnsureSuccess(error);
+			Ensure.Success(error);
 			return ret;
 		}
 	}
@@ -205,7 +205,7 @@ namespace Libuv
 		public static double Uptime {
 			get {
 				double uptime;
-				UV.EnsureSuccess(uv_uptime(out uptime));
+				Ensure.Success(uv_uptime(out uptime));
 				return uptime;
 			}
 		}

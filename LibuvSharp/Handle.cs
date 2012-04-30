@@ -51,7 +51,7 @@ namespace Libuv
 			});
 
 			int r = uv_close(handle, ca.Callback);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 
 		public void Close()

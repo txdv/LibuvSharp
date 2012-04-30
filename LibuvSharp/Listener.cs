@@ -36,7 +36,7 @@ namespace Libuv
 		{
 			OnListen += callback;
 			int r = uv_listen(handle, backlog, listen_cb);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 
 		public void Listen(Action<Stream> callback)

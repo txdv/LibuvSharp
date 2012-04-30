@@ -36,7 +36,7 @@ namespace Libuv
 		{
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.Handle, handle, fd, (readable ? 1 : 0));
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 
 		[DllImport("uv")]
@@ -45,7 +45,7 @@ namespace Libuv
 		public TTYMode Mode {
 			set {
 				int r = uv_tty_set_mode(handle, (int)value);
-				UV.EnsureSuccess(r);
+				Ensure.Success(r, Loop);
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace Libuv
 		static public void ResetMode()
 		{
 			int r = uv_tty_reset_mode();
-			UV.EnsureSuccess(r);
+			Ensure.Success(r);
 		}
 
 		[DllImport("uv")]

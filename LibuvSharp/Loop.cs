@@ -123,7 +123,7 @@ namespace Libuv
 			});
 
 			int r = uv_queue_work(Handle, pr.Handle, before.Callback, cafter.Callback);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, this);
 		}
 
 		public void Sync(Action cb)

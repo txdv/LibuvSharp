@@ -66,6 +66,7 @@
     <Compile Include="TTY.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="Process.cs" />
+    <Compile Include="Internal\Ensure.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

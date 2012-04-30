@@ -214,7 +214,7 @@ namespace Libuv
 			options_t.stderr_stream = process.Stderr.handle;
 
 			int r = uv_spawn(loop.Handle, process.handle, options_t);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, loop);
 
 			return process;
 		}
@@ -224,7 +224,7 @@ namespace Libuv
 
 		public void Kill(int signum)
 		{
-			UV.EnsureSuccess(uv_process_kill(handle, signum));
+			Ensure.Success(uv_process_kill(handle, signum), Loop);
 		}
 
 		public void Kill(Signum signum)

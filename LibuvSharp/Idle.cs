@@ -22,8 +22,8 @@ namespace Libuv
 		public Idle(Loop loop)
 			: base(loop, UvHandleType.Idle)
 		{
-			int err = uv_idle_init(loop.Handle, handle);
-			UV.EnsureSuccess(err);
+			int r = uv_idle_init(loop.Handle, handle);
+			Ensure.Success(r, loop);
 		}
 
 		private Action<IntPtr, int> cb;
@@ -47,14 +47,14 @@ namespace Libuv
 
 		internal void Start(IntPtr callback)
 		{
-			int err = uv_idle_start(handle, callback);
-			UV.EnsureSuccess(err);
+			int r = uv_idle_start(handle, callback);
+			Ensure.Success(r, Loop);
 		}
 
 		public void Stop()
 		{
-			int err = uv_idle_stop(handle);
-			UV.EnsureSuccess(err);
+			int r = uv_idle_stop(handle);
+			Ensure.Success(r, Loop);
 		}
 
 	}

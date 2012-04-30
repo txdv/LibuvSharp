@@ -40,13 +40,13 @@ namespace Libuv
 		public void Resume()
 		{
 			int r = uv_read_start(handle, Loop.buffer.AllocCallback, read_cb);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 
 		public void Pause()
 		{
 			int r = uv_read_stop(handle);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 
 		Action<IntPtr, IntPtr, UnixBufferStruct> read_cb;
@@ -114,7 +114,7 @@ namespace Libuv
 			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 			int r = uv_write(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
-			UV.EnsureSuccess(r);
+			Ensure.Success(r, Loop);
 		}
 		public void Write(byte[] data, int length)
 		{
