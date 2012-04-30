@@ -157,7 +157,7 @@ namespace Libuv
 			}
 
 			if (Handle != Default.Handle) {
-				uv_loop_delete(Handle);
+				// uv_loop_delete(Handle);
 			}
 
 			if (buffer != null) {
