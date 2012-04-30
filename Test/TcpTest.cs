@@ -1,9 +1,8 @@
 using System;
-using Libuv;
 using System.Net;
 using System.Text;
-
 using NUnit.Framework;
+using Libuv;
 
 namespace Test
 {
