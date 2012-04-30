@@ -39,6 +39,7 @@
     <Compile Include="UdpTest.cs" />
     <Compile Include="TcpTest.cs" />
     <Compile Include="PipeTest.cs" />
+    <Compile Include="TimerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
