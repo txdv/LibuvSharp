@@ -206,6 +206,15 @@ namespace LibuvSharp.Tests
 			});
 			Loop.Default.Run();
 		}
+
+		[Test]
+		public static void NotNullListener()
+		{
+			var t = new PipeListener();
+			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
+			Assert.Throws<ArgumentNullException>(() => t.Listen(null));
+			t.Close();
+		}
 	}
 }
 

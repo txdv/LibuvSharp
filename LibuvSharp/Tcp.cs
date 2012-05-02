@@ -24,19 +24,24 @@ namespace LibuvSharp
 
 		public void Bind(string ipAddress, int port)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Bind(IPAddress.Parse(ipAddress), port);
 		}
 		public void Bind(IPAddress ipAddress, int port)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				uv_tcp_bind(handle, UV.uv_ip4_addr(ipAddress.ToString(), port));
+				r = uv_tcp_bind(handle, UV.uv_ip4_addr(ipAddress.ToString(), port));
 			} else {
-				uv_tcp_bind6(handle, UV.uv_ip6_addr(ipAddress.ToString(), port));
+				r = uv_tcp_bind6(handle, UV.uv_ip6_addr(ipAddress.ToString(), port));
 			}
+			Ensure.Success(r, Loop);
 		}
-		public void Bind(IPEndPoint ep)
+		public void Bind(IPEndPoint endPoint)
 		{
-			Bind(ep.Address, ep.Port);
+			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Bind(endPoint.Address, endPoint.Port);
 		}
 
 		protected override Stream Create()
@@ -46,6 +51,7 @@ namespace LibuvSharp
 
 		public void Listen(int backlog, Action<Tcp> callback)
 		{
+			Ensure.ArgumentNotNull(callback, "callback");
 			Listen(backlog, (Stream stream) => callback(stream as Tcp));
 		}
 

@@ -42,6 +42,7 @@ namespace LibuvSharp
 
 		public void Bind(string name)
 		{
+			Ensure.ArgumentNotNull(name, null);
 			int r = uv_pipe_bind(handle, name);
 			Ensure.Success(r, Loop);
 		}
@@ -99,6 +100,10 @@ namespace LibuvSharp
 		}
 		public static void Connect(Loop loop, string name, bool interProcessCommunication, Action<Exception, Pipe> callback)
 		{
+			Ensure.ArgumentNotNull(loop, "loop");
+			Ensure.ArgumentNotNull(name, "name");
+			Ensure.ArgumentNotNull(callback, "callback");
+
 			ConnectRequest cpr = new ConnectRequest();
 			Pipe pipe = new Pipe(loop, interProcessCommunication);
 

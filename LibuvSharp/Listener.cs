@@ -34,6 +34,7 @@ namespace LibuvSharp
 
 		public void Listen(int backlog, Action<Stream> callback)
 		{
+			Ensure.ArgumentNotNull(callback, "callback");
 			OnListen += callback;
 			int r = uv_listen(handle, backlog, listen_cb);
 			Ensure.Success(r, Loop);

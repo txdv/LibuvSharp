@@ -297,6 +297,17 @@ namespace LibuvSharp.Tests
 
 			Assert.IsTrue(called);
 		}
+
+		[Test]
+		public static void NotNullListener()
+		{
+			var t = new TcpListener();
+			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
+			Assert.Throws<ArgumentNullException>(() => t.Bind(null as string, 8000));
+			Assert.Throws<ArgumentNullException>(() => t.Bind(null as IPAddress, 8000));
+			Assert.Throws<ArgumentNullException>(() => t.Listen(null));
+			t.Close();
+		}
 	}
 }
 
