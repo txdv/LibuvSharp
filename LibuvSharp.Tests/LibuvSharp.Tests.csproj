@@ -8,7 +8,7 @@
     <ProjectGuid>{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Test</RootNamespace>
-    <AssemblyName>Test</AssemblyName>
+    <AssemblyName>LibuvSharp.Tests</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
