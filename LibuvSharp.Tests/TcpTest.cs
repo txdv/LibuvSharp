@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using NUnit.Framework;
 
@@ -208,11 +209,9 @@ namespace LibuvSharp.Tests
 
 			s1.Bind(IPAddress.Any, 8000);
 			s1.Listen((_) => {});
+			s2.Bind(IPAddress.Any, 8000);
 
-			Assert.Throws<UVException>(() => {
-				s2.Bind(IPAddress.Any, 8000);
-				s2.Listen((_) => {});
-			});
+			Assert.Throws<SocketException>(() => s2.Listen((_) => {}), "Address already in use");
 
 			s1.Close();
 			s2.Close();
