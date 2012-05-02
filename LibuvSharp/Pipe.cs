@@ -87,17 +87,17 @@ namespace LibuvSharp
 
 		public static void Connect(string name, Action<Pipe> callback)
 		{
-			Connect(false, name, callback);
+			Connect(name, false, callback);
 		}
-		public static void Connect(bool interProcessCommunication, string name, Action<Pipe> callback)
+		public static void Connect(string name, bool interProcessCommunication, Action<Pipe> callback)
 		{
-			Connect(Loop.Default, interProcessCommunication, name, callback);
+			Connect(Loop.Default, name, interProcessCommunication, callback);
 		}
 		public static void Connect(Loop loop, string name, Action<Pipe> callback)
 		{
-			Connect(loop, false, name, callback);
+			Connect(loop, name, false, callback);
 		}
-		public static void Connect(Loop loop, bool interProcessCommunication, string name, Action<Pipe> callback)
+		public static void Connect(Loop loop, string name, bool interProcessCommunication, Action<Pipe> callback)
 		{
 			ConnectRequest cpr = new ConnectRequest();
 			Pipe pipe = new Pipe(loop, interProcessCommunication);
