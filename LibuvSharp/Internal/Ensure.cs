@@ -52,6 +52,12 @@ namespace LibuvSharp
 		internal static Exception Success(Loop loop)
 		{
 			return Map(uv_last_error(loop.Handle));
+
+		public static void ArgumentNotNull(object argumentValue, string argumentName)
+		{
+			if (argumentValue == null) {
+				throw new ArgumentNullException(argumentName);
+			}
 		}
 	}
 }

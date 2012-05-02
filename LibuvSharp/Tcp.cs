@@ -75,6 +75,10 @@ namespace LibuvSharp
 
 		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
 		{
+			Ensure.ArgumentNotNull(loop, "loop");
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			Ensure.ArgumentNotNull(callback, "callback");
+
 			ConnectRequest cpr = new ConnectRequest();
 			Tcp socket = new Tcp(loop);
 
@@ -99,21 +103,24 @@ namespace LibuvSharp
 		{
 			Connect(loop, IPAddress.Parse(ipAddress), port, callback);
 		}
-		public static void Connect(Loop loop, IPEndPoint ep, Action<Exception, Tcp> callback)
+		public static void Connect(Loop loop, IPEndPoint endPoint, Action<Exception, Tcp> callback)
 		{
-			Connect(loop, ep.Address, ep.Port, callback);
+			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Connect(loop, endPoint.Address, endPoint.Port, callback);
 		}
 		public static void Connect(IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Connect(Loop.Default, ipAddress, port, callback);
 		}
 		public static void Connect(string ipAddress, int port, Action<Exception, Tcp> callback)
 		{
 			Connect(Loop.Default, ipAddress, port, callback);
 		}
-		public static void Connect(IPEndPoint ep, Action<Exception, Tcp> callback)
+		public static void Connect(IPEndPoint endPoint, Action<Exception, Tcp> callback)
 		{
-			Connect(Loop.Default, ep, callback);
+			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Connect(Loop.Default, endPoint, callback);
 		}
 
 		[DllImport("uv")]
