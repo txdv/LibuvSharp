@@ -246,11 +246,15 @@ namespace LibuvSharp.Tests
 		}
 
 		[Test]
+		[ExpectedException(typeof(SocketException))]
 		public static void ConnectToNotListeningPort()
 		{
-			Tcp.Connect("127.0.0.1", 7999, (error, socket) => {
-				Assert.Throws<SocketException>(() => { throw error; }, "Connection refused");
+			Tcp.Connect("127.0.0.1", 7999, (e, socket) => {
+				Assert.IsNull(socket);
+				throw e;
 			});
+
+			Loop.Default.Run();
 		}
 	}
 }

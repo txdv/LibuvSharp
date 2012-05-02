@@ -195,6 +195,17 @@ namespace LibuvSharp.Tests
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
+
+		[Test]
+		[ExpectedException(typeof(System.IO.FileNotFoundException))]
+		public static void ConnectToNotListeningFile()
+		{
+			Pipe.Connect("NOT_EXISTING", (e, pipe) => {
+				Assert.IsNull(pipe);
+				throw e;
+			});
+			Loop.Default.Run();
+		}
 	}
 }
 
