@@ -38,7 +38,7 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Tcp.Connect(Loop.Default, ep, (client) => {
+			Tcp.Connect(Loop.Default, ep, (_, client) => {
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
@@ -109,7 +109,7 @@ namespace LibuvSharp.Tests
 					});
 				});
 
-				Tcp.Connect(ep, (client) => {
+				Tcp.Connect(ep, (_, client) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
@@ -169,7 +169,7 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Tcp.Connect(ep, (client) => {
+			Tcp.Connect(ep, (_, client) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -215,6 +215,14 @@ namespace LibuvSharp.Tests
 
 			s1.Close();
 			s2.Close();
+		}
+
+		[Test]
+		public static void ConnectToNotListeningPort()
+		{
+			Tcp.Connect("127.0.0.1", 7999, (error, socket) => {
+				Assert.Throws<SocketException>(() => { throw error; }, "Connection refused");
+			});
 		}
 	}
 }

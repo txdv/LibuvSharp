@@ -73,17 +73,17 @@ namespace LibuvSharp
 		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, Action<IntPtr, int> callback);
 
 
-		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<Tcp> callback)
+		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
 		{
 			ConnectRequest cpr = new ConnectRequest();
 			Tcp socket = new Tcp(loop);
 
 			cpr.Callback = (status, cpr2) => {
 				if (status == 0) {
-					callback(socket);
+					callback(null, socket);
 				} else {
 					socket.Close();
-					callback(null);
+					callback(Ensure.Success(loop), null);
 				}
 			};
 
@@ -95,23 +95,23 @@ namespace LibuvSharp
 			}
 			Ensure.Success(r, loop);
 		}
-		public static void Connect(Loop loop, string ipAddress, int port, Action<Tcp> callback)
+		public static void Connect(Loop loop, string ipAddress, int port, Action<Exception, Tcp> callback)
 		{
 			Connect(loop, IPAddress.Parse(ipAddress), port, callback);
 		}
-		public static void Connect(Loop loop, IPEndPoint ep, Action<Tcp> callback)
+		public static void Connect(Loop loop, IPEndPoint ep, Action<Exception, Tcp> callback)
 		{
 			Connect(loop, ep.Address, ep.Port, callback);
 		}
-		public static void Connect(IPAddress ipAddress, int port, Action<Tcp> callback)
+		public static void Connect(IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
 		{
 			Connect(Loop.Default, ipAddress, port, callback);
 		}
-		public static void Connect(string ipAddress, int port, Action<Tcp> callback)
+		public static void Connect(string ipAddress, int port, Action<Exception, Tcp> callback)
 		{
 			Connect(Loop.Default, ipAddress, port, callback);
 		}
-		public static void Connect(IPEndPoint ep, Action<Tcp> callback)
+		public static void Connect(IPEndPoint ep, Action<Exception, Tcp> callback)
 		{
 			Connect(Loop.Default, ep, callback);
 		}
