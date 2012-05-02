@@ -85,30 +85,29 @@ namespace LibuvSharp
 		[DllImport("uv")]
 		static extern void uv_pipe_connect(IntPtr req, IntPtr handle, string name, Action<IntPtr, int> connect_cb);
 
-		public static void Connect(string name, Action<Pipe> callback)
+		public static void Connect(string name, Action<Exception, Pipe> callback)
 		{
 			Connect(name, false, callback);
 		}
-		public static void Connect(string name, bool interProcessCommunication, Action<Pipe> callback)
+		public static void Connect(string name, bool interProcessCommunication, Action<Exception, Pipe> callback)
 		{
 			Connect(Loop.Default, name, interProcessCommunication, callback);
 		}
-		public static void Connect(Loop loop, string name, Action<Pipe> callback)
+		public static void Connect(Loop loop, string name, Action<Exception, Pipe> callback)
 		{
 			Connect(loop, name, false, callback);
 		}
-		public static void Connect(Loop loop, string name, bool interProcessCommunication, Action<Pipe> callback)
+		public static void Connect(Loop loop, string name, bool interProcessCommunication, Action<Exception, Pipe> callback)
 		{
 			ConnectRequest cpr = new ConnectRequest();
 			Pipe pipe = new Pipe(loop, interProcessCommunication);
 
 			cpr.Callback = (status, cpr2) => {
 				if (status == 0) {
-					callback(pipe);
+					callback(null, pipe);
 				} else {
 					pipe.Close();
-					pipe.Dispose();
-					callback(null);
+					callback(Ensure.Success(loop, name), null);
 				}
 			};
 

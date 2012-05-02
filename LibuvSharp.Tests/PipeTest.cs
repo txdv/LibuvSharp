@@ -36,7 +36,7 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Pipe.Connect(name, (client) => {
+			Pipe.Connect(name, (_, client) => {
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
@@ -105,7 +105,7 @@ namespace LibuvSharp.Tests
 					});
 				});
 
-				Pipe.Connect(name, (client) => {
+				Pipe.Connect(name, (_, client) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
@@ -164,7 +164,7 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Pipe.Connect(name, (client) => {
+			Pipe.Connect(name, (_, client) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);

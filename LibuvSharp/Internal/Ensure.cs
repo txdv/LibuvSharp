@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
@@ -9,13 +10,16 @@ namespace LibuvSharp
 		[DllImport("uv")]
 		internal static extern uv_err_t uv_last_error(IntPtr loop);
 
-		static Exception Map(uv_err_t error)
+		static Exception Map(uv_err_t error, string name = null)
 		{
 			if (error.code == uv_err_code.UV_OK) {
 				return null;
 			}
 
 			switch (error.code) {
+			case uv_err_code.UV_ENOENT:
+				var path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), name);
+				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
 			case uv_err_code.UV_EADDRINUSE:
 				return new SocketException(10048);
 			case uv_err_code.UV_EADDRNOTAVAIL:
@@ -49,9 +53,10 @@ namespace LibuvSharp
 			}
 		}
 
-		internal static Exception Success(Loop loop)
+		internal static Exception Success(Loop loop, string name = null)
 		{
-			return Map(uv_last_error(loop.Handle));
+			return Map(uv_last_error(loop.Handle), name);
+		}
 
 		public static void ArgumentNotNull(object argumentValue, string argumentName)
 		{
