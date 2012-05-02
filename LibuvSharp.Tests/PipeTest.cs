@@ -211,6 +211,7 @@ namespace LibuvSharp.Tests
 		public static void NotNullListener()
 		{
 			var t = new PipeListener();
+			Assert.Throws<ArgumentNullException>(() => new PipeListener(null));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
 			Assert.Throws<ArgumentNullException>(() => t.Listen(null));
 			t.Close();

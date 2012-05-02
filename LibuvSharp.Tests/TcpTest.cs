@@ -302,6 +302,7 @@ namespace LibuvSharp.Tests
 		public static void NotNullListener()
 		{
 			var t = new TcpListener();
+			Assert.Throws<ArgumentNullException>(() => new TcpListener(null));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null as string, 8000));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null as IPAddress, 8000));

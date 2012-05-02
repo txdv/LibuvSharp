@@ -12,6 +12,8 @@ namespace LibuvSharp
 
 		internal Handle(Loop loop, IntPtr handle)
 		{
+			Ensure.ArgumentNotNull(loop, "loop");
+
 			this.handle = handle;
 			GCHandle = GCHandle.Alloc(this);
 			Loop = loop;

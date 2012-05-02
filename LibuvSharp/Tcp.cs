@@ -11,7 +11,12 @@ namespace LibuvSharp
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
 
 		public TcpListener()
-			: base(Loop.Default, UvHandleType.Tcp)
+			: this(Loop.Default)
+		{
+		}
+
+		public TcpListener(Loop loop)
+			: base(loop, UvHandleType.Tcp)
 		{
 			uv_tcp_init(Loop.Handle, handle);
 		}
