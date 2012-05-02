@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public abstract class Stream : Handle, IStream
 	{

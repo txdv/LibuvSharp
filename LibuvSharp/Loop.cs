@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public class Loop : IDisposable
 	{
@@ -57,7 +57,7 @@ namespace Libuv
 			Handle = handle;
 
 			var that = this;
-			dns = new Lazy<Libuv.Dns>(() => new Dns(that));
+			dns = new Lazy<Dns>(() => new Dns(that));
 			callback = new AsyncCallback(this);
 
 			// this fixes a strange bug, where you can't send async

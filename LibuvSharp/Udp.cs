@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public class Udp : Handle
 	{

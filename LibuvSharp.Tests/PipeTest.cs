@@ -2,21 +2,19 @@ using System;
 using System.Net;
 using System.Text;
 using NUnit.Framework;
-using Libuv;
 
-namespace Test
+namespace LibuvSharp.Tests
 {
 	[TestFixture]
-	public class TcpTest
+	public class PipeTest
 	{
 		[TestCase]
 		public static void Simple()
 		{
-			Simple(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			Simple(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			Simple("PipeTestSimple");
 		}
 
-		public static void Simple(IPEndPoint ep)
+		public static void Simple(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -24,21 +22,21 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new TcpListener();
-			server.Bind(ep);
-			server.Listen((socket) => {
-				socket.Resume();
-				socket.Read(Encoding.ASCII, (str) => {
+			var server = new PipeListener();
+			server.Bind(name);
+			server.Listen((pipe) => {
+				pipe.Resume();
+				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
-					socket.Close(() => { close_cb_called++; });
+					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
-			Tcp.Connect(Loop.Default, ep, (client) => {
+			Pipe.Connect(name, (client) => {
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
@@ -66,7 +64,6 @@ namespace Test
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
-
 		public static string Times(string str, int times)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -79,11 +76,10 @@ namespace Test
 		[TestCase]
 		public static void Stress()
 		{
-			Stress(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			Stress(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			Stress("PipeTestStress");
 		}
 
-		public static void Stress(IPEndPoint ep)
+		public static void Stress(string name)
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -94,22 +90,22 @@ namespace Test
 				int sv_send_cb_called = 0;
 				int sv_recv_cb_called = 0;
 
-				var server = new TcpListener();
-				server.Bind(ep);
-				server.Listen((socket) => {
-					socket.Resume();
-					socket.Read(Encoding.ASCII, (str) => {
+				var server = new PipeListener();
+				server.Bind(name);
+				server.Listen((pipe) => {
+					pipe.Resume();
+					pipe.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
 						Assert.AreEqual(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
-							socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+							pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
-						socket.Close(() => { close_cb_called++; });
+						pipe.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
 					});
 				});
 
-				Tcp.Connect(ep, (client) => {
+				Pipe.Connect(name, (client) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
@@ -144,11 +140,10 @@ namespace Test
 		[TestCase]
 		public static void OneSideClose()
 		{
-			OneSideClose(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			OneSideClose(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			OneSideClose("PipeTestOneSidedClose");
 		}
 
-		public static void OneSideClose(IPEndPoint ep)
+		public static void OneSideClose(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -156,20 +151,20 @@ namespace Test
 			int sv_send_cb_called = 0;
 			int sv_recv_cb_called = 0;
 
-			var server = new TcpListener();
-			server.Bind(ep);
-			server.Listen((socket) => {
-				socket.Resume();
-				socket.Read(Encoding.ASCII, (str) => {
+			var server = new PipeListener();
+			server.Bind(name);
+			server.Listen((pipe) => {
+				pipe.Resume();
+				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.AreEqual("PING", str);
-					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
-					socket.Close(() => { close_cb_called++; });
+					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
 			});
 
-			Tcp.Connect(ep, (client) => {
+			Pipe.Connect(name, (client) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -199,24 +194,6 @@ namespace Test
 #if DEBUG
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
-		}
-
-		[Test]
-		public static void TakenPort()
-		{
-			TcpListener s1 = new TcpListener();
-			TcpListener s2 = new TcpListener();
-
-			s1.Bind(IPAddress.Any, 8000);
-			s1.Listen((_) => {});
-
-			Assert.Throws<UVException>(() => {
-				s2.Bind(IPAddress.Any, 8000);
-				s2.Listen((_) => {});
-			});
-
-			s1.Close();
-			s2.Close();
 		}
 	}
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct WindowsBufferStruct

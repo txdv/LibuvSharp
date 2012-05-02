@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public class Idle : Handle
 	{

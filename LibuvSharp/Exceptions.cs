@@ -1,6 +1,6 @@
 using System;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public class UVException : Exception
 	{

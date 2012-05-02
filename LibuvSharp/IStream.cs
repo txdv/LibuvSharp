@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public interface IStream
 	{

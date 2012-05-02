@@ -1,8 +1,7 @@
 using System;
 using NUnit.Framework;
-using Libuv;
 
-namespace Test
+namespace LibuvSharp.Tests
 {
 	[TestFixture]
 	public class TimerTest

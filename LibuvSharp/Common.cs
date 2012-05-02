@@ -3,7 +3,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	unsafe internal class Request<T> : IDisposable where T : struct
 	{

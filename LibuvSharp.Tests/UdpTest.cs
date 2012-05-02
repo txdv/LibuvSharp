@@ -1,11 +1,9 @@
 using System;
 using System.Text;
 using System.Net;
-using Libuv;
-
 using NUnit.Framework;
 
-namespace Test
+namespace LibuvSharp.Tests
 {
 	[TestFixture]
 	public class UdpTest

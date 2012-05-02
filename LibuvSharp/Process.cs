@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Libuv
+namespace LibuvSharp
 {
 	public enum Signum : int {
 		SIGHUP    =  1, // Hangup (POSIX).
