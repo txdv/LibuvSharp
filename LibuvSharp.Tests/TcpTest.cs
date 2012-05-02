@@ -256,6 +256,47 @@ namespace LibuvSharp.Tests
 
 			Loop.Default.Run();
 		}
+
+		[Test]
+		public static void PeerAndSockname()
+		{
+			Tcp client = null;
+			Tcp server = null;
+
+			bool called = false;
+			var l = new TcpListener();
+			l.Bind(IPAddress.Any, 8000);
+
+			Action check = () => {
+				if (client == null || server == null) {
+					return;
+				}
+
+				Assert.AreEqual(client.Sockname, server.Peername);
+				Assert.AreEqual(client.Peername, server.Sockname);
+				Assert.AreEqual(server.Sockname.Port, 8000);
+
+				client.Shutdown();
+				server.Shutdown();
+				l.Close();
+
+				called = true;
+			};
+
+			l.Listen((tcp) => {
+				server = tcp;
+				check();
+			});
+
+			Tcp.Connect("127.0.0.1", 8000, (e, tcp) => {
+				client = tcp;
+				check();
+			});
+
+			Loop.Default.Run();
+
+			Assert.IsTrue(called);
+		}
 	}
 }
 
