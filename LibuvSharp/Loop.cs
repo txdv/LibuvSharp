@@ -50,6 +50,7 @@ namespace LibuvSharp
 
 		internal IntPtr Handle { get; set; }
 
+		Async async;
 		AsyncCallback callback;
 
 		internal Loop(IntPtr handle)
@@ -59,12 +60,17 @@ namespace LibuvSharp
 			var that = this;
 			dns = new Lazy<Dns>(() => new Dns(that));
 			callback = new AsyncCallback(this);
+			async = new Async(this);
 
 			// this fixes a strange bug, where you can't send async
 			// stuff from other threads
 			Sync(() => { });
+			async.Send();
+			RunOnce();
 
-			Unref(); // ignore our allocated resources
+			// ignore our allocated resources
+			Unref();
+			Unref();
 		}
 
 		public Loop()
@@ -80,6 +86,12 @@ namespace LibuvSharp
 		public void RunOnce()
 		{
 			uv_run_once(Handle);
+		}
+
+		public void RunAsync()
+		{
+			async.Send();
+			RunOnce();
 		}
 
 		public void Ref()
