@@ -19,8 +19,6 @@ namespace LibuvSharp.Tests
 
 			Assert.Throws<ArgumentNullException>(() => asyncWatcher.Send(null as IEnumerable<int>));
 
-			Loop.Default.RunOnce();
-
 			async.Close();
 			asyncWatcher.Close ();
 		}
