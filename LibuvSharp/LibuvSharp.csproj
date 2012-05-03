@@ -44,7 +44,6 @@
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="File.cs" />
-    <Compile Include="ByteBuffer.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="Internal\Ensure.cs" />
     <Compile Include="Internal\UvRequestType.cs" />
     <Compile Include="Internal\UvHandleType.cs" />
+    <Compile Include="Internal\ByteBuffer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
