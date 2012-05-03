@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace LibuvSharp.Tests
 {
 	[TestFixture]
-	public class PipeTest
+	public class PipeFixture
 	{
 		[TestCase]
 		public static void Simple()

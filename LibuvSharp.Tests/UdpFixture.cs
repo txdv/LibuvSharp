@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace LibuvSharp.Tests
 {
 	[TestFixture]
-	public class UdpTest
+	public class UdpFixture
 	{
 		[Test]
 		public static void Run()

@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace LibuvSharp.Tests
 {
 	[TestFixture]
-	public class TimerTest
+	public class TimerFixture
 	{
 		[Test]
 		public static void Simple()

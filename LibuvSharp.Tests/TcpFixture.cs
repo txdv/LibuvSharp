@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace LibuvSharp.Tests
 {
 	[TestFixture]
-	public class TcpTest
+	public class TcpFixture
 	{
 		[TestCase]
 		public static void Simple()

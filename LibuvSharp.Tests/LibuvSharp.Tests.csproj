@@ -35,11 +35,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="UdpTest.cs" />
-    <Compile Include="TcpTest.cs" />
-    <Compile Include="PipeTest.cs" />
-    <Compile Include="TimerTest.cs" />
     <Compile Include="AsyncFixture.cs" />
+    <Compile Include="PipeFixture.cs" />
+    <Compile Include="TcpFixture.cs" />
+    <Compile Include="TimerFixture.cs" />
+    <Compile Include="UdpFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
