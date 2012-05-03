@@ -57,6 +57,14 @@ namespace LibuvSharp
 		}
 
 		public event Action Callback;
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (GCHandle.IsAllocated) {
+				GCHandle.Free();
+			}
+		}
 	}
 
 	public class AsyncWatcher<T>
