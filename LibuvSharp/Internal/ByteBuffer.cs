@@ -31,7 +31,6 @@ namespace LibuvSharp
 				GC.SuppressFinalize(this);
 			}
 			Free();
-			GCHandle.Free();
 		}
 
 		IntPtr Alloc(int size)
@@ -56,7 +55,9 @@ namespace LibuvSharp
 
 		void Free()
 		{
-			GCHandle.Free();
+			if (GCHandle.IsAllocated) {
+				GCHandle.Free();
+			}
 			Buffer = null;
 			Size = 0;
 		}
