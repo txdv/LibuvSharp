@@ -17,7 +17,7 @@ namespace LibuvSharp.Tests
 		{
 			var timer = new Timer();
 			Loop.Default.RunAsync();
-			timer.Stop();
+			timer.Close();
 		}
 	}
 }
