@@ -16,8 +16,8 @@ namespace LibuvSharp
 		{
 		}
 
-		public Async(Action cb)
-			: this(Loop.Default, cb)
+		public Async(Action callback)
+			: this(Loop.Default, callback)
 		{
 		}
 
@@ -26,19 +26,17 @@ namespace LibuvSharp
 		{
 		}
 
-		public Async(Loop loop, Action cb)
+		public Async(Loop loop, Action callback)
 			: base(loop, UvHandleType.Async)
 		{
-			Action<IntPtr, int> callback = (_, status) => {
+			Action<IntPtr, int> cb = (_, status) => {
 				OnCallback();
 			};
 
-			GCHandle = GCHandle.Alloc(callback, GCHandleType.Pinned);
-			uv_async_init(loop.Handle, handle, callback);
+			GCHandle = GCHandle.Alloc(cb, GCHandleType.Pinned);
+			uv_async_init(loop.Handle, handle, cb);
 
-			if (cb != null) {
-				Callback += cb;
-			}
+			Callback += callback;
 		}
 
 		[DllImport("uv")]
@@ -113,6 +111,8 @@ namespace LibuvSharp
 		}
 
 		public void Send(IEnumerable<T> data) {
+			Ensure.ArgumentNotNull(data, "data");
+
 			lock (queue) {
 				foreach (var dataitem in data) {
 					queue.Enqueue(dataitem);
