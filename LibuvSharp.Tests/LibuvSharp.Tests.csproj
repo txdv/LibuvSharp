@@ -40,6 +40,7 @@
     <Compile Include="TcpFixture.cs" />
     <Compile Include="TimerFixture.cs" />
     <Compile Include="UdpFixture.cs" />
+    <Compile Include="DynamicLibraryFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

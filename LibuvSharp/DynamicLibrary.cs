@@ -27,15 +27,17 @@ namespace LibuvSharp
 			Ensure.Success(uv_dlopen(IntPtr.Zero, out handle));
 		}
 
-		public DynamicLibrary(string str)
+		public DynamicLibrary(string library)
 		{
-			var ptr = Marshal.StringToHGlobalAnsi(str);
+			Ensure.ArgumentNotNull(library, "library");
+
+			var ptr = Marshal.StringToHGlobalAnsi(library);
 			var error = uv_dlopen(ptr, out handle);
 			Marshal.FreeHGlobal(ptr);
 			Ensure.Success(error);
 		}
 
-		void Close()
+		public void Close()
 		{
 			if (!Closed) {
 				uv_dlclose(handle);

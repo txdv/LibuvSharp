@@ -17,6 +17,8 @@ namespace LibuvSharp
 			}
 
 			switch (error.code) {
+			case uv_err_code.UV_EINVAL:
+				return new ArgumentException(error.Description);
 			case uv_err_code.UV_ENOENT:
 				var path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), name);
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
