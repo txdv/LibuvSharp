@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	public class PipeListener : Listener
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		public bool InterProcessCommunication { get; protected set; }
@@ -50,7 +50,7 @@ namespace LibuvSharp
 
 	public class Pipe : Stream
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		internal Pipe(Loop loop, bool interProcessCommunication)
@@ -59,7 +59,7 @@ namespace LibuvSharp
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_pipe_open(IntPtr handle, int file);
 
 		public Pipe(int fd)
@@ -83,7 +83,7 @@ namespace LibuvSharp
 			uv_pipe_open(handle, fd);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_pipe_connect(IntPtr req, IntPtr handle, string name, Action<IntPtr, int> connect_cb);
 
 		public static void Connect(string name, Action<Exception, Pipe> callback)

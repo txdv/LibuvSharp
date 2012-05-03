@@ -5,13 +5,13 @@ namespace LibuvSharp
 {
 	public class DynamicLibrary
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static uv_err_t uv_dlopen(IntPtr handle, out IntPtr ptr);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static uv_err_t uv_dlclose(IntPtr handle);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static uv_err_t uv_dlsym(IntPtr handle, string name, out IntPtr ptr);
 
 		IntPtr handle;

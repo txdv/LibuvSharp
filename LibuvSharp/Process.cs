@@ -141,10 +141,10 @@ namespace LibuvSharp
 
 	public class Process : Handle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern uv_err_t uv_get_process_title(IntPtr buffer, IntPtr size);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern uv_err_t uv_set_process_title(string title);
 
 		public static string Title {
@@ -161,7 +161,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_exepath(IntPtr buffer, ref IntPtr size);
 
 		public static string ExecutablePath {
@@ -182,7 +182,7 @@ namespace LibuvSharp
 		public Pipe Stdout { get; protected set; }
 		public Pipe Stderr { get; protected set; }
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
 
 		internal Process(Loop loop)
@@ -219,7 +219,7 @@ namespace LibuvSharp
 			return process;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_process_kill(IntPtr handle, int signum);
 
 		public void Kill(int signum)

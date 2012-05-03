@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	public class Guard : BaseHandle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_once(IntPtr ptr, Action callback);
 
 		public Guard()

@@ -6,8 +6,10 @@ namespace LibuvSharp
 {
 	public class Async : Handle
 	{
-		[DllImport("uv")]
-		internal static extern int uv_async_init(IntPtr loop, IntPtr handle, Action<IntPtr, int> callback);
+		delegate void async_cb(IntPtr handle, int status);
+
+		[DllImport("uv", CallingConvention=CallingConvention.Cdecl)]
+		internal static extern int uv_async_init(IntPtr loop, IntPtr handle, IntPtr callback);
 
 		GCHandle GCHandle { get; set; }
 
@@ -26,20 +28,20 @@ namespace LibuvSharp
 		{
 		}
 
+		async_cb cb;
 		public Async(Loop loop, Action<Async> callback)
 			: base(loop, UvHandleType.UV_ASYNC)
 		{
-			Action<IntPtr, int> cb = (_, status) => {
+			cb = (_, status) => {
 				OnCallback();
 			};
 
-			GCHandle = GCHandle.Alloc(cb, GCHandleType.Pinned);
-			uv_async_init(loop.Handle, handle, cb);
+			uv_async_init(loop.Handle, handle, Marshal.GetFunctionPointerForDelegate(cb));
 
 			Callback += callback;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_async_send(IntPtr handle);
 
 		public void Send()
@@ -53,14 +55,6 @@ namespace LibuvSharp
 		{
 			if (Callback != null) {
 				Callback(this);
-			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-			if (GCHandle.IsAllocated) {
-				GCHandle.Free();
 			}
 		}
 	}

@@ -5,22 +5,22 @@ namespace LibuvSharp
 {
 	public class Timer : Handle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_init(IntPtr loop, IntPtr timer);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_start(IntPtr timer, IntPtr callback, long timeout, long repeat);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_stop(IntPtr timer);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_again(IntPtr timer);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_timer_set_repeat(IntPtr timer, long repeat);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern long uv_timer_get_repeat(IntPtr timer);
 
 		private Action<IntPtr, int> cb;

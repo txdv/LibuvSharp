@@ -5,10 +5,10 @@ namespace LibuvSharp
 {
 	public class Mutex : BaseHandle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_mutex_init(IntPtr ptr);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_mutex_destroy(IntPtr ptr);
 
 		public Mutex()

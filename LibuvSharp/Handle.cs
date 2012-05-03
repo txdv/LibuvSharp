@@ -31,7 +31,7 @@ namespace LibuvSharp
 
 		public event Action CloseEvent;
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_close(IntPtr handle, Action callback);
 
 		public void Close(Action callback)
@@ -83,7 +83,7 @@ namespace LibuvSharp
 			handle = IntPtr.Zero;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_active(IntPtr handle);
 
 		public bool Active {
@@ -92,7 +92,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_readable(IntPtr handle);
 
 		public bool Readable {
@@ -101,7 +101,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_writable(IntPtr handle);
 
 		public bool Writeable {
@@ -110,7 +110,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_closing(IntPtr handle);
 
 		public bool Closing {

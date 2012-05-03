@@ -148,7 +148,7 @@ namespace LibuvSharp
 				}
 			}
 
-			[DllImport("__Internal")]
+			[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
 			unsafe static extern sbyte *inet_ntop(int af, IntPtr src, IntPtr dst, IntPtr size);
 		}
 

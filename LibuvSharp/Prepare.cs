@@ -5,13 +5,13 @@ namespace LibuvSharp
 {
 	public class Prepare : Handle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_prepare_init(IntPtr loop, IntPtr prepare);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_prepare_start(IntPtr idle, IntPtr callback);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_prepare_stop(IntPtr prepare);
 
 		public Prepare()

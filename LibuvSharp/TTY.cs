@@ -13,7 +13,7 @@ namespace LibuvSharp
 	{
 		public IntPtr FileDescriptor { get; private set; }
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_init(IntPtr loop, IntPtr tty, IntPtr fd, int readable);
 
 		public TTY(Loop loop, int fd)
@@ -39,7 +39,7 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_set_mode(IntPtr tty, int mode);
 
 		public TTYMode Mode {
@@ -49,7 +49,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_reset_mode();
 
 		static public void ResetMode()
@@ -58,7 +58,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_get_winsize(IntPtr tty, out int width, out int height);
 
 		public bool GetWindowSize(out int width, out int height)
@@ -67,7 +67,7 @@ namespace LibuvSharp
 			return r == 0;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern UvHandleType uv_guess_handle(IntPtr fd);
 	}
 }

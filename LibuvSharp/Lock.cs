@@ -5,10 +5,10 @@ namespace LibuvSharp
 {
 	public class Lock : BaseHandle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_rwlock_init(IntPtr ptr);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_rwlock_destroy(IntPtr ptr);
 
 		public Lock()
@@ -16,7 +16,7 @@ namespace LibuvSharp
 		{
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_rwlock_rdlock(IntPtr ptr);
 
 		public void ReadLock()
@@ -24,7 +24,7 @@ namespace LibuvSharp
 			uv_rwlock_rdlock(Handle);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_rwlock_tryrdlock(IntPtr ptr);
 
 		public bool TryReadLock()
@@ -32,7 +32,7 @@ namespace LibuvSharp
 			return uv_rwlock_tryrdlock(Handle) != 0;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_rwlock_rdunlock(IntPtr ptr);
 
 		public void ReadUnlock()
@@ -40,7 +40,7 @@ namespace LibuvSharp
 			uv_rwlock_rdunlock(Handle);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_rwlock_wrlock(IntPtr ptr);
 
 		public void WriteLock()
@@ -48,7 +48,7 @@ namespace LibuvSharp
 			uv_rwlock_wrlock(Handle);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_rwlock_trywrlock(IntPtr ptr);
 
 		public bool TryWriteLock()
@@ -56,7 +56,7 @@ namespace LibuvSharp
 			return uv_rwlock_trywrlock(Handle) != 0;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static void uv_rwlock_wrunlock(IntPtr ptr);
 
 		public void WriteUnlock()

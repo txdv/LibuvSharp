@@ -5,39 +5,40 @@ namespace LibuvSharp
 {
 	public class Loop : IDisposable
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr uv_default_loop();
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr uv_loop_new();
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_loop_delete(IntPtr ptr);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_run(IntPtr loop);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_run_once(IntPtr loop);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_ref(IntPtr loop);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_unref(IntPtr loop);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_update_time(IntPtr loop);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern long uv_now(IntPtr loop);
 
 		internal ByteBuffer buffer = new ByteBuffer();
 
-		static Loop @default = new Loop(uv_default_loop());
+
+		static Lazy<Loop> @default = new Lazy<Loop>(() => new Loop(uv_default_loop()));
 		public static Loop Default {
 			get {
-				return @default;
+				return @default.Value;
 			}
 		}
 

@@ -340,22 +340,22 @@ namespace LibuvSharp
 			Execute(data);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void http_parser_init(IntPtr parser, http_parser_type type);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr http_parser_execute(IntPtr parser, IntPtr settings, IntPtr data, IntPtr length);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int http_should_keep_alive(IntPtr parser);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *http_method_str(http_method m);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *http_errno_name(http_errno err);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *http_errno_description(http_errno err);
 	}
 

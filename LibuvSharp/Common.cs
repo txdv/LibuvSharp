@@ -185,7 +185,7 @@ namespace LibuvSharp
 
 		public Action<Exception, FileSystemRequest> Callback { get; set; }
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void uv_fs_req_cleanup(IntPtr req);
 
 		public override void Dispose(bool disposing)
@@ -238,10 +238,10 @@ namespace LibuvSharp
 			this.sys_errno_ = 0;
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_strerror(uv_err_t error);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_err_name(uv_err_t error);
 
 		public uv_err_code code;
@@ -345,19 +345,19 @@ namespace LibuvSharp
 		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
 		internal static bool IsUnix { get { return isUnix; } }
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static sockaddr_in uv_ip4_addr(string ip, int port);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static sockaddr_in6 uv_ip6_addr(string ip, int port);
 
-		[DllImport("__Internal")]
+		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static ushort ntohs(ushort bytes);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_ip4_name(IntPtr src, byte[] dst, IntPtr size);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_ip6_name(IntPtr src, byte[] dst, IntPtr size);
 
 		unsafe internal static IPEndPoint GetIPEndPoint(IntPtr sockaddr)
@@ -383,10 +383,10 @@ namespace LibuvSharp
 			return new IPEndPoint(ip, ntohs(sa->sin_port));
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_handle_size(UvHandleType type);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_req_size(UvRequestType type);
 
 		internal static int Sizeof(UvHandleType type)

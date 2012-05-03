@@ -7,13 +7,13 @@ namespace LibuvSharp
 {
 	public class Udp : Handle
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_init(IntPtr loop, IntPtr handle);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_bind(IntPtr handle, sockaddr_in sockaddr, short flags);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_bind6(IntPtr handle, sockaddr_in6 sockaddr, short flags);
 
 		Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> recv_start_cb;
@@ -59,10 +59,10 @@ namespace LibuvSharp
 			Bind(endPoint.Address, endPoint.Port);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in addr, Action<IntPtr, int> cb);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send6(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, Action<IntPtr, int> cb);
 
 		public void Send(IPAddress ipAddress, int port, byte[] data, int length, Action<bool> callback)
@@ -146,7 +146,7 @@ namespace LibuvSharp
 			Send(endPoint, data, data.Length);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_recv_start(IntPtr handle, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct, IntPtr, ushort> callback);
 
 		internal void recv_start_callback(IntPtr handle, IntPtr nread, UnixBufferStruct buf, IntPtr sockaddr, ushort flags)

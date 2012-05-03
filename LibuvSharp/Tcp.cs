@@ -7,7 +7,7 @@ namespace LibuvSharp
 {
 	public class TcpListener : Listener
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
 
 		public TcpListener()
@@ -21,10 +21,10 @@ namespace LibuvSharp
 			uv_tcp_init(Loop.Handle, handle);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_bind(IntPtr handle, sockaddr_in sockaddr);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_bind6(IntPtr handle, sockaddr_in6 sockaddr);
 
 		public void Bind(string ipAddress, int port)
@@ -68,7 +68,7 @@ namespace LibuvSharp
 
 	public class Tcp : Stream
 	{
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
 
 		internal Tcp(Loop loop)
@@ -77,10 +77,10 @@ namespace LibuvSharp
 			uv_tcp_init(loop.Handle, handle);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_connect(IntPtr req, IntPtr handle, sockaddr_in addr, Action<IntPtr, int> callback);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, Action<IntPtr, int> callback);
 
 
@@ -134,13 +134,13 @@ namespace LibuvSharp
 			Connect(Loop.Default, endPoint, callback);
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_nodelay(IntPtr handle, int enable);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_keepalive(IntPtr handle, int enable, int delay);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_simultaneos_accepts(IntPtr handle, int enable);
 
 		public bool NoDelay {
@@ -160,10 +160,10 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_getsockname(IntPtr handle, IntPtr addr, ref int length);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_getpeername(IntPtr handle, IntPtr addr, ref int length);
 
 		unsafe public IPEndPoint Sockname {

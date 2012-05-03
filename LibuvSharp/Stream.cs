@@ -6,19 +6,19 @@ namespace LibuvSharp
 {
 	public abstract class Stream : Handle, IStream
 	{
-		[DllImport ("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_start(IntPtr stream, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct> read_callback);
 
-		[DllImport ("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_watcher_start(IntPtr stream, Action<IntPtr> read_watcher_callback);
 
-		[DllImport ("uv")]
+		[DllImport ("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_stop(IntPtr stream);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
 
-		[DllImport("uv")]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, Action<IntPtr, int> callback);
 
 		internal Stream(Loop loop, IntPtr handle)
