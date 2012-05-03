@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using NUnit.Framework;
 
 namespace LibuvSharp.Tests
@@ -22,6 +23,40 @@ namespace LibuvSharp.Tests
 
 			async.Close();
 			asyncWatcher.Close ();
+		}
+
+		[Test]
+		public static void Simple()
+		{
+			int async_cb_called = 0;
+			object o = new object();
+			var async = new Async((a) => {
+				int n;
+				lock (o) {
+					n = ++async_cb_called;
+				}
+
+				if (n == 3) {
+					a.Close();
+				}
+			});
+
+			new Thread(() => {
+				while (true) {
+					int n;
+					lock (o) {
+						n = async_cb_called;
+					}
+
+					if (n == 3) {
+						break;
+					}
+
+					async.Send();
+				}
+			}).Start();
+
+			Loop.Default.Run();
 		}
 	}
 }

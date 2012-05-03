@@ -12,11 +12,11 @@ namespace LibuvSharp
 		GCHandle GCHandle { get; set; }
 
 		public Async()
-			: this(null as Action)
+			: this(null as Action<Async>)
 		{
 		}
 
-		public Async(Action callback)
+		public Async(Action<Async> callback)
 			: this(Loop.Default, callback)
 		{
 		}
@@ -26,7 +26,7 @@ namespace LibuvSharp
 		{
 		}
 
-		public Async(Loop loop, Action callback)
+		public Async(Loop loop, Action<Async> callback)
 			: base(loop, UvHandleType.Async)
 		{
 			Action<IntPtr, int> cb = (_, status) => {
@@ -47,14 +47,14 @@ namespace LibuvSharp
 			uv_async_send(handle);
 		}
 
+		public event Action<Async> Callback;
+
 		public void OnCallback()
 		{
 			if (Callback != null) {
-				Callback();
+				Callback(this);
 			}
 		}
-
-		public event Action Callback;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -87,7 +87,7 @@ namespace LibuvSharp
 
 		public AsyncWatcher(Loop loop, Action<T> callback)
 		{
-			async = new Async(loop, () => {
+			async = new Async(loop, (_) => {
 				Queue<T> tmp;
 				lock (queue) {
 					tmp = new Queue<T>(queue);
