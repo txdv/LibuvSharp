@@ -186,7 +186,7 @@ namespace LibuvSharp
 		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
 
 		internal Process(Loop loop)
-			: base(loop, UvHandleType.Process)
+			: base(loop, UvHandleType.UV_PROCESS)
 		{
 		}
 

@@ -32,7 +32,7 @@ namespace LibuvSharp
 		}
 
 		public TTY(Loop loop, IntPtr fd, bool readable)
-			: base(loop, UvHandleType.TTY)
+			: base(loop, UvHandleType.UV_TTY)
 		{
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.Handle, handle, fd, (readable ? 1 : 0));

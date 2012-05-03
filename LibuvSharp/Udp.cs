@@ -24,7 +24,7 @@ namespace LibuvSharp
 		}
 
 		public Udp(Loop loop)
-			: base(loop, UvHandleType.Udp)
+			: base(loop, UvHandleType.UV_UDP)
 		{
 			int r = uv_udp_init(loop.Handle, handle);
 			Ensure.Success(r, loop);
@@ -72,7 +72,7 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(data, "callback");
 
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UdpSend);
+			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UV_UDP_SEND);
 			cpr.Callback += (status, cpr2) => {
 				datagchandle.Free();
 				if (callback != null) {

@@ -26,7 +26,7 @@ namespace LibuvSharp
 		}
 
 		public PipeListener(Loop loop, bool interProcessCommunication)
-			: base(loop, UvHandleType.NamedPipe)
+			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
 			InterProcessCommunication = interProcessCommunication;
@@ -54,7 +54,7 @@ namespace LibuvSharp
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		internal Pipe(Loop loop, bool interProcessCommunication)
-			: base(loop, UvHandleType.NamedPipe)
+			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
 		}

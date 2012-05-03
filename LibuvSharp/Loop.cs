@@ -125,7 +125,7 @@ namespace LibuvSharp
 
 		public void QueueWork(Action callback, Action after)
 		{
-			var pr = new PermaRequest(UV.Sizeof(UvRequestType.Work));
+			var pr = new PermaRequest(UV.Sizeof(UvRequestType.UV_WORK));
 			var before = new CAction<IntPtr>((ptr) => callback());
 			var cafter = new CAction<IntPtr>((ptr) => {
 				pr.Dispose();

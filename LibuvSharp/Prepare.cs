@@ -20,7 +20,7 @@ namespace LibuvSharp
 		}
 
 		public Prepare(Loop loop)
-			: base(loop, UvHandleType.Prepare)
+			: base(loop, UvHandleType.UV_PREPARE)
 		{
 			int err = uv_prepare_init(loop.Handle, handle);
 			Ensure.Success(err, Loop);

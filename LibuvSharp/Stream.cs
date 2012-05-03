@@ -102,7 +102,7 @@ namespace LibuvSharp
 		unsafe public void Write(byte[] data, int length, Action<bool> callback)
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.Write);
+			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UV_WRITE);
 			cpr.Callback += (status, cpr2) => {
 				datagchandle.Free();
 				if (callback != null) {
@@ -141,7 +141,7 @@ namespace LibuvSharp
 
 		public void Shutdown(Action callback)
 		{
-			var cbr = new CallbackPermaRequest(UvRequestType.Shutdown);
+			var cbr = new CallbackPermaRequest(UvRequestType.UV_SHUTDOWN);
 			cbr.Callback = (status, _) => {
 				Close(callback);
 			};

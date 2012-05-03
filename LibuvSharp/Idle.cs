@@ -20,7 +20,7 @@ namespace LibuvSharp
 		}
 
 		public Idle(Loop loop)
-			: base(loop, UvHandleType.Idle)
+			: base(loop, UvHandleType.UV_IDLE)
 		{
 			int r = uv_idle_init(loop.Handle, handle);
 			Ensure.Success(r, loop);

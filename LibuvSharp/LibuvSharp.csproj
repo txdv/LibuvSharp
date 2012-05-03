@@ -67,6 +67,8 @@
     <Compile Include="IListener.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Internal\Ensure.cs" />
+    <Compile Include="Internal\UvRequestType.cs" />
+    <Compile Include="Internal\UvHandleType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

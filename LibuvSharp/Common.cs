@@ -154,7 +154,7 @@ namespace LibuvSharp
 		uv_connect_t *connect;
 
 		public ConnectRequest()
-			: base(UvRequestType.Connect)
+			: base(UvRequestType.UV_CONNECT)
 		{
 			connect = (uv_connect_t *)Handle;
 		}
@@ -168,7 +168,7 @@ namespace LibuvSharp
 
 	unsafe internal class FileSystemRequest : PermaRequest
 	{
-		private static readonly int Size = UV.Sizeof(UvHandleType.File);
+		private static readonly int Size = UV.Sizeof(UvHandleType.UV_FS_EVENT);
 
 		protected uv_fs_t *fsrequest;
 
@@ -230,7 +230,7 @@ namespace LibuvSharp
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	unsafe public struct uv_err_t
+	unsafe internal struct uv_err_t
 	{
 		public uv_err_t(int errorcode)
 		{
@@ -336,44 +336,6 @@ namespace LibuvSharp
 	{
 		public UvRequestType type;
 		public IntPtr data;
-	}
-
-	internal enum UvHandleType : int
-	{
-		Unknown,
-
-		AresTask,
-		Async,
-		Check,
-		FSEvent,
-		Idle,
-		NamedPipe,
-		Prepare,
-		Process,
-		Tcp,
-		Timer,
-		TTY,
-		Udp,
-
-		File,
-		Private,
-		Max,
-	};
-
-	internal enum UvRequestType : int
-	{
-		Unknown,
-
-		Connect,
-		Write,
-		Shutdown,
-		UdpSend,
-		FileSystem,
-		Work,
-		GetAddrInfo,
-
-		Private,
-		Max,
 	}
 
 	public static class UV

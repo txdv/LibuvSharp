@@ -27,7 +27,7 @@ namespace LibuvSharp
 		}
 
 		public Async(Loop loop, Action<Async> callback)
-			: base(loop, UvHandleType.Async)
+			: base(loop, UvHandleType.UV_ASYNC)
 		{
 			Action<IntPtr, int> cb = (_, status) => {
 				OnCallback();
