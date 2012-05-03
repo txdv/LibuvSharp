@@ -38,6 +38,8 @@ namespace LibuvSharp
 
 		public void Bind(IPAddress ipAddress, int port)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				r = uv_udp_bind(handle, UV.uv_ip4_addr(ipAddress.ToString(), port), 0);
@@ -48,11 +50,13 @@ namespace LibuvSharp
 		}
 		public void Bind(string ipAddress, int port)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Bind(IPAddress.Parse(ipAddress), port);
 		}
-		public void Bind(IPEndPoint ep)
+		public void Bind(IPEndPoint endPoint)
 		{
-			Bind(ep.Address, ep.Port);
+			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Bind(endPoint.Address, endPoint.Port);
 		}
 
 		[DllImport("uv")]
@@ -63,6 +67,10 @@ namespace LibuvSharp
 
 		public void Send(IPAddress ipAddress, int port, byte[] data, int length, Action<bool> callback)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			Ensure.ArgumentNotNull(data, "data");
+			Ensure.ArgumentNotNull(data, "callback");
+
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UdpSend);
 			cpr.Callback += (status, cpr2) => {
@@ -85,6 +93,7 @@ namespace LibuvSharp
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] data, Action<bool> callback)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, data.Length, callback);
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] data, int length)
@@ -93,41 +102,48 @@ namespace LibuvSharp
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] data)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, data.Length);
 		}
 
 		public void Send(string ipAddress, int port, byte[] data, int length, Action<bool> callback)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Send(IPAddress.Parse(ipAddress), port, data, length, callback);
 		}
 		public void Send(string ipAddress, int port, byte[] data, Action<bool> callback)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, data.Length, callback);
 		}
 		public void Send(string ipAddress, int port, byte[] data, int length)
 		{
-			Send(IPAddress.Parse(ipAddress), port, data, length);
+			Send(ipAddress, port, data, length, null);
 		}
 		public void Send(string ipAddress, int port, byte[] data)
 		{
-			Send(IPAddress.Parse(ipAddress), port, data);
+			Ensure.ArgumentNotNull(data, "data");
+			Send(ipAddress, port, data, data.Length);
 		}
 
-		public void Send(IPEndPoint ep, byte[] data, int length, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, int length, Action<bool> callback)
 		{
-			Send(ep.Address, ep.Port, data, length, callback);
+			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Send(endPoint.Address, endPoint.Port, data, length, callback);
 		}
-		public void Send(IPEndPoint ep, byte[] data, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, Action<bool> callback)
 		{
-			Send(ep.Address, ep.Port, data, data.Length, callback);
+			Ensure.ArgumentNotNull(data, "data");
+			Send(endPoint, data, data.Length, callback);
 		}
-		public void Send(IPEndPoint ep, byte[] data, int length)
+		public void Send(IPEndPoint endPoint, byte[] data, int length)
 		{
-			Send(ep.Address, ep.Port, data, length);
+			Send(endPoint, data, length, null);
 		}
-		public void Send(IPEndPoint ep, byte[] data)
+		public void Send(IPEndPoint endPoint, byte[] data)
 		{
-			Send(ep.Address, ep.Port, data);
+			Ensure.ArgumentNotNull(data, "data");
+			Send(endPoint, data, data.Length);
 		}
 
 		[DllImport("uv")]
@@ -149,6 +165,8 @@ namespace LibuvSharp
 		bool receive_init = false;
 		public void Receive(Action<byte[], IPEndPoint> callback)
 		{
+			Ensure.ArgumentNotNull(callback, "callback");
+
 			if (!receive_init) {
 				int r = uv_udp_recv_start(handle, Loop.buffer.AllocCallback, recv_start_cb);
 				Ensure.Success(r, Loop);
@@ -157,10 +175,13 @@ namespace LibuvSharp
 			OnMessage += callback;
 		}
 
-		public void Receive(Encoding enc, Action<string, IPEndPoint> callback)
+		public void Receive(Encoding encoding, Action<string, IPEndPoint> callback)
 		{
+			Ensure.ArgumentNotNull(encoding, "encoding");
+			Ensure.ArgumentNotNull(callback, "callback");
+
 			Receive((data, ep) => {
-				callback(enc.GetString(data), ep);
+				callback(encoding.GetString(data), ep);
 			});
 		}
 

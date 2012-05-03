@@ -65,6 +65,64 @@ namespace LibuvSharp.Tests
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
+
+		[Test]
+		public static void NotNullUdp()
+		{
+			var u = new Udp();
+			Action<bool> cb = (_) => { };
+			string ipstr = "127.0.0.1";
+			var ip = IPAddress.Parse(ipstr);
+			var ep = new IPEndPoint(ip, 7999);
+
+			// constructor
+			Assert.Throws<ArgumentNullException>(() => new Udp(null));
+
+			// bind
+			Assert.Throws<ArgumentNullException>(() => u.Bind(null));
+			Assert.Throws<ArgumentNullException>(() => u.Bind(null as string, 0));
+			Assert.Throws<ArgumentNullException>(() => u.Bind(null as IPAddress, 0));
+
+			// receive
+			Assert.Throws<ArgumentNullException>(() => u.Receive(null));
+			Assert.Throws<ArgumentNullException>(() => u.Receive(Encoding.ASCII, null));
+			Assert.Throws<ArgumentNullException>(() => u.Receive(null, (_, __) => { }));
+
+			// send
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, 0, cb));
+
+			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[]));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], 0, cb));
+
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, 0, cb));
+
+			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[]));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], 0, cb));
+
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, 0, cb));
+
+			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[]));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], 0));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], cb));
+			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], 0, cb));
+
+			u.Close();
+
+			Loop.Default.RunOnce();
+		}
 	}
 }
 
