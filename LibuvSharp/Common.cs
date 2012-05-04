@@ -355,14 +355,11 @@ namespace LibuvSharp
 		unsafe internal static IPEndPoint GetIPEndPoint(IntPtr sockaddr)
 		{
 			sockaddr *sa = (sockaddr *)sockaddr;
-			byte[] addr;
-			if (sa->sin_family == 10) {
-				addr = new byte[64];
-				uv_ip6_name(sockaddr, addr, (IntPtr)addr.Length);
-
-			} else {
-				addr = new byte[64];
+			byte[] addr = new byte[64];
+			if (sa->sin_family == 2) {
 				uv_ip4_name(sockaddr, addr, (IntPtr)addr.Length);
+			} else {
+				uv_ip6_name(sockaddr, addr, (IntPtr)addr.Length);
 			}
 
 			int i = 0;
