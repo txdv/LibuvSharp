@@ -67,11 +67,15 @@ namespace LibuvSharp
 			Bind(endPoint.Address, endPoint.Port);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in addr, Action<IntPtr, int> cb);
+		[DllImport("uv", EntryPoint = "uv_udp_send", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, sockaddr_in addr, callback callback);
+		[DllImport("uv", EntryPoint = "uv_udp_send", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in addr, callback callback);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send6(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, Action<IntPtr, int> cb);
+		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send6_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
+		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
 
 		public void Send(IPAddress ipAddress, int port, byte[] data, int length, Action<bool> callback)
 		{
@@ -88,14 +92,26 @@ namespace LibuvSharp
 				}
 			};
 
-			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 			int r;
-			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_udp_send(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+			if (UV.isUnix) {
+				UnixBufferStruct[] buf = new UnixBufferStruct[1];
+				buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+
+				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+					r = uv_udp_send_unix(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				} else {
+					r = uv_udp_send6_unix(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				}
 			} else {
-				r = uv_udp_send6(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
+				buf[0] = new WindowsBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+
+				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+					r = uv_udp_send_win(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				} else {
+					r = uv_udp_send6_win(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				}
 			}
 			Ensure.Success(r, Loop);
 		}
