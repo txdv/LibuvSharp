@@ -331,8 +331,20 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static sockaddr_in6 uv_ip6_addr(string ip, int port);
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static ushort ntohs(ushort bytes);
+		[DllImport("__Internal", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static ushort ntohs_unix(ushort bytes);
+
+		[DllImport("Ws2_32", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static ushort ntohs_win(ushort bytes);
+
+		internal static ushort ntohs(ushort bytes)
+		{
+			if (isUnix) {
+				return ntohs_unix(bytes);
+			} else {
+				return ntohs_win(bytes);
+			}
+		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_ip4_name(IntPtr src, byte[] dst, IntPtr size);
