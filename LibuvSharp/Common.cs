@@ -334,7 +334,7 @@ namespace LibuvSharp
 		[DllImport("__Internal", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static ushort ntohs_unix(ushort bytes);
 
-		[DllImport("Ws2_32", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("Ws2_32", EntryPoint = "ntohs")]
 		internal extern static ushort ntohs_win(ushort bytes);
 
 		internal static ushort ntohs(ushort bytes)
