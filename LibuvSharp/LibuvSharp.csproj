@@ -68,7 +68,8 @@
     <Compile Include="Internal\UvRequestType.cs" />
     <Compile Include="Internal\UvHandleType.cs" />
     <Compile Include="Internal\ByteBuffer.cs" />
-    <Compile Include="Internal\uv_err.cs" />
+    <Compile Include="Internal\uv_err_t.cs" />
+    <Compile Include="Internal\uv_err_code.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
