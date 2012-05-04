@@ -13,7 +13,7 @@ namespace LibuvSharp.Tests
 		public static void Simple()
 		{
 			Simple(Default.IPv4.IPEndPoint);
-			//Simple(Default.IPv6.IPEndPoint);
+			Simple(Default.IPv6.IPEndPoint);
 		}
 
 		public static void Simple(IPEndPoint ep)
@@ -80,7 +80,7 @@ namespace LibuvSharp.Tests
 		public static void Stress()
 		{
 			Stress(Default.IPv4.IPEndPoint);
-			//Stress(Default.IPv6.IPEndPoint);
+			Stress(Default.IPv6.IPEndPoint);
 		}
 
 		public static void Stress(IPEndPoint ep)
@@ -145,7 +145,7 @@ namespace LibuvSharp.Tests
 		public static void OneSideClose()
 		{
 			OneSideClose(Default.IPv4.IPEndPoint);
-			//OneSideClose(Default.IPv6.IPEndPoint);
+			OneSideClose(Default.IPv6.IPEndPoint);
 		}
 
 		public static void OneSideClose(IPEndPoint ep)
