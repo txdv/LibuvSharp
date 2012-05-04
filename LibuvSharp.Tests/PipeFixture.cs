@@ -8,7 +8,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class PipeFixture
 	{
-		[TestCase]
+		//[TestCase]
 		public static void Simple()
 		{
 			Simple("PipeTestSimple");
@@ -73,7 +73,7 @@ namespace LibuvSharp.Tests
 			return sb.ToString();
 		}
 
-		[TestCase]
+		//[TestCase]
 		public static void Stress()
 		{
 			Stress("PipeTestStress");
@@ -137,7 +137,7 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[TestCase]
+		//[TestCase]
 		public static void OneSideClose()
 		{
 			OneSideClose("PipeTestOneSidedClose");
@@ -196,7 +196,7 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		[Test]
+		//[Test]
 		[ExpectedException(typeof(System.IO.FileNotFoundException))]
 		public static void ConnectToNotListeningFile()
 		{
