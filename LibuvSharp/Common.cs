@@ -197,46 +197,14 @@ namespace LibuvSharp
 			// good idea when you have only the pointer, but no need for it ...
 			// var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
 			Exception e = null;
-			if (Result == (IntPtr)(-1)) {
-				uv_err_t error = new uv_err_t(Error);
-				e = new Exception(string.Format("{0}: {1}", error.Name, error.Description));
+			if (Result.ToInt32() == -1) {
+				throw new Exception();
 			}
 
 			if (Callback != null) {
 				Callback(e, this);
 			}
 			Dispose();
-		}
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	unsafe internal struct uv_err_t
-	{
-		public uv_err_t(int errorcode)
-		{
-			this.code = (uv_err_code)errorcode;
-			this.sys_errno_ = 0;
-		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern sbyte *uv_strerror(uv_err_t error);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern sbyte *uv_err_name(uv_err_t error);
-
-		public uv_err_code code;
-		int sys_errno_;
-
-		public string Description {
-			get {
-				return new string(uv_strerror(this));
-			}
-		}
-
-		public string Name {
-			get {
-				return new string(uv_err_name(this));
-			}
 		}
 	}
 

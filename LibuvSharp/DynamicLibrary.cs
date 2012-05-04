@@ -6,7 +6,10 @@ namespace LibuvSharp
 	public class DynamicLibrary
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uv_err_t uv_dlopen(IntPtr handle, out IntPtr ptr);
+		internal extern static uv_err_t uv_dlopen(IntPtr name, out IntPtr handle);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static uv_err_t uv_dlopen(string name, out IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static uv_err_t uv_dlclose(IntPtr handle);
@@ -31,10 +34,10 @@ namespace LibuvSharp
 		{
 			Ensure.ArgumentNotNull(library, "library");
 
-			var ptr = Marshal.StringToHGlobalAnsi(library);
-			var error = uv_dlopen(ptr, out handle);
-			Marshal.FreeHGlobal(ptr);
-			Ensure.Success(error);
+			var error = uv_dlopen(library, out handle);
+			if (error.code != uv_err_code.UV_OK) {
+				throw new Exception();
+			}
 		}
 
 		public void Close()

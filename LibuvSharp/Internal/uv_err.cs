@@ -1,7 +1,33 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe internal struct uv_err_t
+	{
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern sbyte *uv_strerror(uv_err_t error);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern sbyte *uv_err_name(uv_err_t error);
+
+		public uv_err_code code;
+		int sys_errno_;
+
+		public string Description {
+			get {
+				return new string(uv_strerror(this));
+			}
+		}
+
+		public string Name {
+			get {
+				return new string(uv_err_name(this));
+			}
+		}
+	}
+
 	internal enum uv_err_code
 	{
 		UV_UNKNOWN = -1,
