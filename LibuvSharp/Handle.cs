@@ -5,6 +5,14 @@ namespace LibuvSharp
 {
 	public abstract class Handle : IDisposable
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		internal delegate void callback(IntPtr req, int status);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		internal delegate UnixBufferStruct alloc_callback_unix(IntPtr data, int size);
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		internal delegate WindowsBufferStruct alloc_callback_win(IntPtr data, int size);
+
 		public Loop Loop { get; protected set; }
 
 		GCHandle GCHandle { get; set; }

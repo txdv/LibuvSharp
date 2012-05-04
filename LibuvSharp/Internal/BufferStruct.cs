@@ -7,12 +7,12 @@ namespace LibuvSharp
 	internal struct WindowsBufferStruct
 	{
 		internal WindowsBufferStruct(IntPtr @base, int length)
-			: this(@base, (ulong)length)
+			: this(@base, (uint)length)
 		{
 		}
 
 		internal WindowsBufferStruct(IntPtr @base, long length)
-			: this(@base, (ulong)length)
+			: this(@base, (uint)length)
 		{
 		}
 
@@ -21,13 +21,13 @@ namespace LibuvSharp
 		{
 		}
 
-		internal WindowsBufferStruct(IntPtr @base, ulong length)
+		internal WindowsBufferStruct(IntPtr @base, uint length)
 		{
 			this.@base = @base;
 			this.length = length;
 		}
 
-		internal ulong length;
+		internal uint length;
 		internal IntPtr @base;
 	}
 

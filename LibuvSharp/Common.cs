@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	unsafe internal class Request<T> : IDisposable where T : struct
+	unsafe internal class PermaRequest : IDisposable
 	{
 		public IntPtr Handle { get; protected set; }
 
@@ -20,33 +20,33 @@ namespace LibuvSharp
 			}
 		}
 
-		public T Value {
+		public GCHandle GCHandle {
 			get {
-				T *p = (T *)Data;
+				GCHandle *p = (GCHandle *)Data;
 				return *p;
 			}
 			set {
-				T *p = (T *)Data;
+				GCHandle *p = (GCHandle *)Data;
 				*p = value;
 			}
 		}
 
-		public Request(int size)
+		public PermaRequest(int size)
 			: this(size, true)
 		{
 		}
 
-		public Request(int size, bool allocate)
+		public PermaRequest(int size, bool allocate)
 			: this(UV.Alloc(size), allocate)
 		{
 		}
 
-		public Request(IntPtr ptr)
+		public PermaRequest(IntPtr ptr)
 			: this(ptr, true)
 		{
 		}
 
-		protected Request(IntPtr handle, bool allocate)
+		protected PermaRequest(IntPtr handle, bool allocate)
 		{
 			Handle = handle;
 			request = (uv_req_t *)handle;
@@ -54,8 +54,10 @@ namespace LibuvSharp
 			Data = IntPtr.Zero;
 
 			if (allocate) {
-				Data = UV.Alloc(sizeof(T));
+				Data = UV.Alloc(sizeof(GCHandle));
 			}
+
+			GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
 		}
 
 		public virtual void Dispose()
@@ -70,6 +72,9 @@ namespace LibuvSharp
 			}
 
 			if (Data != IntPtr.Zero) {
+				if (GCHandle.IsAllocated) {
+					GCHandle.Free();
+				}
 				UV.Free(Data);
 				Data = IntPtr.Zero;
 			}
@@ -78,31 +83,6 @@ namespace LibuvSharp
 				UV.Free(Handle);
 				Handle = IntPtr.Zero;
 			}
-		}
-	}
-
-	internal class PermaRequest : Request<GCHandle>
-	{
-		public PermaRequest(int size)
-			: this(size, true)
-		{
-		}
-
-		~PermaRequest()
-		{
-			Dispose(false);
-		}
-
-		public PermaRequest(int size, bool allocate)
-			: base(size, allocate)
-		{
-			Value = GCHandle.Alloc(this, GCHandleType.Normal);
-		}
-
-		public override void Dispose(bool disposing)
-		{
-			Value.Free();
-			base.Dispose(disposing);
 		}
 
 		unsafe public static T GetObject<T>(IntPtr ptr) where T : class

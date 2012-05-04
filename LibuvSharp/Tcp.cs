@@ -78,10 +78,10 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_connect(IntPtr req, IntPtr handle, sockaddr_in addr, Action<IntPtr, int> callback);
+		internal static extern int uv_tcp_connect(IntPtr req, IntPtr handle, sockaddr_in addr, callback callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, Action<IntPtr, int> callback);
+		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, callback callback);
 
 
 		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<Exception, Tcp> callback)

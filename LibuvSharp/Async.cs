@@ -6,6 +6,7 @@ namespace LibuvSharp
 {
 	public class Async : Handle
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void async_cb(IntPtr handle, int status);
 
 		[DllImport("uv", CallingConvention=CallingConvention.Cdecl)]

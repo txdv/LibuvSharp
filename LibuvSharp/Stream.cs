@@ -6,8 +6,16 @@ namespace LibuvSharp
 {
 	public abstract class Stream : Handle, IStream
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_read_start(IntPtr stream, Func<IntPtr, int, UnixBufferStruct> alloc_callback, Action<IntPtr, IntPtr, UnixBufferStruct> read_callback);
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		internal delegate void read_callback_unix(IntPtr a, IntPtr blet, UnixBufferStruct buf);
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		internal delegate void read_callback_win(IntPtr a, IntPtr blet, WindowsBufferStruct buf);
+
+		[DllImport("uv", EntryPoint = "uv_read_start", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_read_start_unix(IntPtr stream, alloc_callback_unix alloc_callback, read_callback_unix read_callback);
+
+		[DllImport("uv", EntryPoint = "uv_read_start", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_read_start_win(IntPtr stream, alloc_callback_win alloc_callback, read_callback_win read_callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_watcher_start(IntPtr stream, Action<IntPtr> read_watcher_callback);
@@ -15,16 +23,20 @@ namespace LibuvSharp
 		[DllImport ("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_stop(IntPtr stream);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_write(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, Action<IntPtr, int> callback);
+		[DllImport("uv", EntryPoint = "uv_write", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_write_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, callback callback);
+
+		[DllImport("uv", EntryPoint = "uv_write", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_write_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, callback callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, Action<IntPtr, int> callback);
+		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, callback callback);
 
 		internal Stream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
-			read_cb = read_callback;
+			read_cb_unix = read_callback_u;
+			read_cb_win = read_callback_w;
 		}
 
 		internal Stream(Loop loop, int size)
@@ -39,7 +51,12 @@ namespace LibuvSharp
 
 		public void Resume()
 		{
-			int r = uv_read_start(handle, Loop.buffer.AllocCallback, read_cb);
+			int r;
+			if (UV.isUnix) {
+				r = uv_read_start_unix(handle, Loop.buffer.AllocCallbackUnix, read_cb_unix);
+			} else {
+				r = uv_read_start_win(handle, Loop.buffer.AllocCallbackWin, read_cb_win);
+			}
 			Ensure.Success(r, Loop);
 		}
 
@@ -49,8 +66,19 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		Action<IntPtr, IntPtr, UnixBufferStruct> read_cb;
-		internal void read_callback(IntPtr stream, IntPtr size, UnixBufferStruct buf)
+		read_callback_unix read_cb_unix;
+		internal void read_callback_u(IntPtr stream, IntPtr size, UnixBufferStruct buf)
+		{
+			read_callback(stream, size);
+		}
+
+		read_callback_win read_cb_win;
+		internal void read_callback_w(IntPtr stream, IntPtr size, WindowsBufferStruct buf)
+		{
+			read_callback(stream, size);
+		}
+
+		internal void read_callback(IntPtr stream, IntPtr size)
 		{
 			long nread = size.ToInt64();
 			if (nread == 0) {
@@ -99,7 +127,7 @@ namespace LibuvSharp
 			OnRead += callback;
 		}
 
-		unsafe public void Write(byte[] data, int length, Action<bool> callback)
+		public void Write(byte[] data, int length, Action<bool> callback)
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UV_WRITE);
@@ -110,10 +138,17 @@ namespace LibuvSharp
 				}
 			};
 
-			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+			int r;
+			if (UV.isUnix) {
+				UnixBufferStruct[] buf = new UnixBufferStruct[1];
+				buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+				r = uv_write_unix(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
+			} else {
+				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
+				buf[0] = new WindowsBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+				r = uv_write_win(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
+			}
 
-			int r = uv_write(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
 			Ensure.Success(r, Loop);
 		}
 		public void Write(byte[] data, int length)

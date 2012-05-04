@@ -7,12 +7,14 @@ namespace LibuvSharp
 	{
 		public byte[] Buffer { get; protected set; }
 		public int Size { get; protected set; }
-		public Func<IntPtr, int, UnixBufferStruct> AllocCallback { get; protected set; }
+		public Tcp.alloc_callback_unix AllocCallbackUnix { get; protected set; }
+		public Tcp.alloc_callback_win AllocCallbackWin { get; protected set; }
 		GCHandle GCHandle { get; set; }
 
 		public ByteBuffer()
 		{
-			AllocCallback = Alloc;
+			AllocCallbackUnix = AllocUnix;
+			AllocCallbackWin = AllocWin;
 		}
 
 		~ByteBuffer()
@@ -48,9 +50,14 @@ namespace LibuvSharp
 			return GCHandle.AddrOfPinnedObject();
 		}
 
-		UnixBufferStruct Alloc(IntPtr data, int size)
+		UnixBufferStruct AllocUnix(IntPtr data, int size)
 		{
 			return new UnixBufferStruct(Alloc(size), size);
+		}
+
+		WindowsBufferStruct AllocWin(IntPtr data, int size)
+		{
+			return new WindowsBufferStruct(Alloc(size), size);
 		}
 
 		void Free()

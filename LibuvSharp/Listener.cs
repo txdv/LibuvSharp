@@ -13,14 +13,14 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_listen(IntPtr stream, int backlog, Action<IntPtr, int> callback);
+		internal static extern int uv_listen(IntPtr stream, int backlog, callback callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_accept(IntPtr server, IntPtr client);
 
 		public int DefaultBacklog { get; set; }
 
-		Action<IntPtr, int> listen_cb;
+		callback listen_cb;
 		void listen_callback(IntPtr req, int status)
 		{
 			Stream stream = Create();
