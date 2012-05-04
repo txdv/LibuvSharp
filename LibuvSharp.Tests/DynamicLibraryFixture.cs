@@ -9,20 +9,28 @@ namespace LibuvSharp.Tests
 		[Test]
 		public static void Error()
 		{
-			// TODO: if library or function does not exist, I get AccessViolationErrors ...
-
 			IntPtr ptr;
-			string lib;
-			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				lib = "libuv.so";
-			} else {
-				lib = "uv.dll";
-			}
 
-			var dl = new DynamicLibrary(lib);
+			Assert.Throws<System.IO.FileNotFoundException>(() => DynamicLibrary.Open("NOT_EXISTING"));
+
+			string failure = "FAILURE";
+			var fs = new System.IO.StreamWriter(System.IO.File.OpenWrite(failure));
+			fs.Write("foobar");
+			fs.Close();
+
+			Assert.IsTrue(System.IO.File.Exists(failure));
+			Assert.Throws<System.IO.FileNotFoundException>(() => DynamicLibrary.Open(failure));
+
+			System.IO.File.Delete(failure);
+
+
+			var dl = DynamicLibrary.Open(DynamicLibrary.Decorate("uv"));
 
 			Assert.IsTrue(dl.TryGetSymbol("uv_default_loop", out ptr));
-			Assert.IsNotNull(ptr);
+			Assert.AreNotEqual(ptr, IntPtr.Zero);
+
+			Assert.IsFalse(dl.TryGetSymbol("NOT_EXISTING", out ptr));
+			Assert.AreEqual(ptr, IntPtr.Zero);
 
 			Assert.IsFalse(dl.Closed);
 			dl.Close();
