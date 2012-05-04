@@ -11,8 +11,8 @@ namespace LibuvSharp.Tests
 		[Test]
 		public static void Run()
 		{
-			Run(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			Run(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			Run(Default.IPv4.IPEndPoint);
+			Run(Default.IPv6.IPEndPoint);
 		}
 
 		public static void Run(IPEndPoint ep)
@@ -69,11 +69,17 @@ namespace LibuvSharp.Tests
 		[Test]
 		public static void NotNullUdp()
 		{
+			NotNullUdp(Default.IPv4.IPEndPoint);
+			NotNullUdp(Default.IPv6.IPEndPoint);
+		}
+
+		public static void NotNullUdp(IPEndPoint ep)
+		{
 			var u = new Udp();
 			Action<bool> cb = (_) => { };
-			string ipstr = "127.0.0.1";
-			var ip = IPAddress.Parse(ipstr);
-			var ep = new IPEndPoint(ip, 7999);
+
+			string ipstr = ep.Address.ToString();
+			var ip = ep.Address;
 
 			// constructor
 			Assert.Throws<ArgumentNullException>(() => new Udp(null));

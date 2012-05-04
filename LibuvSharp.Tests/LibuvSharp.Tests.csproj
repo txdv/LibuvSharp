@@ -42,6 +42,7 @@
     <Compile Include="UdpFixture.cs" />
     <Compile Include="DynamicLibraryFixture.cs" />
     <Compile Include="LoopFixture.cs" />
+    <Compile Include="Default.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

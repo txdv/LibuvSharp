@@ -12,8 +12,8 @@ namespace LibuvSharp.Tests
 		[TestCase]
 		public static void Simple()
 		{
-			Simple(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			Simple(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			Simple(Default.IPv4.IPEndPoint);
+			Simple(Default.IPv6.IPEndPoint);
 		}
 
 		public static void Simple(IPEndPoint ep)
@@ -79,8 +79,8 @@ namespace LibuvSharp.Tests
 		[TestCase]
 		public static void Stress()
 		{
-			Stress(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			Stress(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			Stress(Default.IPv4.IPEndPoint);
+			//Stress(Default.IPv6.IPEndPoint);
 		}
 
 		public static void Stress(IPEndPoint ep)
@@ -144,8 +144,8 @@ namespace LibuvSharp.Tests
 		[TestCase]
 		public static void OneSideClose()
 		{
-			OneSideClose(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
-			OneSideClose(new IPEndPoint(IPAddress.Parse("::1"), 8000));
+			OneSideClose(Default.IPv4.IPEndPoint);
+			OneSideClose(Default.IPv6.IPEndPoint);
 		}
 
 		public static void OneSideClose(IPEndPoint ep)
@@ -207,9 +207,9 @@ namespace LibuvSharp.Tests
 			TcpListener s1 = new TcpListener();
 			TcpListener s2 = new TcpListener();
 
-			s1.Bind(IPAddress.Any, 8000);
+			s1.Bind(IPAddress.Any, Default.Port);
 			s1.Listen((_) => {});
-			s2.Bind(IPAddress.Any, 8000);
+			s2.Bind(IPAddress.Any, Default.Port);
 
 			Assert.Throws<SocketException>(() => s2.Listen((_) => {}), "Address already in use");
 
