@@ -8,10 +8,10 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class PipeFixture
 	{
-		//[TestCase]
+		[TestCase]
 		public static void Simple()
 		{
-			Simple("PipeTestSimple");
+			Simple(Default.Pipename);
 		}
 
 		public static void Simple(string name)
@@ -73,10 +73,10 @@ namespace LibuvSharp.Tests
 			return sb.ToString();
 		}
 
-		//[TestCase]
+		[TestCase]
 		public static void Stress()
 		{
-			Stress("PipeTestStress");
+			Stress(Default.Pipename);
 		}
 
 		public static void Stress(string name)
@@ -137,10 +137,10 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		//[TestCase]
+		[TestCase]
 		public static void OneSideClose()
 		{
-			OneSideClose("PipeTestOneSidedClose");
+			OneSideClose(Default.Pipename);
 		}
 
 		public static void OneSideClose(string name)

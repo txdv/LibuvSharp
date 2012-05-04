@@ -26,11 +26,19 @@ namespace LibuvSharp.Tests
 			Port = 8000;
 			IPv4 = new IPInfo("127.0.0.1", Port);
 			IPv6 = new IPInfo("::1", Port);
+
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				Pipename = "testpipe";
+			} else {
+				Pipename = @"\\.\pipe\testpipe";
+			}
 		}
 
 		public static int Port { get; private set; }
 		public static IPInfo IPv4 { get; private set; }
 		public static IPInfo IPv6 { get; private set; }
+
+		public static string Pipename { get; private set; }
 	}
 }
 
