@@ -9,7 +9,7 @@ namespace LibuvSharp
 		internal static extern int uv_timer_init(IntPtr loop, IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_start(IntPtr timer, IntPtr callback, long timeout, long repeat);
+		internal static extern int uv_timer_start(IntPtr timer, callback callback, long timeout, long repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_stop(IntPtr timer);
@@ -23,7 +23,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern long uv_timer_get_repeat(IntPtr timer);
 
-		private Action<IntPtr, int> cb;
+		callback cb;
 
 		public Timer()
 			: this(Loop.Default)
@@ -56,7 +56,7 @@ namespace LibuvSharp
 
 		public bool Running { get; private set; }
 
-		internal void Start(long timeout, long repeat, IntPtr callback)
+		internal void Start(long timeout, long repeat, callback callback)
 		{
 			if (Running) {
 				Stop();
@@ -72,7 +72,7 @@ namespace LibuvSharp
 				callback(this, status);
 			};
 
-			Start(timeout, repeat, Marshal.GetFunctionPointerForDelegate(cb));
+			Start(timeout, repeat, cb);
 		}
 		public void Start(long repeat, Action<Timer, int> callback)
 		{
@@ -93,7 +93,7 @@ namespace LibuvSharp
 				callback(status);
 			};
 
-			Start(timeout, repeat, Marshal.GetFunctionPointerForDelegate(cb));
+			Start(timeout, repeat, cb);
 		}
 		public void Start(long repeat, Action<int> callback)
 		{
@@ -113,7 +113,7 @@ namespace LibuvSharp
 			cb = delegate (IntPtr h, int status) {
 				callback();
 			};
-			Start(timeout, repeat, Marshal.GetFunctionPointerForDelegate(cb));
+			Start(timeout, repeat, cb);
 		}
 		public void Start(long repeat, Action callback)
 		{
