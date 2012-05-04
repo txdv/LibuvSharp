@@ -196,13 +196,13 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		//[Test]
-		[ExpectedException(typeof(System.IO.FileNotFoundException))]
+		[Test]
 		public static void ConnectToNotListeningFile()
 		{
 			Pipe.Connect("NOT_EXISTING", (e, pipe) => {
+				Assert.IsNotNull(e);
+				Assert.AreEqual(e.GetType(), typeof(System.IO.FileNotFoundException));
 				Assert.IsNull(pipe);
-				throw e;
 			});
 			Loop.Default.Run();
 		}

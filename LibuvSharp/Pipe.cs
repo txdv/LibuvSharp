@@ -84,7 +84,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_pipe_connect(IntPtr req, IntPtr handle, string name, Action<IntPtr, int> connect_cb);
+		static extern void uv_pipe_connect(IntPtr req, IntPtr handle, string name, callback connect_cb);
 
 		public static void Connect(string name, Action<Exception, Pipe> callback)
 		{
