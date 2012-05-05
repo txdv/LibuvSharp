@@ -17,6 +17,8 @@ namespace LibuvSharp
 		UV_TIMER,
 		UV_TTY,
 		UV_UDP,
+		UV_POLL,
+		UV_FILE,
 		UV_HANDLE_TYPE_PRIVATE,
 		UV_HANDLE_TYPE_MAX,
 	}

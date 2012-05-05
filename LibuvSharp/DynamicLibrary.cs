@@ -41,16 +41,16 @@ namespace LibuvSharp
 	class LibuvDynamicLibrary : DynamicLibrary
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uv_err_t uv_dlopen(IntPtr name, out IntPtr handle);
+		internal extern static int uv_dlopen(IntPtr name, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uv_err_t uv_dlopen(string name, out IntPtr handle);
+		internal extern static int uv_dlopen(string name, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uv_err_t uv_dlclose(IntPtr handle);
+		internal extern static void uv_dlclose(IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uv_err_t uv_dlsym(IntPtr handle, string name, out IntPtr ptr);
+		internal extern static int uv_dlsym(IntPtr handle, string name, out IntPtr ptr);
 
 		[DllImport("uv")]
 		internal extern static IntPtr uv_dlerror(IntPtr handle);
@@ -66,23 +66,25 @@ namespace LibuvSharp
 			}
 		}
 
-		void Check(uv_err_t error)
+		void Check(int ret)
 		{
-			if (error.code != uv_err_code.UV_OK) {
-				throw new System.IO.FileNotFoundException();
+			if (ret < 0) {
+				throw new Exception(Marshal.PtrToStringAnsi(uv_dlerror(handle)));
 			}
 		}
 
 		public LibuvDynamicLibrary()
 		{
-			Check(uv_dlopen(IntPtr.Zero, out handle));
+			handle = Marshal.AllocHGlobal(28);
+			Check(uv_dlopen(IntPtr.Zero, handle));
 		}
 
 		public LibuvDynamicLibrary(string library)
 		{
 			Ensure.ArgumentNotNull(library, "library");
 
-			Check(uv_dlopen(library, out handle));
+			handle = Marshal.AllocHGlobal(28);
+			Check(uv_dlopen(library, handle));
 		}
 
 		public override void Close()
@@ -96,13 +98,15 @@ namespace LibuvSharp
 		public override bool TryGetSymbol(string name, out IntPtr pointer)
 		{
 			pointer = IntPtr.Zero;
-			return uv_dlsym(handle, name, out pointer).code == uv_err_code.UV_OK;
+			return uv_dlsym(handle, name, out pointer) == 0;
 		}
 
 		public override IntPtr GetSymbol(string name)
 		{
-			IntPtr ptr;
-			Ensure.Success(uv_dlsym(handle, name, out ptr));
+			IntPtr ptr = IntPtr.Zero;
+			if (uv_dlsym(handle, name, out ptr) < 0) {
+				throw new Exception(Marshal.PtrToStringAnsi(uv_dlerror(handle)));
+			}
 			return ptr;
 		}
 	}
@@ -114,7 +118,7 @@ namespace LibuvSharp
 		public void Check(IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero) {
-				throw new System.IO.FileNotFoundException();
+				throw new Exception();
 			}
 
 			handle = ptr;
@@ -150,7 +154,7 @@ namespace LibuvSharp
 		{
 			var ptr = GetProcAddress(handle, name);
 			if (ptr == IntPtr.Zero) {
-				throw new ArgumentException("invalid argument");
+				throw new Exception();
 			}
 			return ptr;
 		}

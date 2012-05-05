@@ -11,7 +11,7 @@ namespace LibuvSharp.Tests
 		{
 			IntPtr ptr;
 
-			Assert.Throws<System.IO.FileNotFoundException>(() => DynamicLibrary.Open("NOT_EXISTING"));
+			Assert.Throws<Exception>(() => DynamicLibrary.Open("NOT_EXISTING"));
 
 			string failure = "FAILURE";
 			var fs = new System.IO.StreamWriter(System.IO.File.OpenWrite(failure));
@@ -19,7 +19,7 @@ namespace LibuvSharp.Tests
 			fs.Close();
 
 			Assert.IsTrue(System.IO.File.Exists(failure));
-			Assert.Throws<System.IO.FileNotFoundException>(() => DynamicLibrary.Open(failure));
+			Assert.Throws<Exception>(() => DynamicLibrary.Open(failure));
 
 			System.IO.File.Delete(failure);
 
@@ -31,6 +31,8 @@ namespace LibuvSharp.Tests
 
 			Assert.IsFalse(dl.TryGetSymbol("NOT_EXISTING", out ptr));
 			Assert.AreEqual(ptr, IntPtr.Zero);
+
+			Assert.Throws<Exception>(() => dl.GetSymbol("NOT_EXISTING"));
 
 			Assert.IsFalse(dl.Closed);
 			dl.Close();
