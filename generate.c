@@ -35,7 +35,6 @@ void print_handle()
 #define XX(uc, lc) printf("\t\tUV_%s,\n", #uc);
   UV_HANDLE_TYPE_MAP(XX);
 #undef XX
-  printf("\t\tUV_POLL,\n");
   printf("\t\tUV_FILE,\n");
   printf("\t\tUV_HANDLE_TYPE_PRIVATE,\n");
   printf("\t\tUV_HANDLE_TYPE_MAX,\n");

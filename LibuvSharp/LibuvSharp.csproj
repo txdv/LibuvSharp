@@ -70,6 +70,7 @@
     <Compile Include="Internal\ByteBuffer.cs" />
     <Compile Include="Internal\uv_err_t.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
+    <Compile Include="Poll.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
