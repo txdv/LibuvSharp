@@ -1,5 +1,6 @@
 #include <uv.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define UV_ERRNO_GEN(val, name, s) \
 if (val != UV_UNKNOWN) { \
@@ -39,8 +40,13 @@ void print_handle()
   printf("\t}\n}\n");
 }
 
-int main(int i, char **argv)
+int main(int argc, char **argv)
 {
+  if (argc < 2) {
+    printf("Provide at least on parameter (err, req, handle)");
+    exit(0);
+  }
+
   if (!strcmp(argv[1], "err")) {
     print_err();
   } else if (!strcmp(argv[1], "req")) {
