@@ -192,13 +192,11 @@ namespace LibuvSharp
 				return;
 			}
 
-			if (OnMessage != null) {
-				OnMessage(Loop.buffer.Get(n), UV.GetIPEndPoint(sockaddr));
-			}
+			OnMessage(UV.GetIPEndPoint(sockaddr), Loop.buffer.Get(n));
 		}
 
 		bool receive_init = false;
-		public void Receive(Action<byte[], IPEndPoint> callback)
+		public void Receive(Action<IPEndPoint, byte[]> callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 
@@ -212,20 +210,24 @@ namespace LibuvSharp
 				Ensure.Success(r, Loop);
 				receive_init = true;
 			}
-			OnMessage += callback;
+			Message += callback;
 		}
 
-		public void Receive(Encoding encoding, Action<string, IPEndPoint> callback)
+		public void Receive(Encoding encoding, Action<IPEndPoint, string> callback)
 		{
 			Ensure.ArgumentNotNull(encoding, "encoding");
 			Ensure.ArgumentNotNull(callback, "callback");
 
-			Receive((data, ep) => {
-				callback(encoding.GetString(data), ep);
-			});
+			Receive((ep, data) => callback(ep, encoding.GetString(data)));
 		}
 
-		internal event Action<byte[], IPEndPoint> OnMessage = null;
+		event Action<IPEndPoint, byte[]> Message = null;
+		void OnMessage(IPEndPoint endPoint, byte[] data)
+		{
+			if (Message != null) {
+				Message(endPoint, data);
+			}
+		}
 	}
 }
 

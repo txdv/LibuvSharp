@@ -27,7 +27,7 @@ namespace LibuvSharp.Tests
 			Udp server = new Udp();
 
 			server.Bind(ep);
-			server.Receive(Encoding.ASCII, (str, rinfo) => {
+			server.Receive(Encoding.ASCII, (rinfo, str) => {
 				Assert.AreEqual(str, "PING");
 				sv_recv_cb_called++;
 				server.Send(rinfo, Encoding.ASCII.GetBytes("PONG"), (s) => {
@@ -38,7 +38,7 @@ namespace LibuvSharp.Tests
 
 			client.Send(ep, Encoding.ASCII.GetBytes("PING"), (s) => {
 				cl_send_cb_called++;
-				client.Receive(Encoding.ASCII, (str, rinfo) => {
+				client.Receive(Encoding.ASCII, (rinfo, str) => {
 					Assert.AreEqual(str, "PONG");
 					cl_recv_cb_called++;
 					client.Close(() => { close_cb_called++; });
