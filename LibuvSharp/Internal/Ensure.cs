@@ -10,7 +10,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern uv_err_t uv_last_error(IntPtr loop);
 
-		static Exception Map(uv_err_t error, string name = null)
+		internal static Exception Map(uv_err_t error, string name = null)
 		{
 			if (error.code == uv_err_code.UV_OK) {
 				return null;
