@@ -18,7 +18,7 @@ namespace LibuvSharp.Tests
 		{
 			Timer t = new Timer();
 			int i = 0;
-			t.Start(TimeSpan.FromMilliseconds(spawn), (_) => {
+			t.Start(TimeSpan.FromMilliseconds(spawn), () => {
 				i++;
 				if (i > times) {
 					t.Close();
