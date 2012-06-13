@@ -32,6 +32,7 @@
     <Reference Include="nunit.framework">
       <HintPath>..\dlls\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -43,6 +44,8 @@
     <Compile Include="DynamicLibraryFixture.cs" />
     <Compile Include="LoopFixture.cs" />
     <Compile Include="Default.cs" />
+    <Compile Include="DirectoryFixture.cs" />
+    <Compile Include="FileFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -32,6 +32,11 @@ namespace LibuvSharp.Tests
 			} else {
 				Pipename = @"\\.\pipe\testpipe";
 			}
+
+			Directory = "./tmp";
+			SecondDirectory = Directory + "2";
+
+			File = "file";
 		}
 
 		public static int Port { get; private set; }
@@ -39,6 +44,11 @@ namespace LibuvSharp.Tests
 		public static IPInfo IPv6 { get; private set; }
 
 		public static string Pipename { get; private set; }
+
+		public static string Directory { get; private set; }
+		public static string SecondDirectory { get; private set; }
+
+		public static string File { get; private set; }
 	}
 }
 
