@@ -5,94 +5,6 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	unsafe internal class PermaRequest : IDisposable
-	{
-		public IntPtr Handle { get; protected set; }
-
-		protected uv_req_t *request;
-
-		public IntPtr Data {
-			get {
-				return request->data;
-			}
-			set {
-				request->data = value;
-			}
-		}
-
-		public GCHandle GCHandle {
-			get {
-				GCHandle *p = (GCHandle *)Data;
-				return *p;
-			}
-			set {
-				GCHandle *p = (GCHandle *)Data;
-				*p = value;
-			}
-		}
-
-		public PermaRequest(int size)
-			: this(size, true)
-		{
-		}
-
-		public PermaRequest(int size, bool allocate)
-			: this(UV.Alloc(size), allocate)
-		{
-		}
-
-		public PermaRequest(IntPtr ptr)
-			: this(ptr, true)
-		{
-		}
-
-		protected PermaRequest(IntPtr handle, bool allocate)
-		{
-			Handle = handle;
-			request = (uv_req_t *)handle;
-
-			Data = IntPtr.Zero;
-
-			if (allocate) {
-				Data = UV.Alloc(sizeof(GCHandle));
-			}
-
-			GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
-		}
-
-		public virtual void Dispose()
-		{
-			Dispose(true);
-		}
-
-		public virtual void Dispose(bool disposing)
-		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
-			if (Data != IntPtr.Zero) {
-				if (GCHandle.IsAllocated) {
-					GCHandle.Free();
-				}
-				UV.Free(Data);
-				Data = IntPtr.Zero;
-			}
-
-			if (Handle != IntPtr.Zero) {
-				UV.Free(Handle);
-				Handle = IntPtr.Zero;
-			}
-		}
-
-		unsafe public static T GetObject<T>(IntPtr ptr) where T : class
-		{
-			uv_req_t *req = (uv_req_t *)ptr.ToPointer();
-			GCHandle *gchandle = (GCHandle *)req->data;
-			return (gchandle->Target as T);
-		}
-	}
-
 	internal class CallbackPermaRequest : PermaRequest
 	{
 		public CallbackPermaRequest(int size)
@@ -146,87 +58,10 @@ namespace LibuvSharp
 		}
 	}
 
-	unsafe internal class FileSystemRequest : PermaRequest
-	{
-		private static readonly int Size = UV.Sizeof(UvHandleType.UV_FS_EVENT);
-
-		protected uv_fs_t *fsrequest;
-
-		public FileSystemRequest()
-			: this(true)
-		{
-		}
-
-		public FileSystemRequest(bool allocate)
-			: base(Size, allocate)
-		{
-			fsrequest = (uv_fs_t *)Handle;
-		}
-
-		public Action<Exception, FileSystemRequest> Callback { get; set; }
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern void uv_fs_req_cleanup(IntPtr req);
-
-		public override void Dispose(bool disposing)
-		{
-			uv_fs_req_cleanup(Handle);
-			base.Dispose(disposing);
-		}
-
-		public IntPtr Result {
-			get {
-				return fsrequest->result;
-			}
-		}
-
-		public int Error {
-			get {
-				return fsrequest->error;
-			}
-		}
-
-		public IntPtr Pointer {
-			get {
-				return fsrequest->ptr;
-			}
-		}
-
-		public void End(IntPtr ptr)
-		{
-			// good idea when you have only the pointer, but no need for it ...
-			// var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
-			Exception e = null;
-			if (Result.ToInt32() == -1) {
-				throw new Exception();
-			}
-
-			if (Callback != null) {
-				Callback(e, this);
-			}
-			Dispose();
-		}
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct uv_fs_t
-	{
-		public UvRequestType type;
-		public IntPtr data;
-
-		public IntPtr loop;
-		public int fs_type;
-		public IntPtr cb;
-		public IntPtr result;
-		public IntPtr ptr;
-		public IntPtr path;
-		public int error;
-	}
-
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct lin_stat
 	{
-		public long dev;
+		public ulong dev;
 		public uint ino;
 		public uint mode;
 		public uint nlink;
@@ -234,6 +69,8 @@ namespace LibuvSharp
 		public uint gid;
 		public ulong rdev;
 		public int size;
+		public int blksize;
+		public int blkcnt;
 		public int atime;
 		public int mtime;
 		public int ctime;

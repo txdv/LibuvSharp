@@ -6,6 +6,12 @@ namespace LibuvSharp
 	[StructLayout(LayoutKind.Sequential)]
 	unsafe internal struct uv_err_t
 	{
+		public uv_err_t(int error)
+		{
+			code = (uv_err_code)error;
+			sys_errno_ = 0;
+		}
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_strerror(uv_err_t error);
 

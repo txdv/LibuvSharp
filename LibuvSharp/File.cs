@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -19,17 +20,19 @@ namespace LibuvSharp
 
 	public class File
 	{
-		public File(Loop loop, IntPtr handle)
+		private delegate void uv_fs_cb(IntPtr IntPtr);
+
+		private File(Loop loop, IntPtr handle)
 		{
-			DefaultLoop = loop;
+			Loop = loop;
 			FileHandle = handle;
 		}
 
-		public Loop DefaultLoop { get; protected set; }
+		public Loop Loop { get; protected set; }
 		public IntPtr FileHandle { get; protected set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, Action<IntPtr> callback);
+		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
 
 		public static void Open(Loop loop, string path, FileAccess access, Action<Exception, File> callback)
 		{
@@ -39,9 +42,11 @@ namespace LibuvSharp
 				if (fsr.Result != IntPtr.Zero) {
 					file = new File(loop, fsr.Result);
 				}
-				callback(ex, file);
+				if (callback != null) {
+					callback(ex, file);
+				}
 			};
-			int r = uv_fs_open(loop.Handle, fsr.Handle, path, (int)access, 0, fsr.End);
+			int r = uv_fs_open(loop.Handle, fsr.Handle, path, (int)access, 0, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Open(string path, FileAccess access, Action<Exception, File> callback)
@@ -50,13 +55,13 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_close(IntPtr loop, IntPtr req, IntPtr file, Action<IntPtr> callback);
+		private static extern int uv_fs_close(IntPtr loop, IntPtr req, IntPtr file, uv_fs_cb callback);
 
 		public void Close(Loop loop, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_close(loop.Handle, fsr.Handle, FileHandle, fsr.End);
+			int r = uv_fs_close(loop.Handle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Close(Loop loop)
@@ -65,11 +70,11 @@ namespace LibuvSharp
 		}
 		public void Close(Action<Exception> callback)
 		{
-			Close(Loop.Default, callback);
+			Close(Loop, callback);
 		}
 		public void Close()
 		{
-			Close(Loop.Default);
+			Close(Loop);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -83,7 +88,7 @@ namespace LibuvSharp
 				callback(ex, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			int r = uv_fs_read(loop.Handle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, fsr.End);
+			int r = uv_fs_read(loop.Handle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Read(byte[] data, int length, int offset, Action<Exception, int> callback)
@@ -92,17 +97,19 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_write(IntPtr loop, IntPtr req, IntPtr file, IntPtr buf, int length, int offset);
+		private static extern int uv_fs_write(IntPtr loop, IntPtr req, IntPtr file, IntPtr buf, IntPtr length, long offset, uv_fs_cb fs_cb);
 
 		public void Write(Loop loop, byte[] data, int length, int offset, Action<Exception, int> callback)
 		{
 			var datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
 			fsr.Callback += (ex, fsr2) => {
-				callback(ex, (int)fsr.Result);
+				if (callback != null) {
+					callback(ex, (int)fsr.Result);
+				}
 				datagchandle.Free();
 			};
-			int r = uv_fs_write(loop.Handle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), length, offset);
+			int r = uv_fs_write(loop.Handle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Write(Loop loop, byte[] data, int length, int offset)
@@ -150,22 +157,41 @@ namespace LibuvSharp
 			Write(data, data.Length, callback);
 		}
 
+		public void Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback)
+		{
+			Write(loop, encoding.GetBytes(text), callback);
+		}
+		public void Write(Loop loop, Encoding encoding, string text)
+		{
+			Write(loop, encoding, text, null);
+		}
+		public void Write(Encoding encoding, string text, Action<Exception, int> callback)
+		{
+			Write(Loop, encoding, text, callback);
+		}
+		public void Write(Encoding encoding, string text)
+		{
+			Write(encoding, text, null);
+		}
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		unsafe private static extern void uv_fs_req_stat(IntPtr req, lin_stat *stat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_stat(IntPtr loop, IntPtr req, string path, Action<IntPtr> callback);
+		private static extern int uv_fs_stat(IntPtr loop, IntPtr req, string path, uv_fs_cb callback);
 
 		unsafe public static void Stat(Loop loop, string path, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => {
-				lin_stat stats = new lin_stat();
-				uv_fs_req_stat(fsr.Handle, &stats);
-				Console.WriteLine (stats);
-				callback(ex);
+				// TODO: do this
+				lin_stat *stats = (lin_stat *)fsr.Pointer;
+
+				if (callback != null) {
+					callback(ex);
+				}
 			};
-			int r = uv_fs_stat(loop.Handle, fsr.Handle, path, fsr.End);
+			int r = uv_fs_stat(loop.Handle, fsr.Handle, path, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 
@@ -181,18 +207,18 @@ namespace LibuvSharp
 				Console.WriteLine (stats);
 				callback(ex);
 			};
-			int r = uv_fs_fstat(loop.Handle, fsr.Handle, FileHandle, fsr.End);
+			int r = uv_fs_fstat(loop.Handle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fsync(IntPtr loop, IntPtr req, IntPtr file, Action<IntPtr> callback);
+		private static extern int uv_fs_fsync(IntPtr loop, IntPtr req, IntPtr file, uv_fs_cb callback);
 
 		public void Sync(Loop loop, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_fsync(loop.Handle, fsr.Handle, FileHandle, fsr.End);
+			int r = uv_fs_fsync(loop.Handle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Sync(Loop loop)
@@ -209,13 +235,13 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fdatasync(IntPtr loop, IntPtr req, IntPtr file, Action<IntPtr> callback);
+		private static extern int uv_fs_fdatasync(IntPtr loop, IntPtr req, IntPtr file, uv_fs_cb callback);
 
 		public void DataSync(Loop loop, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_fdatasync(loop.Handle, fsr.Handle, FileHandle, fsr.End);
+			int r = uv_fs_fdatasync(loop.Handle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void DataSync(Loop loop)
@@ -232,13 +258,13 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, IntPtr file, int offset, Action<IntPtr> callback);
+		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, IntPtr file, long offset, uv_fs_cb callback);
 
 		public void Truncate(Loop loop, int offset, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_ftruncate(loop.Handle, fsr.Handle, FileHandle, offset, fsr.End);
+			int r = uv_fs_ftruncate(loop.Handle, fsr.Handle, FileHandle, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Truncate(Loop loop, int offset)
@@ -255,13 +281,17 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_sendfile(IntPtr loop, IntPtr req, IntPtr out_fd, IntPtr in_fd, int offset, int length, Action<IntPtr> callback);
+		private static extern int uv_fs_sendfile(IntPtr loop, IntPtr req, IntPtr out_fd, IntPtr in_fd, int offset, int length, uv_fs_cb callback);
 
 		public void Send(Loop loop, Tcp socket, int offset, int length, Action<Exception, int> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => { callback(ex, (int)fsr.Result); };
-			int r = uv_fs_sendfile(loop.Handle, fsr.Handle, socket.handle, FileHandle, offset, length, fsr.End);
+			fsr.Callback = (ex, fsr2) => {
+				if (callback != null) {
+					callback(ex, (int)fsr.Result);
+				};
+			};
+			int r = uv_fs_sendfile(loop.Handle, fsr.Handle, socket.handle, FileHandle, offset, length, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Send(Tcp socket, int offset, int length, Action<Exception, int> callback)
@@ -276,7 +306,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_fchmod(loop.Handle, fsr.Handle, FileHandle, mode, fsr.End);
+			int r = uv_fs_fchmod(loop.Handle, fsr.Handle, FileHandle, mode, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Chmod(Loop loop, int mode)
@@ -299,7 +329,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_chmod(loop.Handle, fsr.Handle, path, mode, fsr.End);
+			int r = uv_fs_chmod(loop.Handle, fsr.Handle, path, mode, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Chmod(Loop loop, string path, int mode)
@@ -322,7 +352,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_chown(loop.Handle, fsr.Handle, path, uid, gid, fsr.End);
+			int r = uv_fs_chown(loop.Handle, fsr.Handle, path, uid, gid, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Chown(Loop loop, string path, int uid, int gid)
@@ -345,7 +375,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_fchown(loop.Handle, fsr.Handle, FileHandle, uid, gid, fsr.End);
+			int r = uv_fs_fchown(loop.Handle, fsr.Handle, FileHandle, uid, gid, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Chown(Loop loop, int uid, int gid)
@@ -368,7 +398,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_unlink(loop.Handle, fsr.Handle, path, fsr.End);
+			int r = uv_fs_unlink(loop.Handle, fsr.Handle, path, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Unlink(Loop loop, string path)
@@ -391,7 +421,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_link(loop.Handle, fsr.Handle, path, newPath, fsr.End);
+			int r = uv_fs_link(loop.Handle, fsr.Handle, path, newPath, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Link(Loop loop, string path, string newPath)
@@ -408,108 +438,5 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Directory
-	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_mkdir(IntPtr loop, IntPtr req, string path, int mode, Action<IntPtr> callback);
-
-		public static void Create(Loop loop, string path, int mode, Action<Exception> callback)
-		{
-			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_mkdir(loop.Handle, fsr.Handle, path, mode, fsr.End);
-			Ensure.Success(r, loop);
-		}
-		public static void Create(Loop loop, string path, int mode)
-		{
-			Create(loop, path, mode, null);
-		}
-		public static void Create(string path, int mode, Action<Exception> callback)
-		{
-			Create(Loop.Default, path, mode, callback);
-		}
-		public static void Create(string path, int mode)
-		{
-			Create(path, mode, null);
-		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_rmdir(IntPtr loop, IntPtr req, string path, Action<IntPtr> callback);
-
-		public static void Delete(Loop loop, string path, Action<Exception> callback)
-		{
-			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_rmdir(loop.Handle, fsr.Handle, path, fsr.End);
-			Ensure.Success(r, loop);
-		}
-		public static void Delete(Loop loop, string path)
-		{
-			Delete(loop, path, null);
-		}
-		public static void Delete(string path, Action<Exception> callback)
-		{
-			Delete(Loop.Default, path, callback);
-		}
-		public static void Delete(string path)
-		{
-			Delete(path, null);
-		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_rename(IntPtr loop, IntPtr req, string path, string newPath, Action<IntPtr> callback);
-
-		public static void Rename(Loop loop, string path, string newPath, Action<Exception> callback)
-		{
-			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_rename(loop.Handle, fsr.Handle, path, newPath, fsr.End);
-			Ensure.Success(r, loop);
-		}
-		public static void Rename(Loop loop, string path, string newPath)
-		{
-			Rename(loop, path, newPath, null);
-		}
-		public static void Rename(string path, string newPath, Action<Exception> callback)
-		{
-			Rename(Loop.Default, path, newPath, callback);
-		}
-		public static void Rename(string path, string newPath)
-		{
-			Rename(path, newPath, null);
-		}
-
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int strlen(IntPtr ptr);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_readdir(IntPtr loop, IntPtr req, string path, int flags, Action<IntPtr> callback);
-
-		unsafe public static void Read(Loop loop, string path, Action<Exception, List<string>> callback)
-		{
-			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => {
-				if (ex != null) {
-					callback(ex, null);
-					return;
-				}
-
-				int length = (int)fsr.Result;
-				List<string> list = new List<string>(length);
-				sbyte *ptr = (sbyte *)fsr.Pointer;
-				for (int i = 0; i < length; i++) {
-					list.Add(new string(ptr));
-					ptr += strlen((IntPtr)ptr) + 1;
-				}
-				callback(ex, list);
-			};
-			uv_fs_readdir(loop.Handle, fsr.Handle, path, 0, fsr.End);
-		}
-		public static void Read(string path, Action<Exception, List<string>> callback)
-		{
-			Read(Loop.Default, path, callback);
-		}
-
-	}
 }
 

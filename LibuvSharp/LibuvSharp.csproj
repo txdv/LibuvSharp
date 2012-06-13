@@ -71,6 +71,11 @@
     <Compile Include="Internal\uv_err_t.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
+    <Compile Include="FileSystemEvent.cs" />
+    <Compile Include="Directory.cs" />
+    <Compile Include="Internal\FileSystemRequest.cs" />
+    <Compile Include="Internal\PermaRequest.cs" />
+    <Compile Include="Internal\uv_fs_t.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
