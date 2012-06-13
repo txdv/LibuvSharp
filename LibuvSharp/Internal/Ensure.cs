@@ -20,7 +20,7 @@ namespace LibuvSharp
 			case uv_err_code.UV_EINVAL:
 				return new ArgumentException(error.Description);
 			case uv_err_code.UV_ENOENT:
-				var path = Path.Combine(System.IO.Directory.GetCurrentDirectory(), name);
+				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
 			case uv_err_code.UV_EADDRINUSE:
 				return new SocketException(10048);
