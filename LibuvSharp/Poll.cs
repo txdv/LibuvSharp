@@ -54,7 +54,7 @@ namespace LibuvSharp
 
 		event poll_callback poll_cb;
 
-		public void pollcallback(IntPtr handle, int status, int events)
+		void pollcallback(IntPtr handle, int status, int events)
 		{
 			OnEvent((PollEvent)events);
 		}
