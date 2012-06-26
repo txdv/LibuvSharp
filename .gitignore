@@ -2,3 +2,4 @@
 *.pidb
 bin/
 dlls/
+libs/

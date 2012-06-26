@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibuvSharp", "LibuvSharp\Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibuvSharp.Tests", "LibuvSharp.Tests\LibuvSharp.Tests.csproj", "{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibuvSharp.IronRuby", "LibuvSharp.IronRuby\LibuvSharp.IronRuby.csproj", "{8BA6420E-4433-411E-8026-DCAB821804AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BA6420E-4433-411E-8026-DCAB821804AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA6420E-4433-411E-8026-DCAB821804AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA6420E-4433-411E-8026-DCAB821804AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA6420E-4433-411E-8026-DCAB821804AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = LibuvSharp\LibuvSharp.csproj
