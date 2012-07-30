@@ -9,7 +9,7 @@ namespace LibuvSharp
 		Raw
 	}
 
-	public class TTY : Stream
+	public class TTY : UVStream
 	{
 		public IntPtr FileDescriptor { get; private set; }
 

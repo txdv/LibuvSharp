@@ -32,7 +32,7 @@ namespace LibuvSharp
 			InterProcessCommunication = interProcessCommunication;
 		}
 
-		protected override Stream Create()
+		protected override UVStream Create()
 		{
 			return new Pipe(Loop, InterProcessCommunication);
 		}
@@ -48,7 +48,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Pipe : Stream
+	public class Pipe : UVStream
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);

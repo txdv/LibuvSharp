@@ -11,24 +11,24 @@
     <AssemblyName>LibuvSharp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>..\bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>..\bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,7 +43,6 @@
     <Compile Include="Udp.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
-    <Compile Include="File.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Dns.cs" />
@@ -58,7 +57,6 @@
     <Compile Include="Internal\BufferPin.cs" />
     <Compile Include="Internal\CAction.cs" />
     <Compile Include="Internal\BufferStruct.cs" />
-    <Compile Include="IStream.cs" />
     <Compile Include="Listener.cs" />
     <Compile Include="Pipe.cs" />
     <Compile Include="TTY.cs" />
@@ -72,10 +70,12 @@
     <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
     <Compile Include="FileSystemEvent.cs" />
-    <Compile Include="Directory.cs" />
     <Compile Include="Internal\FileSystemRequest.cs" />
     <Compile Include="Internal\PermaRequest.cs" />
     <Compile Include="Internal\uv_fs_t.cs" />
+    <Compile Include="UVDirectory.cs" />
+    <Compile Include="IUVStream.cs" />
+    <Compile Include="UVFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

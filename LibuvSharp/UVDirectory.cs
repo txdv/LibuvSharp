@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	public class Directory
+	public class UVDirectory
 	{
 		private delegate void uv_fs_cb(IntPtr IntPtr);
 

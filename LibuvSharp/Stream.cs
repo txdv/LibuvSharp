@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public abstract class Stream : Handle, IStream
+	public abstract class UVStream : Handle, IUVStream
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_unix(IntPtr a, IntPtr blet, UnixBufferStruct buf);
@@ -32,19 +32,19 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, callback callback);
 
-		internal Stream(Loop loop, IntPtr handle)
+		internal UVStream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
 			read_cb_unix = read_callback_u;
 			read_cb_win = read_callback_w;
 		}
 
-		internal Stream(Loop loop, int size)
+		internal UVStream(Loop loop, int size)
 			: this(loop, UV.Alloc(size))
 		{
 		}
 
-		internal Stream(Loop loop, UvHandleType type)
+		internal UVStream(Loop loop, UvHandleType type)
 			: this(loop, UV.Sizeof(type))
 		{
 		}

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace LibuvSharp.Tests
@@ -10,11 +11,11 @@ namespace LibuvSharp.Tests
 		[TestCase]
 		public void CreateNotexistingFile()
 		{
-			if (System.IO.File.Exists(Default.File)) {
-				System.IO.File.Delete(Default.File);
+			if (File.Exists(Default.File)) {
+				File.Delete(Default.File);
 			}
 
-			File.Open(Default.File, FileAccess.Write, (e, file) => {
+			UVFile.Open(Default.File, FileAccess.Write, (e, file) => {
 				Assert.IsNull(e);
 				Assert.IsNotNull(file);
 			});

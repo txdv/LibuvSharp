@@ -23,16 +23,16 @@ namespace LibuvSharp
 		callback listen_cb;
 		void listen_callback(IntPtr req, int status)
 		{
-			Stream stream = Create();
+			UVStream stream = Create();
 			uv_accept(req, stream.handle);
 			OnListen(stream);
 		}
 
-		protected abstract Stream Create();
+		protected abstract UVStream Create();
 
-		protected event Action<Stream> OnListen;
+		protected event Action<UVStream> OnListen;
 
-		public void Listen(int backlog, Action<Stream> callback)
+		public void Listen(int backlog, Action<UVStream> callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 			OnListen += callback;
@@ -40,7 +40,7 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		public void Listen(Action<Stream> callback)
+		public void Listen(Action<UVStream> callback)
 		{
 			Listen(DefaultBacklog, callback);
 		}

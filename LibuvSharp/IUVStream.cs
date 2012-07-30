@@ -3,7 +3,7 @@ using System.Text;
 
 namespace LibuvSharp
 {
-	public interface IStream
+	public interface IUVStream
 	{
 		Loop Loop { get; }
 

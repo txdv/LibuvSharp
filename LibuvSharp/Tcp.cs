@@ -49,7 +49,7 @@ namespace LibuvSharp
 			Bind(endPoint.Address, endPoint.Port);
 		}
 
-		protected override Stream Create()
+		protected override UVStream Create()
 		{
 			return new Tcp(Loop);
 		}
@@ -57,7 +57,7 @@ namespace LibuvSharp
 		public void Listen(int backlog, Action<Tcp> callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
-			Listen(backlog, (Stream stream) => callback(stream as Tcp));
+			Listen(backlog, (UVStream stream) => callback(stream as Tcp));
 		}
 
 		public void Listen(Action<Tcp> callback)
@@ -66,7 +66,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Tcp : Stream
+	public class Tcp : UVStream
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);

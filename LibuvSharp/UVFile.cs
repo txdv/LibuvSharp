@@ -18,11 +18,11 @@ namespace LibuvSharp
 	// 3. uv_fs_readlink
 	// 4. uv_fs_utime uv_fs_futime
 
-	public class File
+	public class UVFile
 	{
 		private delegate void uv_fs_cb(IntPtr IntPtr);
 
-		private File(Loop loop, IntPtr handle)
+		private UVFile(Loop loop, IntPtr handle)
 		{
 			Loop = loop;
 			FileHandle = handle;
@@ -34,13 +34,13 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
 
-		public static void Open(Loop loop, string path, FileAccess access, Action<Exception, File> callback)
+		public static void Open(Loop loop, string path, FileAccess access, Action<Exception, UVFile> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => {
-				File file = null;
+				UVFile file = null;
 				if (fsr.Result != IntPtr.Zero) {
-					file = new File(loop, fsr.Result);
+					file = new UVFile(loop, fsr.Result);
 				}
 				if (callback != null) {
 					callback(ex, file);
@@ -49,7 +49,7 @@ namespace LibuvSharp
 			int r = uv_fs_open(loop.Handle, fsr.Handle, path, (int)access, 0, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
-		public static void Open(string path, FileAccess access, Action<Exception, File> callback)
+		public static void Open(string path, FileAccess access, Action<Exception, UVFile> callback)
 		{
 			Open(Loop.Default, path, access, callback);
 		}
