@@ -79,6 +79,29 @@ namespace LibuvSharp
 		}
 	}
 
+	class CAction<T1, T2> : CActionBase
+	{
+		public Action<T1, T2> Callback { get; protected set; }
+
+		Action<T1, T2> cb;
+
+		public CAction(Action<T1, T2> callback)
+			: base()
+		{
+			cb = callback;
+			Callback = PrivateCallback;
+		}
+
+		void PrivateCallback(T1 arg1, T2 arg2)
+		{
+			if (cb != null) {
+				cb(arg1, arg2);
+			}
+
+			Dispose();
+		}
+	}
+
 	class CAction<T1, T2, T3> : CActionBase
 	{
 		public Action<T1, T2, T3> Callback { get; protected set; }

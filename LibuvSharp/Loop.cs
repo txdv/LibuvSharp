@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
@@ -160,6 +161,25 @@ namespace LibuvSharp
 			if (buffer != null) {
 				buffer.Dispose();
 				buffer = null;
+			}
+		}
+
+		delegate void walk_cb(IntPtr handle, IntPtr arg);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern void uv_walk(IntPtr loop, Action<IntPtr, IntPtr> cb, IntPtr arg);
+
+		public void Walk(Action<IntPtr> callback)
+		{
+			var cb = new CAction<IntPtr, IntPtr>((handle, arg) => callback(handle));
+			uv_walk(Handle, cb.Callback, IntPtr.Zero);
+		}
+
+		public IntPtr[] Handles {
+			get {
+				var list = new List<IntPtr>();
+				Walk((handle) => list.Add(handle));
+				return list.ToArray();
 			}
 		}
 	}

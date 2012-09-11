@@ -19,6 +19,12 @@ namespace LibuvSharp.Tests
 			Loop.Default.RunAsync();
 			timer.Close();
 		}
+
+		[Test]
+		public void Handles()
+		{
+			Assert.Greater(Loop.Default.Handles.Length, 0);
+		}
 	}
 }
 
