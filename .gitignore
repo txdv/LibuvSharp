@@ -1,5 +1,8 @@
 *.userprefs
 *.pidb
+*.swp
+*.dll
+generate
 bin/
 dlls/
 libs/
