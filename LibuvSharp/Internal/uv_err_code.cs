@@ -60,5 +60,8 @@ namespace LibuvSharp
 		UV_ENOSPC = 54,
 		UV_EIO = 55,
 		UV_EROFS = 56,
+		UV_ENODEV = 57,
+		UV_ESPIPE = 58,
+		UV_ECANCELED = 59,
 	}
 }

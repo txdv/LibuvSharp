@@ -126,6 +126,23 @@ namespace LibuvSharp
 				return uv_is_closing(handle) != 0;
 			}
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern void uv_ref(IntPtr handle);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern void uv_unref(IntPtr handle);
+
+		public void Ref()
+		{
+			uv_ref(handle);
+		}
+
+		public void Unref()
+		{
+			uv_unref(handle);
+		}
+
 	}
 }
 

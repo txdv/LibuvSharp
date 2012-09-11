@@ -37,7 +37,12 @@ namespace LibuvSharp
 
 		static public void StaticEnd(IntPtr ptr, int status)
 		{
-			PermaRequest.GetObject<CallbackPermaRequest>(ptr).End(ptr, status);
+			var obj = PermaRequest.GetObject<CallbackPermaRequest>(ptr);
+			if (obj == null) {
+				throw new Exception("Target is null");
+			} else {
+				obj.End(ptr, status);
+			}
 		}
 	}
 
@@ -119,7 +124,6 @@ namespace LibuvSharp
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct uv_req_t
 	{
-		public UvRequestType type;
 		public IntPtr data;
 	}
 

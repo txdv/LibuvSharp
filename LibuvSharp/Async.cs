@@ -97,6 +97,16 @@ namespace LibuvSharp
 			}
 		}
 
+		public void Unref()
+		{
+			async.Unref();
+		}
+
+		public void Ref()
+		{
+			async.Ref();
+		}
+
 		public void Send(T item)
 		{
 			lock (queue) {

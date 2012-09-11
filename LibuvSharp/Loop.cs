@@ -21,12 +21,6 @@ namespace LibuvSharp
 		static extern void uv_run_once(IntPtr loop);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_ref(IntPtr loop);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_unref(IntPtr loop);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_update_time(IntPtr loop);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -70,8 +64,8 @@ namespace LibuvSharp
 			RunOnce();
 
 			// ignore our allocated resources
-			Unref();
-			Unref();
+			async.Unref();
+			callback.Unref();
 		}
 
 		public Loop()
@@ -93,16 +87,6 @@ namespace LibuvSharp
 		{
 			async.Send();
 			RunOnce();
-		}
-
-		public void Ref()
-		{
-			uv_ref(Handle);
-		}
-
-		public void Unref()
-		{
-			uv_unref(Handle);
 		}
 
 		public void UpdateTime()
