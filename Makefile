@@ -28,7 +28,7 @@ LibuvSharp/Internal/UvRequestType.cs: libuv/include/uv.h generate
 clean:
 	make -C http-parser clean
 	make -C libuv clean
-	rm -rf libuv.so
+	rm -rf libuv.so generate $(gensrc)
 
 
 
