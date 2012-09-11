@@ -25,6 +25,8 @@ namespace LibuvSharp
 			this.handle = handle;
 			GCHandle = GCHandle.Alloc(this);
 			Loop = loop;
+
+			Loop.handles[handle] = this;
 		}
 
 		internal Handle(Loop loop, int size)
@@ -49,6 +51,9 @@ namespace LibuvSharp
 			}
 
 			CAction ca = new CAction(() => {
+				// Remove handle
+				Loop.handles.Remove(handle);
+
 				if (CloseEvent != null) {
 					CloseEvent();
 				}

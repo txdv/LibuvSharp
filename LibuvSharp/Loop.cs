@@ -182,6 +182,29 @@ namespace LibuvSharp
 				return list.ToArray();
 			}
 		}
+
+		internal Dictionary<IntPtr, Handle> handles = new Dictionary<IntPtr, Handle>();
+
+		public Handle GetHandle(IntPtr ptr)
+		{
+			Handle handle;
+			if (handles.TryGetValue(ptr, out handle)) {
+				return handle;
+			} else {
+				return null;
+			}
+		}
+
+		public Handle[] ActiveHandles {
+			get {
+				var tmp = Handles;
+				Handle[] handles = new Handle[tmp.Length];
+				for (var i = 0; i < tmp.Length; i++) {
+					handles[i] = GetHandle(tmp[i]);
+				}
+				return handles;
+			}
+		}
 	}
 }
 
