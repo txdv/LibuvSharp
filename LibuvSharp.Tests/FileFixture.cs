@@ -5,10 +5,8 @@ using NUnit.Framework;
 namespace LibuvSharp.Tests
 {
 
-	[TestFixture]
 	public class FileFixture
 	{
-		[TestCase]
 		public void CreateNotexistingFile()
 		{
 			if (File.Exists(Default.File)) {
