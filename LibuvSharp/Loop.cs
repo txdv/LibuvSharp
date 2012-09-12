@@ -37,13 +37,6 @@ namespace LibuvSharp
 			}
 		}
 
-		Lazy<Dns> dns;
-		public Dns Dns {
-			get {
-				return dns.Value;
-			}
-		}
-
 		internal IntPtr Handle { get; set; }
 
 		Async async;
@@ -54,7 +47,6 @@ namespace LibuvSharp
 			Handle = handle;
 
 			var that = this;
-			dns = new Lazy<Dns>(() => new Dns(that));
 			callback = new AsyncCallback(this);
 			async = new Async(this);
 
@@ -148,10 +140,6 @@ namespace LibuvSharp
 		{
 			if (disposing) {
 				GC.SuppressFinalize(this);
-			}
-
-			if (dns.IsValueCreated) {
-				dns.Value.Dispose();
 			}
 
 			if (Handle != Default.Handle) {
