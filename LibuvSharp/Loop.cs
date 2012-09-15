@@ -37,7 +37,7 @@ namespace LibuvSharp
 			}
 		}
 
-		internal IntPtr Handle { get; set; }
+		public IntPtr Handle { get; set; }
 
 		Async async;
 		AsyncCallback callback;
