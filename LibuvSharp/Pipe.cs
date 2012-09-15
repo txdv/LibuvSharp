@@ -5,10 +5,10 @@ namespace LibuvSharp
 {
 	public class PipeListener : Listener
 	{
+		unsafe uv_pipe_t *pipe_t;
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
-
-		public bool InterProcessCommunication { get; protected set; }
 
 		public PipeListener()
 			: this(Loop.Default)
@@ -25,11 +25,17 @@ namespace LibuvSharp
 		{
 		}
 
-		public PipeListener(Loop loop, bool interProcessCommunication)
+		unsafe public PipeListener(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
-			InterProcessCommunication = interProcessCommunication;
+			pipe_t = (uv_pipe_t *)(this.handle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+		}
+
+		unsafe public bool InterProcessCommunication {
+			get {
+				return pipe_t->rpc >= 0;
+			}
 		}
 
 		protected override UVStream Create()
@@ -50,13 +56,17 @@ namespace LibuvSharp
 
 	public class Pipe : UVStream
 	{
+		unsafe uv_pipe_t *pipe_t;
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
-		internal Pipe(Loop loop, bool interProcessCommunication)
+		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
+			pipe_t = (uv_pipe_t *)(this.handle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+			Console.WriteLine (InterProcessCommunication);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -81,6 +91,12 @@ namespace LibuvSharp
 			: this(loop, interProcessCommunication)
 		{
 			uv_pipe_open(handle, fd);
+		}
+
+		unsafe public bool InterProcessCommunication {
+			get {
+				return pipe_t->rpc >= 1;
+			}
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
