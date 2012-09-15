@@ -75,6 +75,7 @@
     <Compile Include="UVDirectory.cs" />
     <Compile Include="IUVStream.cs" />
     <Compile Include="UVFile.cs" />
+    <Compile Include="Internal\uv_req_t.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

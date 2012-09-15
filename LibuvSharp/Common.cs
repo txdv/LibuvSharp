@@ -121,12 +121,6 @@ namespace LibuvSharp
 	{
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct uv_req_t
-	{
-		public IntPtr data;
-	}
-
 	public static class UV
 	{
 		unsafe internal static readonly int PointerSize = sizeof(IntPtr) / 4;
