@@ -24,7 +24,6 @@ namespace LibuvSharp.Tests
 			Loop.Default.Run();
 		}
 
-		[TestCase]
 		public void DeleteDirectory()
 		{
 			if (!Directory.Exists(Default.Directory)) {
@@ -38,7 +37,6 @@ namespace LibuvSharp.Tests
 			Loop.Default.Run();
 		}
 
-		[TestCase]
 		public void RenameDirectory()
 		{
 			if (!Directory.Exists(Default.Directory)) {
