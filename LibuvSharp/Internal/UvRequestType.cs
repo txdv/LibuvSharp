@@ -5,6 +5,7 @@ namespace LibuvSharp
 	internal enum UvRequestType : int
 	{
 		UV_UNKNOWN_REQ = 0,
+		UV_REQ,
 		UV_CONNECT,
 		UV_WRITE,
 		UV_SHUTDOWN,
