@@ -46,7 +46,6 @@ namespace LibuvSharp
 		{
 			Handle = handle;
 
-			var that = this;
 			callback = new AsyncCallback(this);
 			async = new Async(this);
 
