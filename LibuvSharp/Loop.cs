@@ -65,6 +65,27 @@ namespace LibuvSharp
 		{
 		}
 
+		unsafe uv_loop_t* loop_t {
+			get {
+				return (uv_loop_t *)Handle;
+			}
+		}
+
+		unsafe public uint ActiveHandlesCount {
+			get {
+				return loop_t->active_handlers;
+			}
+		}
+
+		unsafe public IntPtr Data {
+			get {
+				return loop_t->data;
+			}
+			set {
+				loop_t->data = value;
+			}
+		}
+
 		public void Run()
 		{
 			uv_run(Handle);
@@ -142,7 +163,7 @@ namespace LibuvSharp
 			}
 
 			if (Handle != Default.Handle) {
-				// uv_loop_delete(Handle);
+				uv_loop_delete(Handle);
 			}
 
 			if (buffer != null) {
