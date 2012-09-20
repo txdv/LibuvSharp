@@ -136,12 +136,12 @@ namespace LibuvSharp
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_open(IntPtr handle, IntPtr native);
-        public static Tcp Open(Loop loop, IntPtr nativeHandle)
-        {
-            Tcp socket = new Tcp(loop);
-            uv_tcp_open(socket.handle, nativeHandle);
-            return socket;
-        }
+		public static Tcp Open(Loop loop, IntPtr nativeHandle)
+		{
+			Tcp socket = new Tcp(loop);
+			uv_tcp_open(socket.handle, nativeHandle);
+			return socket;
+		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_nodelay(IntPtr handle, int enable);

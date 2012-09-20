@@ -33,7 +33,9 @@ namespace LibuvSharp
 		static Loop @default;
 		public static Loop Default {
 			get {
-                if (@default == null) @default = new Loop(uv_default_loop());
+				if (@default == null) {
+					@default = new Loop(uv_default_loop());
+				}
 				return @default;
 			}
 		}
