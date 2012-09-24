@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public enum FileAccess
+	public enum UVFileAccess
 	{
 		Read = 0,
 		Write = 1,
@@ -34,7 +34,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
 
-		public static void Open(Loop loop, string path, FileAccess access, Action<Exception, UVFile> callback)
+		public static void Open(Loop loop, string path, UVFileAccess access, Action<Exception, UVFile> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => {
@@ -49,7 +49,7 @@ namespace LibuvSharp
 			int r = uv_fs_open(loop.Handle, fsr.Handle, path, (int)access, 0, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
-		public static void Open(string path, FileAccess access, Action<Exception, UVFile> callback)
+		public static void Open(string path, UVFileAccess access, Action<Exception, UVFile> callback)
 		{
 			Open(Loop.Default, path, access, callback);
 		}
