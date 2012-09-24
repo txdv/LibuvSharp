@@ -43,7 +43,6 @@
     <Compile Include="Udp.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
-    <Compile Include="Stream.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Lock.cs" />
     <Compile Include="Mutex.cs" />
@@ -78,6 +77,7 @@
     <Compile Include="Internal\uv_req_t.cs" />
     <Compile Include="Internal\uv_loop_t.cs" />
     <Compile Include="uv_pipe_t.cs" />
+    <Compile Include="UVStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
