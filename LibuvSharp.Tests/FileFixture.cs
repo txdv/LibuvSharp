@@ -13,7 +13,7 @@ namespace LibuvSharp.Tests
 				File.Delete(Default.File);
 			}
 
-			UVFile.Open(Default.File, FileAccess.Write, (e, file) => {
+			UVFile.Open(Default.File, UVFileAccess.Write, (e, file) => {
 				Assert.IsNull(e);
 				Assert.IsNotNull(file);
 			});
