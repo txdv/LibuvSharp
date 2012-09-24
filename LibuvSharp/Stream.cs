@@ -53,16 +53,16 @@ namespace LibuvSharp
 		{
 			int r;
 			if (UV.isUnix) {
-				r = uv_read_start_unix(handle, Loop.buffer.AllocCallbackUnix, read_cb_unix);
+				r = uv_read_start_unix(NativeHandle, Loop.buffer.AllocCallbackUnix, read_cb_unix);
 			} else {
-				r = uv_read_start_win(handle, Loop.buffer.AllocCallbackWin, read_cb_win);
+				r = uv_read_start_win(NativeHandle, Loop.buffer.AllocCallbackWin, read_cb_win);
 			}
 			Ensure.Success(r, Loop);
 		}
 
 		public void Pause()
 		{
-			int r = uv_read_stop(handle);
+			int r = uv_read_stop(NativeHandle);
 			Ensure.Success(r, Loop);
 		}
 
@@ -144,11 +144,11 @@ namespace LibuvSharp
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
 				buf[0] = new UnixBufferStruct(ptr, count);
-				r = uv_write_unix(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
+				r = uv_write_unix(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.StaticEnd);
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
 				buf[0] = new WindowsBufferStruct(ptr, count);
-				r = uv_write_win(cpr.Handle, handle, buf, 1, CallbackPermaRequest.StaticEnd);
+				r = uv_write_win(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.StaticEnd);
 			}
 
 			Ensure.Success(r, Loop);
@@ -191,7 +191,7 @@ namespace LibuvSharp
 			cbr.Callback = (status, _) => {
 				Close(callback);
 			};
-			uv_shutdown(cbr.Handle, handle, CallbackPermaRequest.StaticEnd);
+			uv_shutdown(cbr.Handle, NativeHandle, CallbackPermaRequest.StaticEnd);
 		}
 
 		public void Shutdown()

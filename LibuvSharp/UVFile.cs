@@ -291,7 +291,7 @@ namespace LibuvSharp
 					callback(ex, (int)fsr.Result);
 				};
 			};
-			int r = uv_fs_sendfile(loop.Handle, fsr.Handle, socket.handle, FileHandle, offset, length, FileSystemRequest.StaticEnd);
+			int r = uv_fs_sendfile(loop.Handle, fsr.Handle, socket.NativeHandle, FileHandle, offset, length, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public void Send(Tcp socket, int offset, int length, Action<Exception, int> callback)

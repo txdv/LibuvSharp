@@ -209,11 +209,11 @@ namespace LibuvSharp
 				// options_t.Dispose();
 			});
 
-			options_t.stdin_stream = process.Stdin.handle;
-			options_t.stdout_stream = process.Stdout.handle;
-			options_t.stderr_stream = process.Stderr.handle;
+			options_t.stdin_stream = process.Stdin.NativeHandle;
+			options_t.stdout_stream = process.Stdout.NativeHandle;
+			options_t.stderr_stream = process.Stderr.NativeHandle;
 
-			int r = uv_spawn(loop.Handle, process.handle, options_t);
+			int r = uv_spawn(loop.Handle, process.NativeHandle, options_t);
 			Ensure.Success(r, loop);
 
 			return process;
@@ -224,7 +224,7 @@ namespace LibuvSharp
 
 		public void Kill(int signum)
 		{
-			Ensure.Success(uv_process_kill(handle, signum), Loop);
+			Ensure.Success(uv_process_kill(NativeHandle, signum), Loop);
 		}
 
 		public void Kill(Signum signum)

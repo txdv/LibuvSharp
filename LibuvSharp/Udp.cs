@@ -33,7 +33,7 @@ namespace LibuvSharp
 		public Udp(Loop loop)
 			: base(loop, UvHandleType.UV_UDP)
 		{
-			int r = uv_udp_init(loop.Handle, handle);
+			int r = uv_udp_init(loop.Handle, NativeHandle);
 			Ensure.Success(r, loop);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time
@@ -42,6 +42,7 @@ namespace LibuvSharp
 			// is gone
 			recv_start_cb_win = recv_start_callback_w;
 			recv_start_cb_unix = recv_start_callback_u;
+
 		}
 
 		public void Bind(IPAddress ipAddress, int port)
@@ -50,9 +51,9 @@ namespace LibuvSharp
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_udp_bind(handle, UV.uv_ip4_addr(ipAddress.ToString(), port), 0);
+				r = uv_udp_bind(NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port), 0);
 			} else {
-				r = uv_udp_bind6(handle, UV.uv_ip6_addr(ipAddress.ToString(), port), 0);
+				r = uv_udp_bind6(NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), 0);
 			}
 			Ensure.Success(r, Loop);
 		}
@@ -99,18 +100,18 @@ namespace LibuvSharp
 				buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_unix(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_unix(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send6_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 				}
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
 				buf[0] = new WindowsBufferStruct(datagchandle.AddrOfPinnedObject(), length);
 
 				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_win(cpr.Handle, handle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_win(cpr.Handle, handle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send6_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 				}
 			}
 			Ensure.Success(r, Loop);
@@ -203,9 +204,9 @@ namespace LibuvSharp
 			if (!receive_init) {
 				int r;
 				if (UV.isUnix) {
-					r = uv_udp_recv_start_unix(handle, Loop.buffer.AllocCallbackUnix, recv_start_cb_unix);
+					r = uv_udp_recv_start_unix(NativeHandle, Loop.buffer.AllocCallbackUnix, recv_start_cb_unix);
 				} else {
-					r = uv_udp_recv_start_win(handle, Loop.buffer.AllocCallbackWin, recv_start_cb_win);
+					r = uv_udp_recv_start_win(NativeHandle, Loop.buffer.AllocCallbackWin, recv_start_cb_win);
 				}
 				Ensure.Success(r, Loop);
 				receive_init = true;

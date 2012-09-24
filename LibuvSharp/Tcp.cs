@@ -18,7 +18,7 @@ namespace LibuvSharp
 		public TcpListener(Loop loop)
 			: base(loop, UvHandleType.UV_TCP)
 		{
-			uv_tcp_init(Loop.Handle, handle);
+			uv_tcp_init(Loop.Handle, NativeHandle);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -37,9 +37,9 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_tcp_bind(handle, UV.uv_ip4_addr(ipAddress.ToString(), port));
+				r = uv_tcp_bind(NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port));
 			} else {
-				r = uv_tcp_bind6(handle, UV.uv_ip6_addr(ipAddress.ToString(), port));
+				r = uv_tcp_bind6(NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port));
 			}
 			Ensure.Success(r, Loop);
 		}
@@ -74,7 +74,7 @@ namespace LibuvSharp
 		internal Tcp(Loop loop)
 			: base(loop, UvHandleType.UV_TCP)
 		{
-			uv_tcp_init(loop.Handle, handle);
+			uv_tcp_init(loop.Handle, NativeHandle);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -104,9 +104,9 @@ namespace LibuvSharp
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_tcp_connect(cpr.Handle, socket.handle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect(cpr.Handle, socket.NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			} else {
-				r = uv_tcp_connect6(cpr.Handle, socket.handle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect6(cpr.Handle, socket.NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
 			Ensure.Success(r, loop);
 		}
@@ -145,18 +145,18 @@ namespace LibuvSharp
 
 		public bool NoDelay {
 			set {
-				uv_tcp_nodelay(handle, (value ? 1 : 0));
+				uv_tcp_nodelay(NativeHandle, (value ? 1 : 0));
 			}
 		}
 
 		public void SetKeepAlive(bool enable, int delay)
 		{
-			uv_tcp_keepalive(handle, (enable ? 1 : 0), delay);
+			uv_tcp_keepalive(NativeHandle, (enable ? 1 : 0), delay);
 		}
 
 		public bool SimultaneosAccepts {
 			set {
-				uv_tcp_simultaneos_accepts(handle, (value ? 1 : 0));
+				uv_tcp_simultaneos_accepts(NativeHandle, (value ? 1 : 0));
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace LibuvSharp
 				sockaddr_in6 addr;
 				IntPtr ptr = new IntPtr(&addr);
 				int length = sizeof(sockaddr_in6);
-				int r = uv_tcp_getsockname(handle, ptr, ref length);
+				int r = uv_tcp_getsockname(NativeHandle, ptr, ref length);
 				Ensure.Success(r, Loop);
 				return UV.GetIPEndPoint(ptr);
 			}
@@ -182,7 +182,7 @@ namespace LibuvSharp
 				sockaddr_in6 addr;
 				IntPtr ptr = new IntPtr(&addr);
 				int length = sizeof(sockaddr_in6);
-				int r = uv_tcp_getpeername(handle, ptr, ref length);
+				int r = uv_tcp_getpeername(NativeHandle, ptr, ref length);
 				Ensure.Success(r, Loop);
 				return UV.GetIPEndPoint(ptr);
 			}

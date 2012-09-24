@@ -15,18 +15,19 @@ namespace LibuvSharp
 
 		public Loop Loop { get; protected set; }
 
+		public IntPtr NativeHandle { get; protected set; }
+
 		GCHandle GCHandle { get; set; }
-		internal IntPtr handle;
 
 		internal Handle(Loop loop, IntPtr handle)
 		{
 			Ensure.ArgumentNotNull(loop, "loop");
 
-			this.handle = handle;
+			NativeHandle = handle;
 			GCHandle = GCHandle.Alloc(this);
 			Loop = loop;
 
-			Loop.handles[handle] = this;
+			Loop.handles[NativeHandle] = this;
 		}
 
 		internal Handle(Loop loop, int size)
@@ -46,13 +47,13 @@ namespace LibuvSharp
 
 		public void Close(Action callback)
 		{
-			if (handle == IntPtr.Zero) {
+			if (NativeHandle == IntPtr.Zero) {
 				return;
 			}
 
 			CAction ca = new CAction(() => {
 				// Remove handle
-				Loop.handles.Remove(handle);
+				Loop.handles.Remove(NativeHandle);
 
 				if (CloseEvent != null) {
 					CloseEvent();
@@ -65,7 +66,7 @@ namespace LibuvSharp
 				Dispose();
 			});
 
-			int r = uv_close(handle, ca.Callback);
+			int r = uv_close(NativeHandle, ca.Callback);
 			Ensure.Success(r, Loop);
 		}
 
@@ -76,7 +77,7 @@ namespace LibuvSharp
 
 		public bool Closed {
 			get {
-				return handle == IntPtr.Zero;
+				return NativeHandle == IntPtr.Zero;
 			}
 		}
 
@@ -91,9 +92,9 @@ namespace LibuvSharp
 				GC.SuppressFinalize(this);
 			}
 
-			UV.Free(handle);
+			UV.Free(NativeHandle);
 			GCHandle.Free();
-			handle = IntPtr.Zero;
+			NativeHandle = IntPtr.Zero;
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -101,7 +102,7 @@ namespace LibuvSharp
 
 		public bool Active {
 			get {
-				return uv_is_active(handle) != 0;
+				return uv_is_active(NativeHandle) != 0;
 			}
 		}
 
@@ -110,7 +111,7 @@ namespace LibuvSharp
 
 		public bool Readable {
 			get {
-				return uv_is_readable(handle) != 0;
+				return uv_is_readable(NativeHandle) != 0;
 			}
 		}
 
@@ -119,7 +120,7 @@ namespace LibuvSharp
 
 		public bool Writeable {
 			get {
-				return uv_is_writable(handle) != 0;
+				return uv_is_writable(NativeHandle) != 0;
 			}
 		}
 
@@ -128,7 +129,7 @@ namespace LibuvSharp
 
 		public bool Closing {
 			get {
-				return uv_is_closing(handle) != 0;
+				return uv_is_closing(NativeHandle) != 0;
 			}
 		}
 
@@ -140,12 +141,12 @@ namespace LibuvSharp
 
 		public void Ref()
 		{
-			uv_ref(handle);
+			uv_ref(NativeHandle);
 		}
 
 		public void Unref()
 		{
-			uv_unref(handle);
+			uv_unref(NativeHandle);
 		}
 
 	}

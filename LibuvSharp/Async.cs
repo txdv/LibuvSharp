@@ -37,7 +37,7 @@ namespace LibuvSharp
 				OnCallback();
 			};
 
-			uv_async_init(loop.Handle, handle, Marshal.GetFunctionPointerForDelegate(cb));
+			uv_async_init(loop.Handle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
 
 			Callback += callback;
 		}
@@ -47,7 +47,7 @@ namespace LibuvSharp
 
 		public void Send()
 		{
-			uv_async_send(handle);
+			uv_async_send(NativeHandle);
 		}
 
 		public event Action<Async> Callback;

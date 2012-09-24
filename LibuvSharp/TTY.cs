@@ -35,7 +35,7 @@ namespace LibuvSharp
 			: base(loop, UvHandleType.UV_TTY)
 		{
 			FileDescriptor = fd;
-			int r = uv_tty_init(loop.Handle, handle, fd, (readable ? 1 : 0));
+			int r = uv_tty_init(loop.Handle, NativeHandle, fd, (readable ? 1 : 0));
 			Ensure.Success(r, Loop);
 		}
 
@@ -44,7 +44,7 @@ namespace LibuvSharp
 
 		public TTYMode Mode {
 			set {
-				int r = uv_tty_set_mode(handle, (int)value);
+				int r = uv_tty_set_mode(NativeHandle, (int)value);
 				Ensure.Success(r, Loop);
 			}
 		}
@@ -63,7 +63,7 @@ namespace LibuvSharp
 
 		public bool GetWindowSize(out int width, out int height)
 		{
-			int r = uv_tty_get_winsize(handle, out width, out height);
+			int r = uv_tty_get_winsize(NativeHandle, out width, out height);
 			return r == 0;
 		}
 

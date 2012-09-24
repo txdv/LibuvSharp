@@ -28,8 +28,8 @@ namespace LibuvSharp
 		unsafe public PipeListener(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.handle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_STREAM));
+			uv_pipe_init(loop.Handle, NativeHandle, interProcessCommunication ? 1 : 0);
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_STREAM));
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -49,7 +49,7 @@ namespace LibuvSharp
 		public void Bind(string name)
 		{
 			Ensure.ArgumentNotNull(name, null);
-			int r = uv_pipe_bind(handle, name);
+			int r = uv_pipe_bind(NativeHandle, name);
 			Ensure.Success(r, Loop);
 		}
 	}
@@ -64,8 +64,8 @@ namespace LibuvSharp
 		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.handle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+			uv_pipe_init(loop.Handle, NativeHandle, interProcessCommunication ? 1 : 0);
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -89,7 +89,7 @@ namespace LibuvSharp
 		public Pipe(Loop loop, int fd, bool interProcessCommunication)
 			: this(loop, interProcessCommunication)
 		{
-			uv_pipe_open(handle, fd);
+			uv_pipe_open(NativeHandle, fd);
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -131,7 +131,7 @@ namespace LibuvSharp
 				}
 			};
 
-			uv_pipe_connect(cpr.Handle, pipe.handle, name, ConnectRequest.StaticEnd);
+			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.StaticEnd);
 		}
 	}
 

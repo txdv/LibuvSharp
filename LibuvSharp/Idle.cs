@@ -22,7 +22,7 @@ namespace LibuvSharp
 		public Idle(Loop loop)
 			: base(loop, UvHandleType.UV_IDLE)
 		{
-			int r = uv_idle_init(loop.Handle, handle);
+			int r = uv_idle_init(loop.Handle, NativeHandle);
 			Ensure.Success(r, loop);
 		}
 
@@ -47,13 +47,13 @@ namespace LibuvSharp
 
 		internal void Start(IntPtr callback)
 		{
-			int r = uv_idle_start(handle, callback);
+			int r = uv_idle_start(NativeHandle, callback);
 			Ensure.Success(r, Loop);
 		}
 
 		public void Stop()
 		{
-			int r = uv_idle_stop(handle);
+			int r = uv_idle_stop(NativeHandle);
 			Ensure.Success(r, Loop);
 		}
 

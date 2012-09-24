@@ -24,7 +24,7 @@ namespace LibuvSharp
 		void listen_callback(IntPtr req, int status)
 		{
 			UVStream stream = Create();
-			uv_accept(req, stream.handle);
+			uv_accept(req, stream.NativeHandle);
 			OnListen(stream);
 		}
 
@@ -36,7 +36,7 @@ namespace LibuvSharp
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 			OnListen += callback;
-			int r = uv_listen(handle, backlog, listen_cb);
+			int r = uv_listen(NativeHandle, backlog, listen_cb);
 			Ensure.Success(r, Loop);
 		}
 

@@ -33,15 +33,15 @@ namespace LibuvSharp
 		public Timer(Loop loop)
 			: base(loop, UvHandleType.UV_TIMER)
 		{
-			uv_timer_init(loop.Handle, handle);
+			uv_timer_init(loop.Handle, NativeHandle);
 		}
 
 		public long LongRepeat {
 			get {
-				return uv_timer_get_repeat(handle);
+				return uv_timer_get_repeat(NativeHandle);
 			}
 			set {
-				uv_timer_set_repeat(handle, value);
+				uv_timer_set_repeat(NativeHandle, value);
 			}
 		}
 
@@ -63,7 +63,7 @@ namespace LibuvSharp
 			}
 			Running = true;
 			LongRepeat = repeat;
-			uv_timer_start(handle, callback, timeout, repeat);
+			uv_timer_start(NativeHandle, callback, timeout, repeat);
 		}
 
 		public void Start(long timeout, long repeat, Action<Timer, int> callback)
@@ -131,14 +131,14 @@ namespace LibuvSharp
 		public void Stop()
 		{
 			if (Running) {
-				uv_timer_stop(handle);
+				uv_timer_stop(NativeHandle);
 			}
 			Running = false;
 		}
 
 		public void Again()
 		{
-			uv_timer_again(handle);
+			uv_timer_again(NativeHandle);
 		}
 	}
 }

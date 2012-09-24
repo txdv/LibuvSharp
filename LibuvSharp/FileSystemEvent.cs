@@ -24,7 +24,7 @@ namespace LibuvSharp
 			: base(loop, UvHandleType.UV_FS_EVENT)
 		{
 			uv_fs_event = fs_event;
-			int r = uv_fs_event_init(loop.Handle, handle, path, uv_fs_event, 0);
+			int r = uv_fs_event_init(loop.Handle, NativeHandle, path, uv_fs_event, 0);
 			Ensure.Success(r, loop);
 		}
 
