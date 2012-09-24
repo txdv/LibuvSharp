@@ -28,7 +28,7 @@ namespace LibuvSharp
 		unsafe public PipeListener(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.Handle, NativeHandle, interProcessCommunication ? 1 : 0);
+			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_STREAM));
 		}
 
@@ -64,7 +64,7 @@ namespace LibuvSharp
 		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.Handle, NativeHandle, interProcessCommunication ? 1 : 0);
+			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}
 

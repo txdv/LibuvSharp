@@ -37,14 +37,14 @@ namespace LibuvSharp
 			}
 		}
 
-		public IntPtr Handle { get; set; }
+		public IntPtr NativeHandle { get; set; }
 
 		Async async;
 		AsyncCallback callback;
 
 		internal Loop(IntPtr handle)
 		{
-			Handle = handle;
+			NativeHandle = handle;
 
 			callback = new AsyncCallback(this);
 			async = new Async(this);
@@ -67,7 +67,7 @@ namespace LibuvSharp
 
 		unsafe uv_loop_t* loop_t {
 			get {
-				return (uv_loop_t *)Handle;
+				return (uv_loop_t *)NativeHandle;
 			}
 		}
 
@@ -88,12 +88,12 @@ namespace LibuvSharp
 
 		public void Run()
 		{
-			uv_run(Handle);
+			uv_run(NativeHandle);
 		}
 
 		public void RunOnce()
 		{
-			uv_run_once(Handle);
+			uv_run_once(NativeHandle);
 		}
 
 		public void RunAsync()
@@ -104,12 +104,12 @@ namespace LibuvSharp
 
 		public void UpdateTime()
 		{
-			uv_update_time(Handle);
+			uv_update_time(NativeHandle);
 		}
 
 		public long Now {
 			get {
-				return uv_now(Handle);
+				return uv_now(NativeHandle);
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace LibuvSharp
 				}
 			});
 
-			int r = uv_queue_work(Handle, pr.Handle, before.Callback, cafter.Callback);
+			int r = uv_queue_work(NativeHandle, pr.Handle, before.Callback, cafter.Callback);
 			Ensure.Success(r, this);
 		}
 
@@ -162,8 +162,8 @@ namespace LibuvSharp
 				GC.SuppressFinalize(this);
 			}
 
-			if (Handle != Default.Handle) {
-				uv_loop_delete(Handle);
+			if (NativeHandle != Default.NativeHandle) {
+				uv_loop_delete(NativeHandle);
 			}
 
 			if (buffer != null) {
@@ -180,7 +180,7 @@ namespace LibuvSharp
 		public void Walk(Action<IntPtr> callback)
 		{
 			var cb = new CAction<IntPtr, IntPtr>((handle, arg) => callback(handle));
-			uv_walk(Handle, cb.Callback, IntPtr.Zero);
+			uv_walk(NativeHandle, cb.Callback, IntPtr.Zero);
 		}
 
 		public IntPtr[] Handles {

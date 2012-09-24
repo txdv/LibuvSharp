@@ -213,7 +213,7 @@ namespace LibuvSharp
 			options_t.stdout_stream = process.Stdout.NativeHandle;
 			options_t.stderr_stream = process.Stderr.NativeHandle;
 
-			int r = uv_spawn(loop.Handle, process.NativeHandle, options_t);
+			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, options_t);
 			Ensure.Success(r, loop);
 
 			return process;

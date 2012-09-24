@@ -33,7 +33,7 @@ namespace LibuvSharp
 		public Udp(Loop loop)
 			: base(loop, UvHandleType.UV_UDP)
 		{
-			int r = uv_udp_init(loop.Handle, NativeHandle);
+			int r = uv_udp_init(loop.NativeHandle, NativeHandle);
 			Ensure.Success(r, loop);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time

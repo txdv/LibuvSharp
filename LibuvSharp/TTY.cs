@@ -35,7 +35,7 @@ namespace LibuvSharp
 			: base(loop, UvHandleType.UV_TTY)
 		{
 			FileDescriptor = fd;
-			int r = uv_tty_init(loop.Handle, NativeHandle, fd, (readable ? 1 : 0));
+			int r = uv_tty_init(loop.NativeHandle, NativeHandle, fd, (readable ? 1 : 0));
 			Ensure.Success(r, Loop);
 		}
 

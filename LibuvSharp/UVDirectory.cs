@@ -19,7 +19,7 @@ namespace LibuvSharp
 					callback(ex);
 				};
 			};
-			int r = uv_fs_mkdir(loop.Handle, fsr.Handle, path, mode, FileSystemRequest.StaticEnd);
+			int r = uv_fs_mkdir(loop.NativeHandle, fsr.Handle, path, mode, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Create(Loop loop, string path, int mode)
@@ -62,7 +62,7 @@ namespace LibuvSharp
 					callback(ex);
 				};
 			};
-			int r = uv_fs_rmdir(loop.Handle, fsr.Handle, path, FileSystemRequest.StaticEnd);
+			int r = uv_fs_rmdir(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
 		public static void Delete(Loop loop, string path)
@@ -85,7 +85,7 @@ namespace LibuvSharp
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => { callback(ex); };
-			int r = uv_fs_rename(loop.Handle, fsr.Handle, path, newPath, fsr.End);
+			int r = uv_fs_rename(loop.NativeHandle, fsr.Handle, path, newPath, fsr.End);
 			Ensure.Success(r, loop);
 		}
 		public static void Rename(Loop loop, string path, string newPath)
@@ -125,7 +125,7 @@ namespace LibuvSharp
 				}
 				callback(ex, list.ToArray());
 			};
-			uv_fs_readdir(loop.Handle, fsr.Handle, path, 0, fsr.End);
+			uv_fs_readdir(loop.NativeHandle, fsr.Handle, path, 0, fsr.End);
 		}
 		public static void Read(string path, Action<Exception, string[]> callback)
 		{

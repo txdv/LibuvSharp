@@ -37,7 +37,7 @@ namespace LibuvSharp
 				OnCallback();
 			};
 
-			uv_async_init(loop.Handle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
+			uv_async_init(loop.NativeHandle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
 
 			Callback += callback;
 		}

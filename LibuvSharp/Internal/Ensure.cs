@@ -57,7 +57,7 @@ namespace LibuvSharp
 
 		internal static Exception Success(Loop loop, string name = null)
 		{
-			return Map(uv_last_error(loop.Handle), name);
+			return Map(uv_last_error(loop.NativeHandle), name);
 		}
 
 		public static void ArgumentNotNull(object argumentValue, string argumentName)

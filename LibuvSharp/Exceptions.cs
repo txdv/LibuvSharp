@@ -17,7 +17,7 @@ namespace LibuvSharp
 		}
 
 		internal UVException(Loop loop)
-			: this(Ensure.uv_last_error(loop.Handle))
+			: this(Ensure.uv_last_error(loop.NativeHandle))
 		{
 		}
 
