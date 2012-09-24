@@ -66,7 +66,6 @@ namespace LibuvSharp
 		{
 			uv_pipe_init(loop.Handle, handle, interProcessCommunication ? 1 : 0);
 			pipe_t = (uv_pipe_t *)(this.handle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
-			Console.WriteLine (InterProcessCommunication);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
