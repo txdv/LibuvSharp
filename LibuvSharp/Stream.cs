@@ -138,7 +138,7 @@ namespace LibuvSharp
 				}
 			};
 
-			IntPtr ptr = datagchandle.AddrOfPinnedObject() + offset;
+			IntPtr ptr = (IntPtr)(((long)datagchandle.AddrOfPinnedObject()) + (long)offset);
 
 			int r;
 			if (UV.isUnix) {

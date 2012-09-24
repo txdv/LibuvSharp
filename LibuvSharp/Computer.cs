@@ -66,7 +66,7 @@ namespace LibuvSharp
 			CpuInformation[] ret = new CpuInformation[count];
 
 			for (int i = 0; i < count; i++) {
-				uv_cpu_info_t *cpuinfo = (uv_cpu_info_t *)(info + i*sizeof(uv_cpu_info_t));
+				uv_cpu_info_t *cpuinfo = (uv_cpu_info_t *)((IntPtr)(((long)info) + (long)i*sizeof(uv_cpu_info_t)));
 				ret[i] = new CpuInformation(cpuinfo);
 			}
 
@@ -89,7 +89,7 @@ namespace LibuvSharp
 		{
 			Name = Marshal.PtrToStringAnsi(iface->name);
 			Internal = iface->is_internal != 0;
-			Address = UV.GetIPEndPoint(new IntPtr(iface) + sizeof(IntPtr) + sizeof(int)).Address;
+			Address = UV.GetIPEndPoint((IntPtr)(((long)new IntPtr(iface)) + (long)(sizeof(IntPtr) + sizeof(int)))).Address;
 		}
 
 		public string Name { get; protected set; }
@@ -112,7 +112,7 @@ namespace LibuvSharp
 			NetworkInterface[] ret = new NetworkInterface[count];
 
 			for (int i = 0; i < count; i++) {
-				uv_interface_address_t *iface = (uv_interface_address_t *)(interfaces + i*sizeof(uv_interface_address_t));
+				uv_interface_address_t *iface = (uv_interface_address_t *)(IntPtr)((((long)interfaces) + (long)(i*sizeof(uv_interface_address_t))));
 				ret[i] = new NetworkInterface(iface);
 			}
 
@@ -132,8 +132,8 @@ namespace LibuvSharp
 			IntPtr ptr = Marshal.AllocHGlobal(sizeof(double) * 3);
 			uv_loadavg(ptr);
 			Last = *((double *)ptr);
-			Five = *((double *)(ptr + sizeof(double)));
-			Fifteen = *((double *)(ptr + sizeof(double) * 2));
+			Five = *((double *)((IntPtr)(((long)ptr) + (long)sizeof(double))));
+			Fifteen = *((double *)((IntPtr)(((long)ptr) + (long)(sizeof(double) * 2))));
 			Marshal.FreeHGlobal(ptr);
 		}
 

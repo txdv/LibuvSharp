@@ -30,10 +30,13 @@ namespace LibuvSharp
 		internal ByteBuffer buffer = new ByteBuffer();
 
 
-		static Lazy<Loop> @default = new Lazy<Loop>(() => new Loop(uv_default_loop()));
+		static Loop @default;
 		public static Loop Default {
 			get {
-				return @default.Value;
+				if (@default == null) {
+					@default = new Loop(uv_default_loop());
+				}
+				return @default;
 			}
 		}
 
