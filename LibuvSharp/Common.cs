@@ -5,23 +5,6 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	unsafe internal class ConnectRequest : CallbackPermaRequest
-	{
-		uv_connect_t *connect;
-
-		public ConnectRequest()
-			: base(UvRequestType.UV_CONNECT)
-		{
-			connect = (uv_connect_t *)Handle;
-		}
-
-		public IntPtr ConnectHandle {
-			get {
-				return connect->handle;
-			}
-		}
-	}
-
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct lin_stat
 	{
@@ -44,23 +27,6 @@ namespace LibuvSharp
 			return string.Format ("dev={0} ino={1} mode={2} nlink={3} uid={4} gid={5} rdev={6} size={7} atime={8} mtime={9} ctime={10}", dev, ino, mode, nlink, uid, gid, rdev, size, atime, mtime, ctime);
 		}
 
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct uv_connect_t
-	{
-		public UvRequestType type;
-		public IntPtr data;
-		/*
-		#if !__MonoCS__
-		NativeOverlapped overlapped;
-		IntPtr queued_bytes;
-		uv_err_t error;
-		IntPtr next_req;
-		#endif
-		*/
-		public IntPtr cb;
-		public IntPtr handle;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

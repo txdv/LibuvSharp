@@ -78,6 +78,8 @@
     <Compile Include="Internal\uv_loop_t.cs" />
     <Compile Include="UVStream.cs" />
     <Compile Include="Internal\uv_pipe_t.cs" />
+    <Compile Include="Internal\CallbackPermaRequest.cs" />
+    <Compile Include="Internal\ConnectRequest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
