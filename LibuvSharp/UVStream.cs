@@ -91,9 +91,7 @@ namespace LibuvSharp
 					Close();
 				}
 			} else {
-				if (OnRead != null) {
-					OnRead(Loop.ByteBufferAllocator.Retrieve(size.ToInt32()));
-				}
+				OnRead(Loop.ByteBufferAllocator.Retrieve(size.ToInt32()));
 			}
 		}
 
@@ -115,16 +113,27 @@ namespace LibuvSharp
 
 		public event Action<UVException> Error;
 
-		public event Action<ByteBuffer> OnRead;
+		Action<ByteBuffer> ReadEvent;
+
+		void OnRead(ByteBuffer buffer)
+		{
+			if (ReadEvent != null) {
+				ReadEvent(buffer);
+			}
+		}
 
 		public void Read(Encoding enc, Action<string> callback)
 		{
-			OnRead += (data) => callback(enc.GetString(data.Buffer, data.Start, data.Length));
+			if (callback != null) {
+				ReadEvent = (data) => callback(enc.GetString(data.Buffer, data.Start, data.Length));
+			}
 		}
 
 		public void Read(Action<ByteBuffer> callback)
 		{
-			OnRead += callback;
+			if (callback != null) {
+				ReadEvent = callback;
+			}
 		}
 
 		public void Write(byte[] data, int offset, int count, Action<bool> callback)

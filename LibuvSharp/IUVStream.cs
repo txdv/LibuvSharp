@@ -11,7 +11,6 @@ namespace LibuvSharp
 
 		event Action EndOfStream;
 		event Action<UVException> Error;
-		event Action<ByteBuffer> OnRead;
 
 		void Read(Action<ByteBuffer> callback);
 		void Read(Encoding enc, Action<string> callback);
