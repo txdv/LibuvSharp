@@ -197,7 +197,7 @@ namespace LibuvSharp
 		}
 
 		bool receive_init = false;
-		public void Receive(Action<IPEndPoint, byte[]> callback)
+		public void Receive(Action<IPEndPoint, ByteBuffer> callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 
@@ -219,11 +219,11 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(encoding, "encoding");
 			Ensure.ArgumentNotNull(callback, "callback");
 
-			Receive((ep, data) => callback(ep, encoding.GetString(data)));
+			Receive((ep, data) => callback(ep, encoding.GetString(data.Buffer, data.Start, data.Length)));
 		}
 
-		event Action<IPEndPoint, byte[]> Message = null;
-		void OnMessage(IPEndPoint endPoint, byte[] data)
+		event Action<IPEndPoint, ByteBuffer> Message = null;
+		void OnMessage(IPEndPoint endPoint, ByteBuffer data)
 		{
 			if (Message != null) {
 				Message(endPoint, data);

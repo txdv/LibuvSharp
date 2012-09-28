@@ -81,6 +81,8 @@
     <Compile Include="Internal\ConnectRequest.cs" />
     <Compile Include="DefaultByteBufferAllocator.cs" />
     <Compile Include="AbstractByteBufferAllocator.cs" />
+    <Compile Include="ByteBuffer.cs" />
+    <Compile Include="ByteBufferCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

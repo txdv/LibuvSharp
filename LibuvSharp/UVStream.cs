@@ -115,14 +115,14 @@ namespace LibuvSharp
 
 		public event Action<UVException> Error;
 
-		public event Action<byte[]> OnRead;
+		public event Action<ByteBuffer> OnRead;
 
 		public void Read(Encoding enc, Action<string> callback)
 		{
-			OnRead += (data) => callback(enc.GetString(data));
+			OnRead += (data) => callback(enc.GetString(data.Buffer, data.Start, data.Length));
 		}
 
-		public void Read(Action<byte[]> callback)
+		public void Read(Action<ByteBuffer> callback)
 		{
 			OnRead += callback;
 		}

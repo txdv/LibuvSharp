@@ -41,11 +41,11 @@ namespace LibuvSharp
 			Size = 0;
 		}
 
-		public override byte[] Retrieve(int size)
+		public override ByteBuffer Retrieve(int size)
 		{
 			byte[] ret = new byte[size];
 			Array.Copy(Buffer, 0, ret, 0, size);
-			return ret;
+			return new ByteBuffer(ret);
 		}
 	}
 }
