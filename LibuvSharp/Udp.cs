@@ -193,7 +193,7 @@ namespace LibuvSharp
 				return;
 			}
 
-			OnMessage(UV.GetIPEndPoint(sockaddr), Loop.buffer.Get(n));
+			OnMessage(UV.GetIPEndPoint(sockaddr), Loop.ByteBufferAllocator.Retrieve(n));
 		}
 
 		bool receive_init = false;
@@ -204,9 +204,9 @@ namespace LibuvSharp
 			if (!receive_init) {
 				int r;
 				if (UV.isUnix) {
-					r = uv_udp_recv_start_unix(NativeHandle, Loop.buffer.AllocCallbackUnix, recv_start_cb_unix);
+					r = uv_udp_recv_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, recv_start_cb_unix);
 				} else {
-					r = uv_udp_recv_start_win(NativeHandle, Loop.buffer.AllocCallbackWin, recv_start_cb_win);
+					r = uv_udp_recv_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
 				}
 				Ensure.Success(r, Loop);
 				receive_init = true;

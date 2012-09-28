@@ -27,24 +27,28 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern long uv_now(IntPtr loop);
 
-		internal ByteBuffer buffer = new ByteBuffer();
+		static Loop @default;
 
-
-		static Lazy<Loop> @default = new Lazy<Loop>(() => new Loop(uv_default_loop()));
 		public static Loop Default {
 			get {
-				return @default.Value;
+				if (@default == null) {
+					@default = new Loop(uv_default_loop(), new DefaultByteBufferAllocator());
+				}
+				return @default;
 			}
 		}
 
 		public IntPtr NativeHandle { get; set; }
 
+		public AbstractByteBufferAllocator ByteBufferAllocator { get; protected set; }
+
 		Async async;
 		AsyncCallback callback;
 
-		internal Loop(IntPtr handle)
+		internal Loop(IntPtr handle, AbstractByteBufferAllocator allocator)
 		{
 			NativeHandle = handle;
+			ByteBufferAllocator = allocator;
 
 			callback = new AsyncCallback(this);
 			async = new Async(this);
@@ -61,7 +65,12 @@ namespace LibuvSharp
 		}
 
 		public Loop()
-			: this(uv_loop_new())
+			: this(uv_loop_new(), new DefaultByteBufferAllocator())
+		{
+		}
+
+		public Loop(AbstractByteBufferAllocator allocator)
+			: this(uv_loop_new(), allocator)
 		{
 		}
 
@@ -166,9 +175,9 @@ namespace LibuvSharp
 				uv_loop_delete(NativeHandle);
 			}
 
-			if (buffer != null) {
-				buffer.Dispose();
-				buffer = null;
+			if (ByteBufferAllocator != null) {
+				ByteBufferAllocator.Dispose();
+				ByteBufferAllocator = null;
 			}
 		}
 

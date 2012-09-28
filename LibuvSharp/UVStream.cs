@@ -53,9 +53,9 @@ namespace LibuvSharp
 		{
 			int r;
 			if (UV.isUnix) {
-				r = uv_read_start_unix(NativeHandle, Loop.buffer.AllocCallbackUnix, read_cb_unix);
+				r = uv_read_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
 			} else {
-				r = uv_read_start_win(NativeHandle, Loop.buffer.AllocCallbackWin, read_cb_win);
+				r = uv_read_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, read_cb_win);
 			}
 			Ensure.Success(r, Loop);
 		}
@@ -92,7 +92,7 @@ namespace LibuvSharp
 				}
 			} else {
 				if (OnRead != null) {
-					OnRead(Loop.buffer.Get(size.ToInt32()));
+					OnRead(Loop.ByteBufferAllocator.Retrieve(size.ToInt32()));
 				}
 			}
 		}
