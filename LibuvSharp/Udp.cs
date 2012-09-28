@@ -222,7 +222,7 @@ namespace LibuvSharp
 			Receive((ep, data) => callback(ep, encoding.GetString(data.Buffer, data.Start, data.Length)));
 		}
 
-		event Action<IPEndPoint, ByteBuffer> Message = null;
+		Action<IPEndPoint, ByteBuffer> Message = null;
 		void OnMessage(IPEndPoint endPoint, ByteBuffer data)
 		{
 			if (Message != null) {
