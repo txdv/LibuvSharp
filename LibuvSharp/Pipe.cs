@@ -61,7 +61,22 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
-		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
+		public Pipe()
+			: this(false)
+		{
+		}
+
+		public Pipe(bool interProcessCommunication)
+			: this(Loop.Default, interProcessCommunication)
+		{
+		}
+
+		public Pipe(Loop loop)
+			: this(loop, false)
+		{
+		}
+
+		unsafe public Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, UvHandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
@@ -69,27 +84,12 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_pipe_open(IntPtr handle, int file);
+		static extern int uv_pipe_open(IntPtr handle, int file);
 
-		public Pipe(int fd)
-			: this(fd, false)
+		public void Open(IntPtr fileDescriptor)
 		{
-		}
-
-		public Pipe(int fd, bool interProcessCommunication)
-			: this(Loop.Default, fd)
-		{
-		}
-
-		public Pipe(Loop loop, int fd)
-			: this(loop, fd, false)
-		{
-		}
-
-		public Pipe(Loop loop, int fd, bool interProcessCommunication)
-			: this(loop, interProcessCommunication)
-		{
-			uv_pipe_open(NativeHandle, fd);
+			int r = uv_pipe_open(NativeHandle, fileDescriptor.ToInt32());
+			Ensure.Success(r);
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -101,33 +101,24 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_pipe_connect(IntPtr req, IntPtr handle, string name, callback connect_cb);
 
-		public static void Connect(string name, Action<Exception, Pipe> callback)
+		public void Connect(string name, Action<Exception> callback)
 		{
 			Connect(name, false, callback);
 		}
-		public static void Connect(string name, bool interProcessCommunication, Action<Exception, Pipe> callback)
+		public void Connect(string name, bool interProcessCommunication, Action<Exception> callback)
 		{
-			Connect(Loop.Default, name, interProcessCommunication, callback);
-		}
-		public static void Connect(Loop loop, string name, Action<Exception, Pipe> callback)
-		{
-			Connect(loop, name, false, callback);
-		}
-		public static void Connect(Loop loop, string name, bool interProcessCommunication, Action<Exception, Pipe> callback)
-		{
-			Ensure.ArgumentNotNull(loop, "loop");
 			Ensure.ArgumentNotNull(name, "name");
 			Ensure.ArgumentNotNull(callback, "callback");
 
 			ConnectRequest cpr = new ConnectRequest();
-			Pipe pipe = new Pipe(loop, interProcessCommunication);
+			Pipe pipe = this;
 
 			cpr.Callback = (status, cpr2) => {
 				if (status == 0) {
-					callback(null, pipe);
+					callback(null);
 				} else {
 					pipe.Close();
-					callback(Ensure.Success(loop, name), null);
+					callback(Ensure.Success(Loop, name));
 				}
 			};
 

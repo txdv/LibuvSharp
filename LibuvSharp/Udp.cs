@@ -45,6 +45,15 @@ namespace LibuvSharp
 
 		}
 
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_open(IntPtr handle, IntPtr sock);
+
+		public void Open(IntPtr socket)
+		{
+			int r = uv_udp_open(NativeHandle, socket);
+			Ensure.Success(r);
+		}
+
 		public void Bind(IPAddress ipAddress, int port)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");

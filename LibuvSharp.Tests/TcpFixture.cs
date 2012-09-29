@@ -38,7 +38,8 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Tcp.Connect(Loop.Default, ep, (_, client) => {
+			Tcp client = new Tcp();
+			client.Connect(ep, (_) => {
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
@@ -109,7 +110,8 @@ namespace LibuvSharp.Tests
 					});
 				});
 
-				Tcp.Connect(ep, (_, client) => {
+				var client = new Tcp();
+				client.Connect(ep, (_) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
@@ -169,7 +171,8 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Tcp.Connect(ep, (_, client) => {
+			Tcp client = new Tcp();
+			client.Connect(ep, (_) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -217,39 +220,34 @@ namespace LibuvSharp.Tests
 			s2.Close();
 		}
 
+		public static Tcp Create()
+		{
+			return new Tcp();
+		}
+
 		[Test]
 		public static void NotNullConnect()
 		{
-			Action<Exception, Tcp> cb = (_, __) => { };
+			Action<Exception> cb = (_) => { };
 			int port = 8000;
 			var ipstr = "127.0.0.1";
 			var ip = IPAddress.Parse(ipstr);
 			var ep = new IPEndPoint(ip, 8000);
 
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null as IPEndPoint, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null as string, port, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null as IPAddress, port, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, null as IPEndPoint, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, null as String, port, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, null as IPAddress, port, cb));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(null as IPEndPoint, cb));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(null as string, port, cb));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(null as IPAddress, port, cb));
 
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(ep, null));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(ipstr, port, null));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(ip, port, null));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, ep, null));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, ipstr, port, null));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(Loop.Default, ip, port, null));
-
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null, ep, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null, ipstr, port, cb));
-			Assert.Throws<ArgumentNullException>(() => Tcp.Connect(null, ip, port, cb));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(ep, null));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(ipstr, port, null));
+			Assert.Throws<ArgumentNullException>(() => Create().Connect(ip, port, null));
 		}
 
 		[Test]
 		public static void ConnectToNotListeningPort()
 		{
-			Tcp.Connect("127.0.0.1", 7999, (e, socket) => {
-				Assert.IsNull(socket);
+			Tcp socket = new Tcp();
+			socket.Connect("127.0.0.1", 7999, (e) => {
 				Assert.IsNotNull(e);
 			});
 
@@ -287,8 +285,9 @@ namespace LibuvSharp.Tests
 				check();
 			});
 
-			Tcp.Connect("127.0.0.1", 8000, (e, tcp) => {
-				client = tcp;
+			Tcp t = new Tcp();
+			t.Connect("127.0.0.1", 8000, (e) => {
+				client = t;
 				check();
 			});
 

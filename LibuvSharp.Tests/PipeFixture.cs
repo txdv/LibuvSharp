@@ -36,7 +36,8 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Pipe.Connect(name, (_, client) => {
+			Pipe client = new Pipe();
+			client.Connect(name, (_) => {
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
@@ -105,7 +106,8 @@ namespace LibuvSharp.Tests
 					});
 				});
 
-				Pipe.Connect(name, (_, client) => {
+				Pipe client = new Pipe();
+				client.Connect(name, (_) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
@@ -164,7 +166,8 @@ namespace LibuvSharp.Tests
 				});
 			});
 
-			Pipe.Connect(name, (_, client) => {
+			Pipe client = new Pipe();
+			client.Connect(name, (_) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.AreEqual("PONG", str);
@@ -199,10 +202,10 @@ namespace LibuvSharp.Tests
 		[Test]
 		public static void ConnectToNotListeningFile()
 		{
-			Pipe.Connect("NOT_EXISTING", (e, pipe) => {
+			Pipe pipe = new Pipe();
+			pipe.Connect("NOT_EXISTING", (e) => {
 				Assert.IsNotNull(e);
 				Assert.AreEqual(e.GetType(), typeof(System.IO.FileNotFoundException));
-				Assert.IsNull(pipe);
 			});
 			Loop.Default.Run();
 		}

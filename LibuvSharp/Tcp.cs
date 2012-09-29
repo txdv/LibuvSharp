@@ -71,10 +71,24 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
 
-		internal Tcp(Loop loop)
+		public Tcp()
+			: this(Loop.Default)
+		{
+		}
+
+		public Tcp(Loop loop)
 			: base(loop, UvHandleType.UV_TCP)
 		{
 			uv_tcp_init(loop.NativeHandle, NativeHandle);
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_tcp_open(IntPtr handle, IntPtr sock);
+
+		public void Open(IntPtr socket)
+		{
+			int r = uv_tcp_open(NativeHandle, socket);
+			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -83,22 +97,20 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_connect6(IntPtr req, IntPtr handle, sockaddr_in6 addr, callback callback);
 
-
-		public static void Connect(Loop loop, IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
+		public void Connect(IPAddress ipAddress, int port, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(loop, "loop");
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.ArgumentNotNull(callback, "callback");
 
 			ConnectRequest cpr = new ConnectRequest();
-			Tcp socket = new Tcp(loop);
+			Tcp socket = this;
 
 			cpr.Callback = (status, cpr2) => {
 				if (status == 0) {
-					callback(null, socket);
+					callback(null);
 				} else {
 					socket.Close();
-					callback(Ensure.Success(loop), null);
+					callback(Ensure.Success(Loop));
 				}
 			};
 
@@ -108,30 +120,16 @@ namespace LibuvSharp
 			} else {
 				r = uv_tcp_connect6(cpr.Handle, socket.NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
-			Ensure.Success(r, loop);
+			Ensure.Success(r, Loop);
 		}
-		public static void Connect(Loop loop, string ipAddress, int port, Action<Exception, Tcp> callback)
+		public void Connect(string ipAddress, int port, Action<Exception> callback)
 		{
-			Connect(loop, IPAddress.Parse(ipAddress), port, callback);
+			Connect(IPAddress.Parse(ipAddress), port, callback);
 		}
-		public static void Connect(Loop loop, IPEndPoint endPoint, Action<Exception, Tcp> callback)
-		{
-			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Connect(loop, endPoint.Address, endPoint.Port, callback);
-		}
-		public static void Connect(IPAddress ipAddress, int port, Action<Exception, Tcp> callback)
-		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			Connect(Loop.Default, ipAddress, port, callback);
-		}
-		public static void Connect(string ipAddress, int port, Action<Exception, Tcp> callback)
-		{
-			Connect(Loop.Default, ipAddress, port, callback);
-		}
-		public static void Connect(IPEndPoint endPoint, Action<Exception, Tcp> callback)
+		public void Connect(IPEndPoint endPoint, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Connect(Loop.Default, endPoint, callback);
+			Connect(endPoint.Address, endPoint.Port, callback);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
