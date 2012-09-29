@@ -38,7 +38,7 @@ namespace LibuvSharp
 			}
 		}
 
-		public IntPtr NativeHandle { get; set; }
+		public IntPtr NativeHandle { get; protected set; }
 
 		public AbstractByteBufferAllocator ByteBufferAllocator { get; protected set; }
 
