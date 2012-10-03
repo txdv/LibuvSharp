@@ -4,7 +4,11 @@ gensrc=LibuvSharp/Internal/uv_err_code.cs LibuvSharp/Internal/UvHandleType.cs Li
 
 all: libuv.so $(gensrc)
 
-$(uv):
+libuv/Makefile:
+	git submodule sync
+	git submodule update
+
+$(uv): libuv/Makefile
 	make -C libuv uv.a
 
 libuv.so: $(uv)
