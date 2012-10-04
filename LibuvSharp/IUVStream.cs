@@ -16,8 +16,12 @@ namespace LibuvSharp
 		void Read(Action<ByteBuffer> callback);
 		void Read(Encoding enc, Action<string> callback);
 
-		void Write(byte[] data, int length, Action<bool> callback);
-		void Write(byte[] data, int length);
+		void Write(byte[] data, int index, int count, Action<bool> callback);
+		void Write(byte[] data, int index, int count);
+
+		void Write(byte[] data, int count, Action<bool> callback);
+		void Write(byte[] data, int count);
+
 		void Write(byte[] data, Action<bool> callback);
 		void Write(byte[] data);
 

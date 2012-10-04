@@ -136,7 +136,7 @@ namespace LibuvSharp
 			}
 		}
 
-		public void Write(byte[] data, int offset, int count, Action<bool> callback)
+		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(UvRequestType.UV_WRITE);
@@ -147,7 +147,7 @@ namespace LibuvSharp
 				}
 			};
 
-			IntPtr ptr = datagchandle.AddrOfPinnedObject() + offset;
+			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
 
 			int r;
 			if (UV.isUnix) {
@@ -162,9 +162,9 @@ namespace LibuvSharp
 
 			Ensure.Success(r, Loop);
 		}
-		public void Write(byte[] data, int offset, int count)
+		public void Write(byte[] data, int index, int count)
 		{
-			Write(data, offset, count, null);
+			Write(data, index, count, null);
 		}
 
 		public void Write(byte[] data, int count, Action<bool> callback)
