@@ -57,7 +57,7 @@ namespace LibuvSharp
 		public UVStream Stderr { get; set; }
 	}
 
-	public class Process : Handle
+	unsafe public class Process : Handle
 	{
 		public int ExitCode { get; private set; }
 		public int TermSignal { get; private set; }
@@ -112,6 +112,22 @@ namespace LibuvSharp
 				exitCallback(this);
 				Close();
 			});
+		}
+
+		uv_process_t *process {
+			get {
+				return (uv_process_t *)(NativeHandle.ToInt32() + Handle.Size(LibuvSharp.HandleType.UV_STREAM));
+			}
+		}
+
+		public int ID {
+			get {
+				if (NativeHandle != IntPtr.Zero) {
+					return process->pid;
+				} else {
+					return -1;
+				}
+			}
 		}
 
 		public static Process Spawn(ProcessOptions options, Action<Process> exitCallback)
