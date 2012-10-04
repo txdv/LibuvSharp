@@ -87,7 +87,7 @@ namespace LibuvSharp
 				if (nread == -1) {
 					Close(EndOfStream);
 				} else {
-					OnError(new UVException(Loop));
+					OnError(Ensure.Success(Loop));
 					Close();
 				}
 			} else {
@@ -104,14 +104,14 @@ namespace LibuvSharp
 
 		public event Action EndOfStream;
 
-		protected void OnError(UVException exception)
+		protected void OnError(Exception exception)
 		{
 			if (Error != null) {
 				Error(exception);
 			}
 		}
 
-		public event Action<UVException> Error;
+		public event Action<Exception> Error;
 
 		Action<ByteBuffer> ReadEvent;
 
