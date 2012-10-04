@@ -16,8 +16,18 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_init(IntPtr loop, IntPtr tty, IntPtr fd, int readable);
 
+		public TTY(int fd)
+			: this(Loop.Default, fd)
+		{
+		}
+
 		public TTY(Loop loop, int fd)
 			: this(loop, fd, true)
+		{
+		}
+
+		public TTY(IntPtr fd)
+			: this(Loop.Default, fd)
 		{
 		}
 
@@ -26,8 +36,18 @@ namespace LibuvSharp
 		{
 		}
 
+		public TTY(int fd, bool readable)
+			: this(Loop.Default, fd, readable)
+		{
+		}
+
 		public TTY(Loop loop, int fd, bool readable)
 			: this(loop, (IntPtr)fd, readable)
+		{
+		}
+
+		public TTY(IntPtr fd, bool readable)
+			: this(Loop.Default, fd, readable)
 		{
 		}
 
