@@ -111,6 +111,7 @@ namespace LibuvSharp
 		public CAction(Action<T1, T2, T3> callback)
 		{
 			cb = callback;
+			Callback = PrivateCallback;
 		}
 
 		void PrivateCallback(T1 arg1, T2 arg2, T3 arg3)

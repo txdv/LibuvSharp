@@ -41,23 +41,48 @@ namespace LibuvSharp
 		SIGUNUSED = 31
 	}
 
+	enum uv_stdio_flags : int {
+		UV_IGNORE         = 0x00,
+		UV_CREATE_PIPE    = 0x01,
+		UV_INHERIT_FD     = 0x02,
+		UV_INHERIT_STREAM = 0x04,
+		UV_READABLE_PIPE  = 0x10,
+		UV_WRITABLE_PIPE  = 0x20
+	}
+
+
 	[StructLayout(LayoutKind.Sequential)]
-	unsafe internal struct uv_process_options_t : IDisposable
+	struct uv_stdio_container_stream_t {
+		public uv_stdio_flags flags;
+		public IntPtr stream;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	struct uv_stdio_container_t {
+		public uv_stdio_container_stream_t stdin;
+		public uv_stdio_container_stream_t stdout;
+		public uv_stdio_container_stream_t stderr;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe struct uv_process_options_t : IDisposable
 	{
 		// fields
 
-		public Action<IntPtr, int, int> exit_cb;
+		public IntPtr exit_cb;
 		public IntPtr file;
 		public IntPtr args;
 		public IntPtr env;
 		public IntPtr cwd;
 
-		public int windows_verbatim_arguments;
+		public uint flags;
 
-		public IntPtr stdin_stream;
-		public IntPtr stdout_stream;
-		public IntPtr stderr_stream;
+		public int uid;
+		public int gid;
 
+		public int stdio_count;
+		//public IntPtr stdio;
+		uv_stdio_container_stream_t *stdio;
 
 		// functions
 
@@ -69,33 +94,49 @@ namespace LibuvSharp
 				file = Marshal.StringToHGlobalAnsi(options.File);
 			}
 
-
 			args = alloc(options.Arguments);
 			env = alloc(options.Environment);
 			cwd = Marshal.StringToHGlobalAnsi(options.CurrentWorkingDirectory);
 
-			windows_verbatim_arguments = (options.WindowsVerbatimArguments ? 1 : 0);
+			flags = 0;
+			stdio_count = 3;
+			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(sizeof(uv_stdio_container_stream_t));
 
-			stdin_stream = IntPtr.Zero;
-			stdout_stream = IntPtr.Zero;
-			stderr_stream = IntPtr.Zero;
+			int i = 0;
+			foreach (var stream in new UVStream[] { options.Stdin, options.Stdout, options.Stderr }) {
+				if (stream != null && stream is UVStream) {
+					stdio[i].flags = uv_stdio_flags.UV_INHERIT_STREAM;
+					stdio[i].stream = stream.NativeHandle;
+				}
+				i++;
+			}
 
-			exit_cb = new CAction<IntPtr, int, int>((handle, exit_status, term_signal) => {
+			uid = 0;
+			gid = 0;
+
+			var that = this;
+			exit_cb = Marshal.GetFunctionPointerForDelegate(new CAction<IntPtr, int, int>((handle, exit_status, term_signal) => {
 				exitCallback(exit_status, term_signal);
-			}).Callback;
+				that.Dispose();
+			}).Callback);
 		}
 
 		public void Dispose()
 		{
 			if (file != IntPtr.Zero) {
 				Marshal.FreeHGlobal(file);
+				file = IntPtr.Zero;
 			}
 
-			free(args);
-			free(env);
+			free(ref args);
+			free(ref env);
+
+			Marshal.FreeHGlobal((IntPtr )stdio);
+			stdio = (uv_stdio_container_stream_t *)IntPtr.Zero;
 
 			if (cwd != IntPtr.Zero) {
 				Marshal.FreeHGlobal(file);
+				cwd = IntPtr.Zero;
 			}
 		}
 
@@ -113,7 +154,7 @@ namespace LibuvSharp
 			return arr;
 		}
 
-		static void free(IntPtr ptr)
+		static void free(ref IntPtr ptr)
 		{
 			if (ptr == IntPtr.Zero) {
 				return;
@@ -126,7 +167,9 @@ namespace LibuvSharp
 				i++;
 				p = Marshal.ReadIntPtr(ptr, i * sizeof(IntPtr));
 			}
+
 			Marshal.FreeHGlobal(ptr);
+			ptr = IntPtr.Zero;
 		}
 	}
 
@@ -137,10 +180,17 @@ namespace LibuvSharp
 		public string[] Environment { get; set; }
 		public string CurrentWorkingDirectory { get; set; }
 		public bool WindowsVerbatimArguments { get; set; }
+
+		public UVStream Stdin { get; set; }
+		public UVStream Stdout { get; set; }
+		public UVStream Stderr { get; set; }
 	}
 
 	public class Process : Handle
 	{
+		public int ExitCode { get; private set; }
+		public int TermSignal { get; private set; }
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern uv_err_t uv_get_process_title(IntPtr buffer, IntPtr size);
 
@@ -177,45 +227,32 @@ namespace LibuvSharp
 			}
 		}
 
-
-		public Pipe Stdin { get; protected set; }
-		public Pipe Stdout { get; protected set; }
-		public Pipe Stderr { get; protected set; }
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
 
-		internal Process(Loop loop)
+		uv_process_options_t process_options;
+
+		internal Process(Loop loop, ProcessOptions options, Action<Process> exitCallback)
 			: base(loop, UvHandleType.UV_PROCESS)
 		{
+			process_options = new uv_process_options_t(options, (exit_status, term_status) => {
+				ExitCode = exit_status;
+				TermSignal = term_status;
+				exitCallback(this);
+				Close();
+			});
 		}
 
-		public static Process Spawn(ProcessOptions options, Action<Process, int, int> exitCallback)
+		public static Process Spawn(ProcessOptions options, Action<Process> exitCallback)
 		{
 			return Spawn(Loop.Default, options, exitCallback);
 		}
 
-		public static Process Spawn(Loop loop, ProcessOptions options, Action<Process, int, int> exitCallback)
+		public static Process Spawn(Loop loop, ProcessOptions options, Action<Process> exitCallback)
 		{
-			Process process = new Process(loop);
-
-			process.Stdin = new Pipe(loop, false);
-			process.Stdout = new Pipe(loop, false);
-			process.Stderr = new Pipe(loop, false);
-
-			uv_process_options_t options_t = new uv_process_options_t(options, (exit_status, term_status) => {
-				exitCallback(process, exit_status, term_status);
-				// TODO: somehow dispose this
-				// options_t.Dispose();
-			});
-
-			options_t.stdin_stream = process.Stdin.NativeHandle;
-			options_t.stdout_stream = process.Stdout.NativeHandle;
-			options_t.stderr_stream = process.Stderr.NativeHandle;
-
-			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, options_t);
+			var process = new Process(loop, options, exitCallback);
+			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, process.process_options);
 			Ensure.Success(r, loop);
-
 			return process;
 		}
 
@@ -230,13 +267,6 @@ namespace LibuvSharp
 		public void Kill(Signum signum)
 		{
 			Kill((int)signum);
-		}
-
-		public void CloseStreams()
-		{
-			Stdin.Close();
-			Stdout.Close();
-			Stderr.Close();
 		}
 	}
 }
