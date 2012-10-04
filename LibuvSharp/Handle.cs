@@ -40,7 +40,7 @@ namespace LibuvSharp
 		{
 		}
 
-		public event Action CloseEvent;
+		public event Action Closed;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_close(IntPtr handle, Action callback);
@@ -55,8 +55,8 @@ namespace LibuvSharp
 				// Remove handle
 				Loop.handles.Remove(NativeHandle);
 
-				if (CloseEvent != null) {
-					CloseEvent();
+				if (Closed != null) {
+					Closed();
 				}
 
 				if (callback != null) {
@@ -75,7 +75,7 @@ namespace LibuvSharp
 			Close(null);
 		}
 
-		public bool Closed {
+		public bool IsClosed {
 			get {
 				return NativeHandle == IntPtr.Zero;
 			}
