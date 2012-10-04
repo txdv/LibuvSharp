@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	unsafe internal class FileSystemRequest : PermaRequest
 	{
-		private static readonly int Size = UV.Sizeof(UvRequestType.UV_FS);
+		private static readonly int Size = UV.Sizeof(RequestType.UV_FS);
 
 		protected uv_fs_t *fsrequest;
 

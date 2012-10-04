@@ -31,7 +31,7 @@ namespace LibuvSharp
 		}
 
 		public Timer(Loop loop)
-			: base(loop, UvHandleType.UV_TIMER)
+			: base(loop, HandleType.UV_TIMER)
 		{
 			uv_timer_init(loop.NativeHandle, NativeHandle);
 		}

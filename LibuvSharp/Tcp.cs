@@ -16,7 +16,7 @@ namespace LibuvSharp
 		}
 
 		public TcpListener(Loop loop)
-			: base(loop, UvHandleType.UV_TCP)
+			: base(loop, HandleType.UV_TCP)
 		{
 			uv_tcp_init(Loop.NativeHandle, NativeHandle);
 		}
@@ -77,7 +77,7 @@ namespace LibuvSharp
 		}
 
 		public Tcp(Loop loop)
-			: base(loop, UvHandleType.UV_TCP)
+			: base(loop, HandleType.UV_TCP)
 		{
 			uv_tcp_init(loop.NativeHandle, NativeHandle);
 		}

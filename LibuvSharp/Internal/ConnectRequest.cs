@@ -6,7 +6,7 @@ namespace LibuvSharp
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct uv_connect_t
 	{
-		public UvRequestType type;
+		public RequestType type;
 		public IntPtr data;
 		/*
 		#if !__MonoCS__
@@ -25,7 +25,7 @@ namespace LibuvSharp
 		uv_connect_t *connect;
 
 		public ConnectRequest()
-			: base(UvRequestType.UV_CONNECT)
+			: base(RequestType.UV_CONNECT)
 		{
 			connect = (uv_connect_t *)Handle;
 		}

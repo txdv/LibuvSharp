@@ -21,7 +21,7 @@ namespace LibuvSharp
 		}
 
 		public FileSystemEvent(Loop loop, string path)
-			: base(loop, UvHandleType.UV_FS_EVENT)
+			: base(loop, HandleType.UV_FS_EVENT)
 		{
 			uv_fs_event = fs_event;
 			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle, path, uv_fs_event, 0);

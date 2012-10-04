@@ -60,8 +60,6 @@
     <Compile Include="IListener.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Internal\Ensure.cs" />
-    <Compile Include="Internal\UvRequestType.cs" />
-    <Compile Include="Internal\UvHandleType.cs" />
     <Compile Include="Internal\uv_err_t.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
@@ -83,6 +81,8 @@
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="ByteBufferCollection.cs" />
     <Compile Include="Internal\uv_process_options_t.cs" />
+    <Compile Include="RequestType.cs" />
+    <Compile Include="HandleType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

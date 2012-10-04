@@ -14,12 +14,12 @@ namespace LibuvSharp
 		{
 		}
 
-		public CallbackPermaRequest(UvRequestType type)
+		public CallbackPermaRequest(RequestType type)
 			: this(type, true)
 		{
 		}
 
-		public CallbackPermaRequest(UvRequestType type, bool allocate)
+		public CallbackPermaRequest(RequestType type, bool allocate)
 			: this(UV.Sizeof(type), allocate)
 		{
 		}

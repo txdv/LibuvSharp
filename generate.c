@@ -11,14 +11,14 @@ if (val != UV_UNKNOWN) { \
 
 void print_err()
 {
-  printf("using System;\n\nnamespace LibuvSharp\n{\n\tinternal enum uv_err_code\n\t{\n");
+  printf("using System;\n\nnamespace LibuvSharp\n{\n\tenum uv_err_code\n\t{\n");
   UV_ERRNO_MAP(UV_ERRNO_GEN)
   printf("\t}\n}\n");
 }
 
 void print_req()
 {
-  printf("using System;\n\nnamespace LibuvSharp\n{\n\tinternal enum UvRequestType : int\n\t{\n");
+  printf("using System;\n\nnamespace LibuvSharp\n{\n\tpublic enum RequestType : int\n\t{\n");
   printf("\t\tUV_UNKNOWN_REQ = 0,\n");
 #define XX(uc, lc) printf("\t\tUV_%s,\n", #uc);
   UV_REQ_TYPE_MAP(XX);
@@ -30,7 +30,7 @@ void print_req()
 
 void print_handle()
 {
-  printf("using System;\n\nnamespace LibuvSharp\n{\n\tinternal enum UvHandleType : int\n\t{\n");
+  printf("using System;\n\nnamespace LibuvSharp\n{\n\tpublic enum HandleType : int\n\t{\n");
   printf("\t\tUV_UNKNOWN_HANDLE = 0,\n");
 #define XX(uc, lc) printf("\t\tUV_%s,\n", #uc);
   UV_HANDLE_TYPE_MAP(XX);

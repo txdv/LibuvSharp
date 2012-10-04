@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	public abstract class Listener : Handle, IListener
 	{
-		internal Listener(Loop loop, UvHandleType type)
+		internal Listener(Loop loop, HandleType type)
 			: base(loop, type)
 		{
 			DefaultBacklog = 128;

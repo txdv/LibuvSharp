@@ -104,7 +104,7 @@ namespace LibuvSharp
 		uv_process_options_t process_options;
 
 		internal Process(Loop loop, ProcessOptions options, Action<Process> exitCallback)
-			: base(loop, UvHandleType.UV_PROCESS)
+			: base(loop, HandleType.UV_PROCESS)
 		{
 			process_options = new uv_process_options_t(options, (exit_status, term_status) => {
 				ExitCode = exit_status;

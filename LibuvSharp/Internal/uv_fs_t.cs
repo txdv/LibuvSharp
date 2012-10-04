@@ -9,7 +9,7 @@ namespace LibuvSharp
 		public IntPtr data;
 		public IntPtr active_queue_prev;
 		public IntPtr active_queue_next;
-		public UvRequestType type;
+		public RequestType type;
 
 		public int fs_type;
 		public IntPtr loop;

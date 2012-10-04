@@ -2,7 +2,7 @@ using System;
 
 namespace LibuvSharp
 {
-	internal enum UvHandleType : int
+	public enum HandleType : int
 	{
 		UV_UNKNOWN_HANDLE = 0,
 		UV_ASYNC,

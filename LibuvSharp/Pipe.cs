@@ -26,10 +26,10 @@ namespace LibuvSharp
 		}
 
 		unsafe public PipeListener(Loop loop, bool interProcessCommunication)
-			: base(loop, UvHandleType.UV_NAMED_PIPE)
+			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_STREAM));
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(HandleType.UV_STREAM));
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -77,10 +77,10 @@ namespace LibuvSharp
 		}
 
 		unsafe public Pipe(Loop loop, bool interProcessCommunication)
-			: base(loop, UvHandleType.UV_NAMED_PIPE)
+			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(UvHandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

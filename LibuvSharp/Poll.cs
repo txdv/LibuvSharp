@@ -28,7 +28,7 @@ namespace LibuvSharp
 		}
 
 		public Poll(Loop loop, int fd)
-			: base(loop, UvHandleType.UV_POLL)
+			: base(loop, HandleType.UV_POLL)
 		{
 			int r = uv_poll_init(loop.NativeHandle, NativeHandle, fd);
 			Ensure.Success(r, Loop);

@@ -101,17 +101,17 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_handle_size(UvHandleType type);
+		internal static extern int uv_handle_size(HandleType type);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_req_size(UvRequestType type);
+		internal static extern int uv_req_size(RequestType type);
 
-		internal static int Sizeof(UvHandleType type)
+		internal static int Sizeof(HandleType type)
 		{
 			return uv_handle_size(type);
 		}
 
-		internal static int Sizeof(UvRequestType type)
+		internal static int Sizeof(RequestType type)
 		{
 			return uv_req_size(type);
 		}
@@ -120,12 +120,12 @@ namespace LibuvSharp
 		static List<IntPtr> pointers = new List<IntPtr>();
 #endif
 
-		internal static IntPtr Alloc(UvRequestType type)
+		internal static IntPtr Alloc(RequestType type)
 		{
 			return Alloc(Sizeof(type));
 		}
 
-		internal static IntPtr Alloc(UvHandleType type)
+		internal static IntPtr Alloc(HandleType type)
 		{
 			return Alloc(Sizeof(type));
 		}

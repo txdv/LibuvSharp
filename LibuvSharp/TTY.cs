@@ -32,7 +32,7 @@ namespace LibuvSharp
 		}
 
 		public TTY(Loop loop, IntPtr fd, bool readable)
-			: base(loop, UvHandleType.UV_TTY)
+			: base(loop, HandleType.UV_TTY)
 		{
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.NativeHandle, NativeHandle, fd, (readable ? 1 : 0));
@@ -68,7 +68,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern UvHandleType uv_guess_handle(IntPtr fd);
+		static extern HandleType uv_guess_handle(IntPtr fd);
 	}
 }
 

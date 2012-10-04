@@ -133,7 +133,7 @@ namespace LibuvSharp
 		[Obsolete("When using this method, the mono process will hang")]
 		public void QueueWork(Action callback, Action after)
 		{
-			var pr = new PermaRequest(UV.Sizeof(UvRequestType.UV_WORK));
+			var pr = new PermaRequest(UV.Sizeof(RequestType.UV_WORK));
 			var before = new CAction<IntPtr>((ptr) => callback());
 			var cafter = new CAction<IntPtr>((ptr) => {
 				pr.Dispose();
