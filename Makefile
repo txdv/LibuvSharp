@@ -14,8 +14,8 @@ $(uv): libuv/Makefile
 libuv.so: $(uv)
 	$(CC) -shared -o libuv.so `find libuv/ -name *.o`
 
-generate: generate.c
-	$(CC) -Ilibuv/include/ `find libuv/ -name ev.o` libuv/uv.a -lm generate.c -o generate
+generate: generate.c libuv.so
+	$(CC) -Ilibuv/include/ -lm -lpthread -ldl -lrt libuv.so generate.c -o generate
 
 LibuvSharp/Internal/uv_err_code.cs: libuv/include/uv.h generate
 	./generate err > $@
