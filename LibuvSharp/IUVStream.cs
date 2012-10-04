@@ -7,18 +7,17 @@ namespace LibuvSharp
 	{
 		Loop Loop { get; }
 
-		void Pause();
-
 		event Action EndOfStream;
 		event Action<UVException> Error;
 
+		void Resume();
+		void Pause();
+
 		void Read(Action<ByteBuffer> callback);
 		void Read(Encoding enc, Action<string> callback);
-		void Resume();
 
 		void Write(byte[] data, int length, Action<bool> callback);
 		void Write(byte[] data, int length);
-
 		void Write(byte[] data, Action<bool> callback);
 		void Write(byte[] data);
 

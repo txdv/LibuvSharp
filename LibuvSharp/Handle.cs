@@ -148,7 +148,6 @@ namespace LibuvSharp
 		{
 			uv_unref(NativeHandle);
 		}
-
 	}
 }
 
