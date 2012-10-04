@@ -27,7 +27,7 @@ namespace LibuvSharp.Tests
 			var now = Loop.Default.Now;
 			Loop.Default.Run();
 			Assert.GreaterOrEqual(Loop.Default.Now - now, times * spawn);
-			Assert.IsTrue(t.Closed);
+			Assert.IsTrue(t.IsClosed);
 		}
 	}
 }
