@@ -29,7 +29,7 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(HandleType.UV_STREAM));
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_STREAM));
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -80,7 +80,7 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + UV.uv_handle_size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

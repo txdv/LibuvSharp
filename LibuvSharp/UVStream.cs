@@ -45,7 +45,7 @@ namespace LibuvSharp
 		}
 
 		internal UVStream(Loop loop, HandleType type)
-			: this(loop, UV.Sizeof(type))
+			: this(loop, Handle.Size(type))
 		{
 		}
 
