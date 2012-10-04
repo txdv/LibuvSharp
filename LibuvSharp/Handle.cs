@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public abstract class Handle : IDisposable
+	unsafe public abstract class Handle : IDisposable
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void callback(IntPtr req, int status);
@@ -18,6 +18,27 @@ namespace LibuvSharp
 		public IntPtr NativeHandle { get; protected set; }
 
 		GCHandle GCHandle { get; set; }
+
+		uv_handle_t *handle {
+			get {
+				return (uv_handle_t *)NativeHandle;
+			}
+		}
+
+		public IntPtr Data {
+			get {
+				return handle->data;
+			}
+			set {
+				handle->data = value;
+			}
+		}
+
+		public HandleType HandleType {
+			get {
+				return handle->type;
+			}
+		}
 
 		internal Handle(Loop loop, IntPtr handle)
 		{
