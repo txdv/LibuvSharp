@@ -47,6 +47,7 @@
     <Compile Include="DirectoryFixture.cs" />
     <Compile Include="FileFixture.cs" />
     <Compile Include="ComputerFixture.cs" />
+    <Compile Include="ProcessFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
