@@ -173,7 +173,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_handle_size(HandleType type);
 
-		internal static int Size(HandleType type)
+		public static int Size(HandleType type)
 		{
 			return uv_handle_size(type);
 		}
