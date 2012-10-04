@@ -44,7 +44,7 @@ void print_handle()
 int main(int argc, char **argv)
 {
   if (argc < 2) {
-    printf("Provide at least on parameter (err, req, handle)");
+    printf("Provide at least on parameter (err, req, handle)\n");
     exit(0);
   }
 
