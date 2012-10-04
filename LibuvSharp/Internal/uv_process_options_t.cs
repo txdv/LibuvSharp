@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
@@ -64,7 +65,29 @@ namespace LibuvSharp
 			env = alloc(options.Environment);
 			cwd = Marshal.StringToHGlobalAnsi(options.CurrentWorkingDirectory);
 
+			// all fields have to be set
 			flags = 0;
+			uid = 0;
+			gid = 0;
+
+			if (options.Detached) {
+				flags |= (uint)uv_process_flags.UV_PROCESS_DETACHED;
+			}
+
+			if (options.WindowsVerbatimArguments) {
+				flags |= (uint)uv_process_flags.UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS;
+			}
+
+			if (options.UID.HasValue) {
+				flags |= (uint)uv_process_flags.UV_PROCESS_SETUID;
+				uid = options.GID.Value;
+			}
+
+			if (options.GID.HasValue) {
+				flags |= (uint)uv_process_flags.UV_PROCESS_SETGID;
+				gid = options.GID.Value;
+			}
+
 			stdio_count = 3;
 			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(sizeof(uv_stdio_container_stream_t));
 
@@ -76,9 +99,6 @@ namespace LibuvSharp
 				}
 				i++;
 			}
-
-			uid = 0;
-			gid = 0;
 
 			var that = this;
 			exit_cb = Marshal.GetFunctionPointerForDelegate(new CAction<IntPtr, int, int>((handle, exit_status, term_signal) => {

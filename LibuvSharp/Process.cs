@@ -48,6 +48,9 @@ namespace LibuvSharp
 		public string[] Environment { get; set; }
 		public string CurrentWorkingDirectory { get; set; }
 		public bool WindowsVerbatimArguments { get; set; }
+		public bool Detached { get; set; }
+		public int? UID { get; set; }
+		public int? GID { get; set ;}
 
 		public UVStream Stdin { get; set; }
 		public UVStream Stdout { get; set; }
