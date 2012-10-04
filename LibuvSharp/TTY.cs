@@ -66,9 +66,6 @@ namespace LibuvSharp
 			int r = uv_tty_get_winsize(NativeHandle, out width, out height);
 			return r == 0;
 		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern HandleType uv_guess_handle(IntPtr fd);
 	}
 }
 
