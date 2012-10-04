@@ -91,10 +91,14 @@ namespace LibuvSharp
 			stdio_count = 3;
 			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(sizeof(uv_stdio_container_stream_t));
 
-			int i = 0;
+			int i;
+			for (i = 0; i < stdio_count; i++) {
+				stdio[i].flags = LibuvSharp.uv_stdio_flags.UV_IGNORE;
+			}
+
 			foreach (var stream in new UVStream[] { options.Stdin, options.Stdout, options.Stderr }) {
 				if (stream != null && stream is UVStream) {
-					stdio[i].flags = uv_stdio_flags.UV_INHERIT_STREAM;
+					stdio[i].flags |= uv_stdio_flags.UV_INHERIT_STREAM;
 					stdio[i].stream = stream.NativeHandle;
 				}
 				i++;
