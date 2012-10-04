@@ -130,6 +130,7 @@ namespace LibuvSharp
 			QueueWork(callback, () => { });
 		}
 
+		[Obsolete("When using this method, the mono process will hang")]
 		public void QueueWork(Action callback, Action after)
 		{
 			var pr = new PermaRequest(UV.Sizeof(UvRequestType.UV_WORK));
