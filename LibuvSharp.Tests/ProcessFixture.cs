@@ -14,35 +14,55 @@ namespace LibuvSharp.Tests
 			Assert.IsNotNullOrEmpty(Process.ExecutablePath);
 		}
 
-		void ProcessSpawn(string command, Action<int, string> callback)
+		Process ProcessSpawn(string command, Action<int> callback)
 		{
 			var args = command.Split(new char[] { ' ' });
-			Pipe stdout = new Pipe();
-			stdout.Open((IntPtr)1);
+			return Process.Spawn(new ProcessOptions() {
+				File = args[0],
+				Arguments = args
+			}, (process) => {
+				callback(process.ExitCode);
+			});
+		}
+
+		Process ProcessSpawn(string command, Action<string> callback)
+		{
+			var stdout = new Pipe() { Writeable = true };
+
+			var streams = new UVStream[] {
+				null,
+				stdout,
+			};
+
+			string text = null;
+
+			var args = command.Split(new char[] { ' ' });
 			var p = Process.Spawn(new ProcessOptions() {
 				File = args[0],
 				Arguments = args,
-				Stdout = stdout
+				Streams = streams
 			}, (process) => {
-				stdout.Shutdown();
-				stdout.Close();
+				callback(text);
 			});
-			stdout.Read(Encoding.ASCII, (text) => callback(p.ExitCode, text));
+
+			stdout.Read(Encoding.ASCII, (t) => text = t);
+			stdout.Resume();
+			return p;
 		}
 
 		[Test]
 		public void ProcessSpawn()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				int result = -1;
-				string which = null;
-				ProcessSpawn("/usr/bin/which which", (code, res) => {
-					result = code;
-					which = res;
-				});
+				string result = null;
+				ProcessSpawn("/usr/bin/which which", (res) => result = res);
 				Loop.Default.Run();
-				Assert.AreEqual(result, 0);
-				Assert.AreEqual(which, "/usr/bin/which");
+				Assert.AreEqual(result, "/usr/bin/which\n");
+
+				int? exitCode = null;
+				ProcessSpawn("/usr/bin/which which", (res) => exitCode = res);
+				Loop.Default.Run();
+				Assert.AreEqual(exitCode.Value, 0);
 			}
 		}
 	}

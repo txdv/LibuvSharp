@@ -82,24 +82,36 @@ namespace LibuvSharp
 				gid = options.GID.Value;
 			}
 
-			stdio_count = 3;
-			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(stdio_count * sizeof(uv_stdio_container_stream_t));
+			process.Data = GCHandle.ToIntPtr(process.GCHandle);
+			exit_cb = Marshal.GetFunctionPointerForDelegate(cb);
 
-			int i;
-			for (i = 0; i < stdio_count; i++) {
-				stdio[i].flags = 0;
+			stdio_count = (options.Streams == null && !(options.Streams is UVStream[]) ? 0 : options.Streams.Length);
+			if (stdio_count == 0) {
+				stdio = null;
+				return;
 			}
 
-			foreach (var stream in new UVStream[] { options.Stdin, options.Stdout, options.Stderr }) {
-				if (stream != null && stream is UVStream) {
-					stdio[i].flags |= uv_stdio_flags.UV_INHERIT_STREAM;
+			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(stdio_count * sizeof(uv_stdio_container_stream_t));
+
+			int i = 0;
+			foreach (var stream in options.Streams) {
+				stdio[i].flags = 0;
+				if (stream != null) {
 					stdio[i].stream = stream.NativeHandle;
+					if ((stream.readable || stream.writeable) && stream is Pipe) {
+						stdio[i].flags |= uv_stdio_flags.UV_CREATE_PIPE;
+						if (stream.readable) {
+							stdio[i].flags |= uv_stdio_flags.UV_READABLE_PIPE;
+						}
+						if (stream.writeable) {
+							stdio[i].flags |= uv_stdio_flags.UV_WRITABLE_PIPE;
+						}
+					} else if (stream is UVStream) {
+						stdio[i].flags |= uv_stdio_flags.UV_INHERIT_STREAM;
+					}
 				}
 				i++;
 			}
-
-			process.Data = GCHandle.ToIntPtr(process.GCHandle);
-			exit_cb = Marshal.GetFunctionPointerForDelegate(cb);
 		}
 
 		static uv_exit_cb cb = exit;

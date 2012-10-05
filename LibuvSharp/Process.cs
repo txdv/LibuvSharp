@@ -52,9 +52,7 @@ namespace LibuvSharp
 		public int? UID { get; set; }
 		public int? GID { get; set ;}
 
-		public UVStream Stdin { get; set; }
-		public UVStream Stdout { get; set; }
-		public UVStream Stderr { get; set; }
+		public UVStream[] Streams { get; set; }
 	}
 
 	unsafe public class Process : Handle

@@ -130,18 +130,26 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_readable(IntPtr handle);
 
+		internal bool readable;
 		public bool Readable {
 			get {
 				return uv_is_readable(NativeHandle) != 0;
+			}
+			set {
+				readable = value;
 			}
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_writable(IntPtr handle);
 
+		internal bool writeable;
 		public bool Writeable {
 			get {
 				return uv_is_writable(NativeHandle) != 0;
+			}
+			set {
+				writeable = value;
 			}
 		}
 
