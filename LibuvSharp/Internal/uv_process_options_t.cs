@@ -85,7 +85,7 @@ namespace LibuvSharp
 			process.Data = GCHandle.ToIntPtr(process.GCHandle);
 			exit_cb = Marshal.GetFunctionPointerForDelegate(cb);
 
-			stdio_count = (options.Streams == null && !(options.Streams is UVStream[]) ? 0 : options.Streams.Length);
+			stdio_count = (options.Streams == null && !(options.Streams is UVStream[]) ? 0 : options.Streams.Count);
 			if (stdio_count == 0) {
 				stdio = null;
 				return;

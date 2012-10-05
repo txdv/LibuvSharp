@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
@@ -52,7 +53,7 @@ namespace LibuvSharp
 		public int? UID { get; set; }
 		public int? GID { get; set ;}
 
-		public UVStream[] Streams { get; set; }
+		public ICollection<UVStream> Streams { get; set; }
 	}
 
 	unsafe public class Process : Handle
