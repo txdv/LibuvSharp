@@ -122,8 +122,10 @@ namespace LibuvSharp
 			}
 		}
 
+		delegate void uv_work_cb(IntPtr req);
+
 		[DllImport("uv")]
-		static extern int uv_queue_work(IntPtr loop, IntPtr req, Action<IntPtr> work_cb, Action<IntPtr> after_work_cb);
+		static extern int uv_queue_work(IntPtr loop, IntPtr req, uv_work_cb work_cb, uv_work_cb after_work_cb);
 
 		public void QueueWork(Action callback)
 		{
@@ -133,16 +135,8 @@ namespace LibuvSharp
 		[Obsolete("When using this method, the mono process will hang")]
 		public void QueueWork(Action callback, Action after)
 		{
-			var pr = new PermaRequest(UV.Sizeof(RequestType.UV_WORK));
-			var before = new CAction<IntPtr>((ptr) => callback());
-			var cafter = new CAction<IntPtr>((ptr) => {
-				pr.Dispose();
-				if (after != null) {
-					after();
-				}
-			});
-
-			int r = uv_queue_work(NativeHandle, pr.Handle, before.Callback, cafter.Callback);
+			var wr = new WorkRequest(callback, after);
+			int r = uv_queue_work(NativeHandle, wr.Handle, WorkRequest.BeforeCallback, WorkRequest.AfterCallback);
 			Ensure.Success(r, this);
 		}
 

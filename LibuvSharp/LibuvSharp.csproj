@@ -85,6 +85,8 @@
     <Compile Include="RequestType.cs" />
     <Compile Include="HandleType.cs" />
     <Compile Include="Internal\uv_process_t.cs" />
+    <Compile Include="Internal\WorkRequest.cs" />
+    <Compile Include="Internal\uv_work_t.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
