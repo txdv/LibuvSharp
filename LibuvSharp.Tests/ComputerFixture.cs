@@ -25,7 +25,6 @@ namespace LibuvSharp.Tests
 				Assert.Greater(cpu.Speed, 0);
 
 				Assert.Greater(cpu.Times.Idle,   0);
-				Assert.Greater(cpu.Times.IRQ,    0);
 				Assert.Greater(cpu.Times.Nice,   0);
 				Assert.Greater(cpu.Times.System, 0);
 				Assert.Greater(cpu.Times.User,   0);
