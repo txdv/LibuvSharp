@@ -5,8 +5,6 @@ namespace LibuvSharp
 {
 	public class PipeListener : Listener
 	{
-		unsafe uv_pipe_t *pipe_t;
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
@@ -15,32 +13,16 @@ namespace LibuvSharp
 		{
 		}
 
-		public PipeListener(bool interProcessCommunication)
-			: this(Loop.Default, interProcessCommunication)
-		{
-		}
-
-		public PipeListener(Loop loop)
-			: this(loop, false)
-		{
-		}
-
-		unsafe public PipeListener(Loop loop, bool interProcessCommunication)
+		unsafe public PipeListener(Loop loop)
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_STREAM));
-		}
-
-		unsafe public bool InterProcessCommunication {
-			get {
-				return pipe_t->rpc >= 0;
-			}
+			// the ipc setting in the listener is irrelevant
+			uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
 		}
 
 		protected override UVStream Create()
 		{
-			return new Pipe(Loop, InterProcessCommunication);
+			return new Pipe(Loop);
 		}
 
 		[DllImport("uv")]
