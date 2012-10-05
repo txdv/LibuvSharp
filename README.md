@@ -1,4 +1,4 @@
-LibuvSharp
+LibuvSharp [![Build Status](https://secure.travis-ci.org/txdv/LibuvSharp.png)](http://travis-ci.org/txdv/LibuvSharp)
 ==========
 
 This is a C# wrapper for the [libuv library](https://github.com/joyent/libuv/).
