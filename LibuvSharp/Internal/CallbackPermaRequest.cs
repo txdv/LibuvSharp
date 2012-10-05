@@ -5,22 +5,12 @@ namespace LibuvSharp
 	internal class CallbackPermaRequest : PermaRequest
 	{
 		public CallbackPermaRequest(int size)
-			: this(size, true)
-		{
-		}
-
-		public CallbackPermaRequest(int size, bool allocate)
-			: base(size, allocate)
+			: base(size)
 		{
 		}
 
 		public CallbackPermaRequest(RequestType type)
-			: this(type, true)
-		{
-		}
-
-		public CallbackPermaRequest(RequestType type, bool allocate)
-			: this(UV.Sizeof(type), allocate)
+			: this(UV.Sizeof(type))
 		{
 		}
 

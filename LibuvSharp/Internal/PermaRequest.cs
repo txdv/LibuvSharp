@@ -30,31 +30,16 @@ namespace LibuvSharp
 		}
 
 		public PermaRequest(int size)
-			: this(size, true)
+			: this(UV.Alloc(size))
 		{
 		}
 
-		public PermaRequest(int size, bool allocate)
-			: this(UV.Alloc(size), allocate)
-		{
-		}
-
-		public PermaRequest(IntPtr ptr)
-			: this(ptr, true)
-		{
-		}
-
-		protected PermaRequest(IntPtr handle, bool allocate)
+		public PermaRequest(IntPtr handle)
 		{
 			Handle = handle;
 			request = (uv_req_t *)handle;
 
-			Data = IntPtr.Zero;
-
-			if (allocate) {
-				Data = UV.Alloc(sizeof(GCHandle));
-			}
-
+			Data = UV.Alloc(sizeof(GCHandle));
 			GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
 		}
 

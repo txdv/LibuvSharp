@@ -10,12 +10,7 @@ namespace LibuvSharp
 		protected uv_fs_t *fsrequest;
 
 		public FileSystemRequest()
-			: this(true)
-		{
-		}
-
-		public FileSystemRequest(bool allocate)
-			: base(Size, allocate)
+			: base(Size)
 		{
 			fsrequest = (uv_fs_t *)Handle;
 		}
