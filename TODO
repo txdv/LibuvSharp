@@ -1,3 +1,5 @@
 * When using QueueWork mono hangs, even though it gets through the main method.
   Call System.Diagnostics.Process.GetCurrentProcess().Kill() at the end of
   main if you wan't to get passed it.
+* Windows structlayout for uv_process_options_t.
+* read2 exposure in IPCPipe.
