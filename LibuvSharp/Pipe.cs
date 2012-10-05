@@ -44,12 +44,7 @@ namespace LibuvSharp
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		public Pipe()
-			: this(false)
-		{
-		}
-
-		public Pipe(bool interProcessCommunication)
-			: this(Loop.Default, interProcessCommunication)
+			: this(Loop.Default)
 		{
 		}
 
@@ -58,7 +53,7 @@ namespace LibuvSharp
 		{
 		}
 
-		unsafe public Pipe(Loop loop, bool interProcessCommunication)
+		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
@@ -108,4 +103,69 @@ namespace LibuvSharp
 		}
 	}
 
+	public class IPCPipe : Pipe
+	{
+		public IPCPipe()
+			: this(Loop.Default)
+		{
+		}
+
+		public IPCPipe(Loop loop)
+			: base(loop, true)
+		{
+		}
+
+		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_write2_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
+
+		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_write2_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
+
+		public void Write(UVStream stream, byte[] data, int index, int count, Action<bool> callback)
+		{
+			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
+			cpr.Callback = (status, cpr2) => {
+				datagchandle.Free();
+				if (callback != null) {
+					callback(status == 0);
+				}
+			};
+
+			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+
+			int r;
+			if (UV.isUnix) {
+				UnixBufferStruct[] buf = new UnixBufferStruct[1];
+				buf[0] = new UnixBufferStruct(ptr, count);
+				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.StaticEnd);
+			} else {
+				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
+				buf[0] = new WindowsBufferStruct(ptr, count);
+				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.StaticEnd);
+			}
+
+			Ensure.Success(r, Loop);
+		}
+		public void Write(UVStream stream, byte[] data, int index, Action<bool> callback)
+		{
+			Write(stream, data, index, data.Length - index, callback);
+		}
+		public void Write(UVStream stream, byte[] data, Action<bool> callback)
+		{
+			Write(stream, data, 0, data.Length, callback);
+		}
+		public void Write(UVStream stream, byte[] data, int index, int count)
+		{
+			Write(stream, data, index, count, null);
+		}
+		public void Write(UVStream stream, byte[] data, int index)
+		{
+			Write(stream, data, index, data.Length - index, null);
+		}
+		public void Write(UVStream stream, byte[] data)
+		{
+			Write(stream, data, 0, data.Length, null);
+		}
+	}
 }
