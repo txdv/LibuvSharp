@@ -26,7 +26,6 @@ namespace LibuvSharp.Tests
 			Assert.Greater(Loop.Default.Handles.Length, 0);
 		}
 
-		[Test]
 		public void ActiveHandlesCount()
 		{
 			Assert.Greater(Loop.Default.ActiveHandlesCount, 0);
