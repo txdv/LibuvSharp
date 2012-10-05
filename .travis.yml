@@ -1,0 +1,20 @@
+# Travis-CI Build for libgit2sharp
+# see travis-ci.org for details
+
+language: c
+
+# Make sure CMake is installed
+install:
+- sudo apt-get install mono-gmcs mono-devel
+
+# Run the Build script
+script:
+ - make
+ - mkdir -p Debug/bin
+ - cd Debug/bin/
+ - ln -s ../../libuv.so
+ - cd ../..
+
+# Run Tests
+after_script:
+ - xbuild LibuvSharp/LibuvSharp.csproj
