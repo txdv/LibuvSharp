@@ -20,12 +20,10 @@ namespace LibuvSharp
 
 		public GCHandle GCHandle {
 			get {
-				GCHandle *p = (GCHandle *)Data;
-				return *p;
+				return GCHandle.FromIntPtr(Data);
 			}
 			set {
-				GCHandle *p = (GCHandle *)Data;
-				*p = value;
+				Data = GCHandle.ToIntPtr(value);
 			}
 		}
 
@@ -39,7 +37,6 @@ namespace LibuvSharp
 			Handle = handle;
 			request = (uv_req_t *)handle;
 
-			Data = UV.Alloc(sizeof(GCHandle));
 			GCHandle = GCHandle.Alloc(this, GCHandleType.Normal);
 		}
 
@@ -58,7 +55,6 @@ namespace LibuvSharp
 				if (GCHandle.IsAllocated) {
 					GCHandle.Free();
 				}
-				UV.Free(Data);
 				Data = IntPtr.Zero;
 			}
 
@@ -71,8 +67,7 @@ namespace LibuvSharp
 		unsafe public static T GetObject<T>(IntPtr ptr) where T : class
 		{
 			uv_req_t *req = (uv_req_t *)ptr.ToPointer();
-			GCHandle *gchandle = (GCHandle *)req->data;
-			return (gchandle->Target as T);
+			return GCHandle.FromIntPtr(req->data).Target as T;
 		}
 	}
 }
