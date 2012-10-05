@@ -102,21 +102,29 @@ namespace LibuvSharp
 		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
 
 		uv_process_options_t process_options;
+		Action<Process> exitCallback;
 
 		internal Process(Loop loop, ProcessOptions options, Action<Process> exitCallback)
 			: base(loop, HandleType.UV_PROCESS)
 		{
-			process_options = new uv_process_options_t(options, (exit_status, term_status) => {
-				ExitCode = exit_status;
-				TermSignal = term_status;
+			this.exitCallback = exitCallback;
+			process_options = new uv_process_options_t(this, options);
+		}
+
+		internal void OnExit(int exit_status, int term_status)
+		{
+			process_options.Dispose();
+			ExitCode = exit_status;
+			TermSignal = term_status;
+			if (exitCallback != null) {
 				exitCallback(this);
-				Close();
-			});
+			}
+			Close();
 		}
 
 		uv_process_t *process {
 			get {
-				return (uv_process_t *)(NativeHandle.ToInt32() + Handle.Size(LibuvSharp.HandleType.UV_STREAM));
+				return (uv_process_t *)(NativeHandle.ToInt32() + Handle.Size(HandleType.UV_STREAM));
 			}
 		}
 

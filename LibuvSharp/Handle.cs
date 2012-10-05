@@ -17,7 +17,7 @@ namespace LibuvSharp
 
 		public IntPtr NativeHandle { get; protected set; }
 
-		GCHandle GCHandle { get; set; }
+		internal GCHandle GCHandle { get; set; }
 
 		uv_handle_t *handle {
 			get {

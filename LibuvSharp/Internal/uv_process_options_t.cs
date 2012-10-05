@@ -26,13 +26,6 @@ namespace LibuvSharp
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	struct uv_stdio_container_t {
-		public uv_stdio_container_stream_t stdin;
-		public uv_stdio_container_stream_t stdout;
-		public uv_stdio_container_stream_t stderr;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
 	unsafe struct uv_process_options_t : IDisposable
 	{
 		// fields
@@ -52,8 +45,9 @@ namespace LibuvSharp
 		uv_stdio_container_stream_t *stdio;
 
 		// functions
+		delegate void uv_exit_cb(IntPtr Handle, int exit_status, int term_signal);
 
-		public uv_process_options_t(ProcessOptions options, Action<int,int> exitCallback)
+		public uv_process_options_t(Process process, ProcessOptions options)
 		{
 			if (string.IsNullOrEmpty(options.File)) {
 				throw new ArgumentException("file of processoptions can't be null");
@@ -89,11 +83,11 @@ namespace LibuvSharp
 			}
 
 			stdio_count = 3;
-			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(sizeof(uv_stdio_container_stream_t));
+			stdio = (uv_stdio_container_stream_t *)Marshal.AllocHGlobal(stdio_count * sizeof(uv_stdio_container_stream_t));
 
 			int i;
 			for (i = 0; i < stdio_count; i++) {
-				stdio[i].flags = LibuvSharp.uv_stdio_flags.UV_IGNORE;
+				stdio[i].flags = 0;
 			}
 
 			foreach (var stream in new UVStream[] { options.Stdin, options.Stdout, options.Stderr }) {
@@ -104,11 +98,19 @@ namespace LibuvSharp
 				i++;
 			}
 
-			var that = this;
-			exit_cb = Marshal.GetFunctionPointerForDelegate(new CAction<IntPtr, int, int>((handle, exit_status, term_signal) => {
-				exitCallback(exit_status, term_signal);
-				that.Dispose();
-			}).Callback);
+			process.Data = GCHandle.ToIntPtr(process.GCHandle);
+			exit_cb = Marshal.GetFunctionPointerForDelegate(cb);
+		}
+
+		static uv_exit_cb cb = exit;
+
+		static void exit(IntPtr handle, int exit_status, int term_signal)
+		{
+			uv_handle_t *h = (uv_handle_t *)handle;
+			var gchandle = GCHandle.FromIntPtr(h->data);
+			var process = (gchandle.Target as Process);
+			gchandle.Free();
+			process.OnExit(exit_status, term_signal);
 		}
 
 		public void Dispose()
@@ -121,8 +123,10 @@ namespace LibuvSharp
 			free(ref args);
 			free(ref env);
 
-			Marshal.FreeHGlobal((IntPtr )stdio);
-			stdio = (uv_stdio_container_stream_t *)IntPtr.Zero;
+			if (stdio != null) {
+				Marshal.FreeHGlobal((IntPtr)stdio);
+				stdio = null;
+			}
 
 			if (cwd != IntPtr.Zero) {
 				Marshal.FreeHGlobal(file);
