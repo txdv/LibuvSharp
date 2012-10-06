@@ -3,11 +3,8 @@
   main if you wan't to get passed it.
 * Windows structlayout for uv_process_options_t.
 * Not (yet?) exposed:
-  - uv_udp_set_ttl
-  - uv_udp_set_broatcast
-  - uv_udp_set_multicast_ttl
-  - uv_udp_set_multicast_loop
   - uv_udp_set_membership
+  - uv_udp_getsockname
   - uv_read2
   - uv_disable_stdio_inheritane
   - uv_signal_* (mostly linux, only default loop)

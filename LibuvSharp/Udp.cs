@@ -238,6 +238,47 @@ namespace LibuvSharp
 				Message(endPoint, data);
 			}
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_udp_set_ttl(IntPtr handle, int ttl);
+
+		public byte TTL
+		{
+			set {
+				int r = uv_udp_set_ttl(NativeHandle, (int)value);
+				Ensure.Success(r);
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_udp_set_broadcast(IntPtr handle, int on);
+
+		public bool Broadcast {
+			set {
+				int r = uv_udp_set_broadcast(NativeHandle, value ? 1 : 0);
+				Ensure.Success(r);
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_udp_set_multicast_ttl(IntPtr handle, int ttl);
+
+		public byte MulticastTTL {
+			set {
+				int r = uv_udp_set_multicast_ttl(NativeHandle, (int)value);
+				Ensure.Success(r);
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_udp_set_multicast_loop(IntPtr handle, int on);
+
+		public bool MulticastLoop {
+			set {
+				int r = uv_udp_set_multicast_loop(NativeHandle, value ? 1 : 0);
+				Ensure.Success(r);
+			}
+		}
 	}
 }
 
