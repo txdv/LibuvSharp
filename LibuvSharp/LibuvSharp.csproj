@@ -84,9 +84,11 @@
     <Compile Include="Internal\uv_process_t.cs" />
     <Compile Include="Internal\WorkRequest.cs" />
     <Compile Include="Internal\uv_work_t.cs" />
+    <Compile Include="Threading\LoopExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Internal\" />
+    <Folder Include="Threading\" />
   </ItemGroup>
 </Project>
