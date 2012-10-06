@@ -10,10 +10,6 @@ install:
 # Run the Build script
 script:
  - make
- - mkdir -p Debug/bin
- - cd Debug/bin/
- - ln -s ../../libuv.so
- - cd ../..
 
 # Run Tests
 after_script:
