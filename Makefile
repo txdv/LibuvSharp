@@ -1,3 +1,5 @@
+obj=src/unix/async.o src/unix/core.o src/unix/dl.o src/unix/error.o src/unix/fs.o src/unix/loop.o src/unix/loop-watcher.o src/unix/pipe.o src/unix/poll.o src/unix/process.o src/unix/signal.o src/unix/stream.o src/unix/tcp.o src/unix/thread.o src/unix/timer.o src/unix/tty.o src/unix/udp.o src/unix/linux/linux-core.o src/unix/linux/inotify.o src/unix/linux/syscalls.o src/fs-poll.o src/inet.o src/uv-common.o src/unix/ev/ev.o src/unix/uv-eio.o src/unix/eio/eio.o
+OBJ=$(addprefix libuv/, $(obj))
 
 uv=libuv/uv.a
 ev=libuv/src/unix/ev/ev.o
@@ -13,7 +15,7 @@ $(uv): libuv/Makefile
 	make -C libuv uv.a
 
 libuv.so: $(uv)
-	$(CC) -shared libuv/uv.a $(ev) -o libuv.so
+	$(CC) -shared libuv/uv.a -o libuv.so $(OBJ)
 
 generate: generate.c libuv.so
 	$(CC) -Ilibuv/include/ -lpthread -ldl -lrt libuv.so $(ev) -lm generate.c -o generate
