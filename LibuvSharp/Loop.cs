@@ -199,6 +199,25 @@ namespace LibuvSharp
 				return handles;
 			}
 		}
+
+		public int RefCount { get; private set; }
+
+		public void Ref() {
+			if (RefCount == 0) {
+				async.Ref();
+			}
+			RefCount++;
+		}
+
+		public void Unref() {
+			if (RefCount <= 0) {
+				return;
+			}
+			if (RefCount == 1) {
+				async.Unref();
+			}
+			RefCount--;
+		}
 	}
 }
 
