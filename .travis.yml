@@ -5,12 +5,15 @@ language: c
 
 # Make sure CMake is installed
 install:
-- sudo apt-get install mono-gmcs mono-devel
+- sudo apt-get install mono-gmcs mono-devel nunit-console
 
 # Run the Build script
 script:
  - make
+ - xbuild LibuvSharp.sln
 
 # Run Tests
 after_script:
- - xbuild LibuvSharp/LibuvSharp.csproj
+ - sudo cp libuv.so /usr/lib/
+ - cd bin/Debug
+ - nunit-console LibuvSharp.Tests.dll
