@@ -162,6 +162,14 @@ namespace LibuvSharp
 		{
 			Kill((int)signum);
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void uv_disable_stdio_inheritance();
+
+		public static void DisableStdioInheritance()
+		{
+			uv_disable_stdio_inheritance();
+		}
 	}
 }
 

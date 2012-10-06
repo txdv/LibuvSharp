@@ -6,7 +6,6 @@
   - uv_udp_set_membership
   - uv_udp_getsockname
   - uv_read2
-  - uv_disable_stdio_inheritane
   - uv_signal_* (mostly linux, only default loop)
   - uv_pipe_pending_instances (windows only)
   - uv_inet_ntop
