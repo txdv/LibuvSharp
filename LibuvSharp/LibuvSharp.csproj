@@ -44,9 +44,6 @@
     <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="Lock.cs" />
-    <Compile Include="Mutex.cs" />
-    <Compile Include="Guard.cs" />
     <Compile Include="BaseHandle.cs" />
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />

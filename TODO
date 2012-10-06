@@ -11,17 +11,10 @@
   - uv_read2
   - uv_disable_stdio_inheritane
   - uv_signal_* (mostly linux, only default loop)
-  = uv_pipe_pending_instances (windows only)
+  - uv_pipe_pending_instances (windows only)
   - uv_inet_ntop
   - uv_inet_pton
-  - uv_thread_create
-  - uv_thread_self
-  - uv_thread_join
   - uv_setup_args
-  - uv_strlcpy
-  - uv_strlcat
-  - uv_sem_*
-  - uv_rw_lock
 * get rid of threading functionality?
   monitors and stuff are available in the BCL.
   - uv_mutex_*
@@ -30,3 +23,14 @@
 * update poll
   maybe use a more convenient representation in the callback.
 * Add Open interface?
+* Not to expose:
+  - Threading and locking functionality
+    it is already provided by the .NET BCL and is easier to use.
+    - uv_sem_*
+    - uv_rwlock_*
+    - uv_mutex_*
+    - uv_thread_*
+  - strutility
+    c# has all the string manipulating utilities it needs.
+    - uv_strlcpy
+    - uv_strlcat
