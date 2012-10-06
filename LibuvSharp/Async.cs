@@ -85,7 +85,10 @@ namespace LibuvSharp
 			async = new Async(loop, (_) => {
 				Queue<T> tmp;
 				lock (queue) {
-					tmp = new Queue<T>(queue);
+					tmp = new Queue<T>();
+					while (queue.Count > 0) {
+						tmp.Enqueue(queue.Dequeue());
+					}
 				}
 				while (tmp.Count > 0) {
 					OnCallback(tmp.Dequeue());
