@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace LibuvSharp.Threading.Tasks
 {
-	class LoopTaskScheduler : System.Threading.Tasks.TaskScheduler
+	class LoopTaskScheduler : TaskScheduler
 	{
 		static LoopTaskScheduler()
 		{

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Loop : IDisposable
+	public partial class Loop : IDisposable
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr uv_default_loop();
@@ -217,12 +217,6 @@ namespace LibuvSharp
 				async.Unref();
 			}
 			RefCount--;
-		}
-
-		public System.Threading.Tasks.TaskScheduler Scheduler {
-			get {
-				return LibuvSharp.Threading.Tasks.LoopTaskScheduler.Instance;
-			}
 		}
 	}
 }

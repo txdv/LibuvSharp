@@ -87,6 +87,7 @@
     <Compile Include="Threading\LoopExtensions.cs" />
     <Compile Include="Threading\Tasks\TasksExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopTaskScheduler.cs" />
+    <Compile Include="Threading\Tasks\Loop.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
