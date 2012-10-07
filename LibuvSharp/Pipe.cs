@@ -80,10 +80,6 @@ namespace LibuvSharp
 
 		public void Connect(string name, Action<Exception> callback)
 		{
-			Connect(name, false, callback);
-		}
-		public void Connect(string name, bool interProcessCommunication, Action<Exception> callback)
-		{
 			Ensure.ArgumentNotNull(name, "name");
 			Ensure.ArgumentNotNull(callback, "callback");
 
