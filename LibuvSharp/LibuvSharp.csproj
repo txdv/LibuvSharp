@@ -90,6 +90,7 @@
     <Compile Include="Threading\Tasks\Loop.cs" />
     <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
     <Compile Include="Threading\Tasks\TcpExtensions.cs" />
+    <Compile Include="Threading\Tasks\PipeExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,12 +1,26 @@
 using System;
+using System.Threading.Tasks;
 
 namespace LibuvSharp
 {
-		public class PipeExtensions
+	public static class PipeExtensions
+	{
+		public static Task ConnectAsync(this Pipe pipe, string name)
 		{
-				public PipeExtensions ()
-				{
-				}
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				pipe.Connect(name, (e) => {
+					if (e == null) {
+						tcs.SetResult(null);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
 		}
+	}
 }
 
