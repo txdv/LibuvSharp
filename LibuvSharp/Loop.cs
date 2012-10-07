@@ -218,6 +218,12 @@ namespace LibuvSharp
 			}
 			RefCount--;
 		}
+
+		public System.Threading.Tasks.TaskScheduler Scheduler {
+			get {
+				return LibuvSharp.Threading.Tasks.LoopTaskScheduler.Instance;
+			}
+		}
 	}
 }
 
