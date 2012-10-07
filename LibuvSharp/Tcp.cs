@@ -64,6 +64,15 @@ namespace LibuvSharp
 		{
 			Listen(DefaultBacklog, callback);
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_tcp_simultaneos_accepts(IntPtr handle, int enable);
+
+		public bool SimultaneosAccepts {
+			set {
+				uv_tcp_simultaneos_accepts(NativeHandle, (value ? 1 : 0));
+			}
+		}
 	}
 
 	public class Tcp : UVStream
@@ -138,9 +147,6 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_keepalive(IntPtr handle, int enable, int delay);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_simultaneos_accepts(IntPtr handle, int enable);
-
 		public bool NoDelay {
 			set {
 				uv_tcp_nodelay(NativeHandle, (value ? 1 : 0));
@@ -150,12 +156,6 @@ namespace LibuvSharp
 		public void SetKeepAlive(bool enable, int delay)
 		{
 			uv_tcp_keepalive(NativeHandle, (enable ? 1 : 0), delay);
-		}
-
-		public bool SimultaneosAccepts {
-			set {
-				uv_tcp_simultaneos_accepts(NativeHandle, (value ? 1 : 0));
-			}
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
