@@ -7,7 +7,7 @@ namespace LibuvSharp
 	{
 		Loop Loop { get; }
 
-		event Action EndOfStream;
+		event Action Complete;
 		event Action<Exception> Error;
 
 		void Resume();

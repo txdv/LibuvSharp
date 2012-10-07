@@ -43,7 +43,7 @@ namespace LibuvSharp.Threading.Tasks
 			Action end = () => tcs.SetResult(null);
 			try {
 				stream.Error += error;
-				stream.EndOfStream += end;
+				stream.Complete += end;
 				stream.Read((buffer) => {
 					tcs.SetResult(buffer);
 				});
@@ -56,7 +56,7 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task.ContinueWith((bb) => {
 				stream.Pause();
 				stream.Error -= error;
-				stream.EndOfStream -= end;
+				stream.Complete -= end;
 				return bb.Result;
 			}, stream.Loop.Scheduler);
 		}

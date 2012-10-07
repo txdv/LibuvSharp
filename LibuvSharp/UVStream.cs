@@ -85,7 +85,7 @@ namespace LibuvSharp
 				return;
 			} else if (nread < 0) {
 				if (nread == -1) {
-					Close(EndOfStream);
+					Close(Complete);
 				} else {
 					OnError(Ensure.Success(Loop));
 					Close();
@@ -95,14 +95,14 @@ namespace LibuvSharp
 			}
 		}
 
-		protected void OnEndOfStream()
+		protected void OnComplete()
 		{
-			if (EndOfStream != null) {
-				EndOfStream();
+			if (Complete != null) {
+				Complete();
 			}
 		}
 
-		public event Action EndOfStream;
+		public event Action Complete;
 
 		protected void OnError(Exception exception)
 		{
