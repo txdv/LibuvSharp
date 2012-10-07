@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using LibuvSharp.Threading.Tasks;
 
-namespace LibuvSharp
+namespace LibuvSharp.Threading.Tasks
 {
 	public static class IUVStreamExtensions
 	{
