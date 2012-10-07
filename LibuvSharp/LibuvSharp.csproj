@@ -91,6 +91,7 @@
     <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
     <Compile Include="Threading\Tasks\TcpExtensions.cs" />
     <Compile Include="Threading\Tasks\PipeExtensions.cs" />
+    <Compile Include="Threading\Tasks\IListenerExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
