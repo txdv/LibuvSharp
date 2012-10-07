@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
+using System.Threading.Tasks;
 using LibuvSharp;
 using LibuvSharp.Threading;
+using LibuvSharp.Threading.Tasks;
 
 namespace Test
 {
@@ -27,11 +29,12 @@ namespace Test
 			}
 		}
 
-		public static void Main(string[] args)
+		public static async Task MainAsync()
 		{
 			var stdin = new Pipe();
 			stdin.Open((IntPtr)0);
-			stdin.Read(Encoding.ASCII, (str) => {
+			string str = null;
+			while ((str = await stdin.ReadStringAsync()) != null) {
 				str = str.TrimEnd(new char[] { '\r', '\n' });
 				if (str.StartsWith("fib ")) {
 					int n;
@@ -39,8 +42,8 @@ namespace Test
 						Console.WriteLine("Supply an integer to the fib command");
 						return;
 					}
-					TimeSpan span;
-					BigInteger res;
+					TimeSpan span = TimeSpan.Zero;
+					BigInteger res = 0;
 					Loop.Default.QueueUserWorkItem(() => {
 						var now = DateTime.Now;
 						res = Fibonacci(n);
@@ -49,7 +52,7 @@ namespace Test
 						Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 					});
 				} else if (str == "quit") {
-					stdin.Close();
+					break;
 				} else if (str == "help") {
 					Console.WriteLine("Available commands: ");
 					Console.WriteLine("fib <n:int> - start a thread which calculates fib");
@@ -58,9 +61,17 @@ namespace Test
 				} else {
 					Console.WriteLine("Unknown command");
 				}
+			}
+			stdin.Shutdown();
+		}
+
+		public static void Main(string[] args)
+		{
+			var stdin = new Pipe();
+			stdin.Open((IntPtr)0);
+			Loop.Default.Run(async delegate {
+				await MainAsync();
 			});
-			stdin.Resume();
-			Loop.Default.Run();
 		}
 	}
 }
