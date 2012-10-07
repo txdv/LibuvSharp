@@ -23,44 +23,6 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static Task ShutdownAsync(this UVStream stream)
-		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				stream.Shutdown(() => {
-					tcs.SetResult(null);
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-
-		public static Task<ByteBuffer> ReadAsync(this UVStream stream)
-		{
-			var tcs = new TaskCompletionSource<ByteBuffer>();
-			Action<Exception> error = (e) => tcs.SetException(e);
-			Action end = () => tcs.SetResult(null);
-			try {
-				stream.Error += error;
-				stream.Complete += end;
-				stream.Read((buffer) => {
-					tcs.SetResult(buffer);
-				});
-				stream.Resume();
-			} catch (ArgumentException) {
-				tcs.SetResult(null);
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task.ContinueWith((bb) => {
-				stream.Pause();
-				stream.Error -= error;
-				stream.Complete -= end;
-				return bb.Result;
-			}, stream.Loop.Scheduler);
-		}
-
 		public static Task WaitAsync(this LibuvSharp.Timer timer, TimeSpan timeout)
 		{
 			var tcs = new TaskCompletionSource<object>();

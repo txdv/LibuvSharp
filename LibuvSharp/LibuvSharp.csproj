@@ -88,6 +88,7 @@
     <Compile Include="Threading\Tasks\TasksExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopTaskScheduler.cs" />
     <Compile Include="Threading\Tasks\Loop.cs" />
+    <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
