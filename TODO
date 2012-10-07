@@ -19,6 +19,7 @@
 * update poll
   maybe use a more convenient representation in the callback.
 * Add Open interface?
+* Revaluated throwing ArgumentException in Ensure.Success.
 * Not to expose:
   - Threading and locking functionality
     it is already provided by the .NET BCL and is easier to use.
@@ -30,3 +31,4 @@
     c# has all the string manipulating utilities it needs.
     - uv_strlcpy
     - uv_strlcat
+
