@@ -8,27 +8,22 @@ using LibuvSharp.Threading.Tasks;
 
 class MainClass
 {
-	public static void Execute(Loop loop)
+	public static void Main(string[] args)
 	{
-		loop.Run(async delegate {
+		Loop.Default.Run(async delegate {
 			try {
-				await loop.UVCreateDirectoryAsync("testing");
-				await loop.UVRenameDirectoryAsync("testing", "testing123");
-				var dirs = await loop.UVReadDirectoryAsync("./");
+				await UVDirectoryAsync.Create("testing");
+				await UVDirectoryAsync.Rename("testing", "testing123");
+				var dirs = await UVDirectoryAsync.Read("./");
 				Console.WriteLine("{0} files totally", dirs.Length);
 				Console.WriteLine();
 				foreach (var dir in dirs) {
 					Console.WriteLine(dir);
 				}
-				await loop.UVDeleteDirectoryAsync("testing123");
+				await UVDirectoryAsync.Delete("testing123");
 			} catch (Exception e) {
 				Console.WriteLine(e);
 			}
 		});
-	}
-
-	public static void Main(string[] args)
-	{
-		Execute(Loop.Default);
 	}
 }

@@ -4,9 +4,13 @@ using System.Collections.Generic;
 
 namespace LibuvSharp.Threading.Tasks
 {
-	public static class UVDirectoryExtensions
+	public static class UVDirectoryAsync
 	{
-		public static Task UVCreateDirectoryAsync(this Loop loop, string name)
+		public static Task Create(string name)
+		{
+			return Create(Loop.Default, name);
+		}
+		public static Task Create(Loop loop, string name)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
@@ -23,7 +27,11 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static Task UVDeleteDirectoryAsync(this Loop loop, string path)
+		public static Task Delete(string path)
+		{
+			return Delete(Loop.Default, path);
+		}
+		public static Task Delete(Loop loop, string path)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
@@ -40,7 +48,11 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static Task UVRenameDirectoryAsync(this Loop loop, string path, string newPath)
+		public static Task Rename(string path, string newPath)
+		{
+			return Rename(Loop.Default, path, newPath);
+		}
+		public static Task Rename(Loop loop, string path, string newPath)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
@@ -57,7 +69,11 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static Task<string[]> UVReadDirectoryAsync(this Loop loop, string path)
+		public static Task<string[]> Read(string path)
+		{
+			return Read(Loop.Default, path);
+		}
+		public static Task<string[]> Read(this Loop loop, string path)
 		{
 			var tcs = new TaskCompletionSource<string[]>();
 			try {
