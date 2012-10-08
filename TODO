@@ -1,3 +1,4 @@
+* Finish UVDirectory.Read
 * Windows structlayout for uv_process_options_t.
 * Not (yet?) exposed:
   - uv_udp_set_membership
