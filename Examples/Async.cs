@@ -35,12 +35,12 @@ static class LoopExtensions
 
 static class AsyncExtensions
 {
-	public static async Task<string> ReadStringAsync(this UVStream stream)
+	public static async Task<string> ReadStringAsync(this IUVStream stream)
 	{
 		return await ReadStringAsync(stream, Encoding.Default);
 	}
 
-	public static async Task<string> ReadStringAsync(this UVStream stream, Encoding encoding)
+	public static async Task<string> ReadStringAsync(this IUVStream stream, Encoding encoding)
 	{
 		if (encoding == null) {
 			throw new ArgumentException("encoding");
