@@ -1,6 +1,3 @@
-* When using QueueWork mono hangs, even though it gets through the main method.
-  Call System.Diagnostics.Process.GetCurrentProcess().Kill() at the end of
-  main if you wan't to get passed it.
 * Windows structlayout for uv_process_options_t.
 * Not (yet?) exposed:
   - uv_udp_set_membership
@@ -11,9 +8,6 @@
   - uv_inet_ntop
   - uv_inet_pton
   - uv_setup_args
-* get rid of threading functionality?
-  monitors and stuff are available in the BCL.
-  - uv_mutex_*
 * update filewatcher (new struct flag)
   maybe use a more convenient representation in the callback.
 * update poll
