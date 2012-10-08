@@ -178,7 +178,7 @@ namespace LibuvSharp.Tests
 					Assert.AreEqual("PONG", str);
 				});
 
-				client.EndOfStream += () => {
+				client.Complete += () => {
 					close_cb_called++;
 				};
 				client.Resume();
