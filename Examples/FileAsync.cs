@@ -11,9 +11,19 @@ class MainClass
 	public static void Execute(Loop loop)
 	{
 		loop.Run(async delegate {
-			await loop.CreateDirectoryAsync("testing");
-			await loop.RenameDirectoryAsync("testing", "testing123");
-			await loop.DeleteDirectoryAsync("testing123");
+			try {
+				await loop.UVCreateDirectoryAsync("testing");
+				await loop.UVRenameDirectoryAsync("testing", "testing123");
+				var dirs = await loop.UVReadDirectoryAsync("./");
+				Console.WriteLine("{0} files totally", dirs.Length);
+				Console.WriteLine();
+				foreach (var dir in dirs) {
+					Console.WriteLine(dir);
+				}
+				await loop.UVDeleteDirectoryAsync("testing123");
+			} catch (Exception e) {
+				Console.WriteLine(e);
+			}
 		});
 	}
 
