@@ -12,9 +12,17 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Create(Loop loop, string name)
 		{
+			return Create(Loop.Default, name);
+		}
+		public static Task Create(string name, int mode)
+		{
+			return Create(Loop.Default, name, mode);
+		}
+		public static Task Create(Loop loop, string name, int mode)
+		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				UVDirectory.Create(loop, name, (e) => {
+				UVDirectory.Create(loop, name, mode, (e) => {
 					if (e == null) {
 						tcs.SetResult(null);
 					} else {
