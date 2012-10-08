@@ -2,7 +2,11 @@ basesrc=Async.cs
 output=../bin/Debug/
 includes=../bin/Debug/LibuvSharp.dll,System.Numerics
 
-all: $(output)FibonacciAsync.exe $(output)TcpAsync.exe $(output)FileAsync.exe
+all: \
+	$(output)FibonacciAsync.exe   \
+	$(output)TcpAsync.exe         \
+	$(output)UVDirectoryAsync.exe \
+	$(output)DirectoryAsync.exe
 
 $(output)FibonacciAsync.exe: FibonacciAsync.cs $(basesrc)
 	gmcs -sdk:4.5 $^ -r:$(includes) -out:$@
@@ -10,5 +14,8 @@ $(output)FibonacciAsync.exe: FibonacciAsync.cs $(basesrc)
 $(output)TcpAsync.exe: TcpAsync.cs $(basesrc)
 	gmcs -sdk:4.5 $^ -r:$(includes) -out:$@
 
-$(output)FileAsync.exe: FileAsync.cs $(basesrc)
+$(output)UVDirectoryAsync.exe: UVDirectoryAsync.cs $(basesrc)
+	gmcs -sdk:4.5 $^ -r:$(includes) -out:$@
+
+$(output)DirectoryAsync.exe: DirectoryAsync.cs $(basesrc)
 	gmcs -sdk:4.5 $^ -r:$(includes) -out:$@

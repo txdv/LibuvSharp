@@ -93,6 +93,7 @@
     <Compile Include="Threading\Tasks\PipeExtensions.cs" />
     <Compile Include="Threading\Tasks\IListenerExtensions.cs" />
     <Compile Include="Threading\Tasks\UVDirectoryExtensions.cs" />
+    <Compile Include="Threading\Tasks\LoopExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
