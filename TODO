@@ -1,4 +1,4 @@
-* Finish UVFile.Stat
+* Finish UVFile.Stat for other operating systems (struct layout of stat may be different)
 * Windows structlayout for uv_process_options_t.
 * Not (yet?) exposed:
   - uv_udp_set_membership
