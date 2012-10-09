@@ -80,7 +80,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_read(IntPtr loop, IntPtr req, IntPtr file, IntPtr buf, IntPtr length, long offset, Action<IntPtr> callback);
 
-		public void Read(Loop loop, byte[] data, int length, int offset, Action<Exception, int> callback)
+		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
@@ -88,18 +88,93 @@ namespace LibuvSharp
 				callback(ex, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, FileSystemRequest.StaticEnd);
+			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileHandle, ptr, (IntPtr)count, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
-		public void Read(byte[] data, int length, int offset, Action<Exception, int> callback)
+		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Read(Loop.Default, data, length, offset, callback);
+			Read(loop, data, index, count, callback, -1);
+
+		}
+		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback, int offset)
+		{
+			Read(loop, data, index, data.Length - index, callback, offset);
+		}
+		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback)
+		{
+			Read(loop, data, index, callback, -1);
+		}
+		public void Read(Loop loop, byte[] data, Action<Exception, int> callback, int offset)
+		{
+			Read(loop, data, 0, callback, offset);
+		}
+		public void Read(Loop loop, byte[] data, Action<Exception, int> callback)
+		{
+			Read(loop, data, callback, -1);
+		}
+		public void Read(Loop loop, byte[] data, int index, int count, int offset)
+		{
+			Read(loop, data, index, count, null, offset);
+		}
+		public void Read(Loop loop, byte[] data, int index, int count)
+		{
+			Read(loop, data, index, count, -1);
+		}
+		public void Read(Loop loop, byte[] data, int index)
+		{
+			Read(loop, data, index, data.Length - index);
+		}
+		public void Read(Loop loop, byte[] data)
+		{
+			Read(loop, data, 0);
+		}
+
+		public void Read(byte[] data, int index, int count, Action<Exception, int> callback, int offset)
+		{
+			Read(this.Loop, data, index, count, callback, offset);
+		}
+		public void Read(byte[] data, int index, int count, Action<Exception, int> callback)
+		{
+			Read(this.Loop, data, index, count, callback);
+		}
+		public void Read(byte[] data, int index, Action<Exception, int> callback, int offset)
+		{
+			Read(this.Loop, data, index, callback, offset);
+		}
+		public void Read(byte[] data, int index, Action<Exception, int> callback)
+		{
+			Read(this.Loop, data, index, callback);
+		}
+		public void Read(byte[] data, Action<Exception, int> callback, int offset)
+		{
+			Read(this.Loop, data, callback, offset);
+		}
+		public void Read(byte[] data, Action<Exception, int> callback)
+		{
+			Read(this.Loop, data, callback);
+		}
+		public void Read(byte[] data, int index, int count, int offset)
+		{
+			Read(this.Loop, data, index, count, offset);
+		}
+		public void Read(byte[] data, int index, int count)
+		{
+			Read(this.Loop, data, index, count);
+		}
+		public void Read(byte[] data, int index)
+		{
+			Read(this.Loop, data, index);
+		}
+		public void Read(byte[] data)
+		{
+			Read(this.Loop, data);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_write(IntPtr loop, IntPtr req, IntPtr file, IntPtr buf, IntPtr length, long offset, uv_fs_cb fs_cb);
 
-		public void Write(Loop loop, byte[] data, int length, int offset, Action<Exception, int> callback)
+		public void Write(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
 		{
 			var datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
@@ -109,69 +184,138 @@ namespace LibuvSharp
 				}
 				datagchandle.Free();
 			};
-			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileHandle, datagchandle.AddrOfPinnedObject(), (IntPtr)length, offset, FileSystemRequest.StaticEnd);
+			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileHandle, ptr, (IntPtr)count, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
-		public void Write(Loop loop, byte[] data, int length, int offset)
+		public void Write(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Write(loop, data, length, offset, null);
+			Write(loop, data, index, count, callback, -1);
 		}
-		public void Write(Loop loop, byte[] data, int length)
+		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback, int offset)
 		{
-			Write(loop, data, length, -1);
+			Write(loop, data, index, data.Length - index, callback, offset);
 		}
-		public void Write(Loop loop, byte[] data)
+		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Write(loop, data, data.Length);
+			Write(loop, data, index, callback, -1);
 		}
-		public void Write(Loop loop, byte[] data, int length, Action<Exception, int> callback)
+		public void Write(Loop loop, byte[] data, Action<Exception, int> callback, int offset)
 		{
-			Write(loop, data, length, -1, callback);
+			Write(loop, data, 0, data.Length, callback, offset);
 		}
 		public void Write(Loop loop, byte[] data, Action<Exception, int> callback)
 		{
-			Write(loop, data, data.Length, callback);
+			Write(loop, data, callback, -1);
 		}
-		public void Write(byte[] data, int length, int offset, Action<Exception, int> callback)
+		public void Write(Loop loop, byte[] data, int index, int count, int offset)
 		{
-			Write(Loop.Default, data, length, offset, callback);
+			Write(loop, data, index, count, null, offset);
 		}
-		public void Write(byte[] data, int length, int offset)
+		public void Write(Loop loop, byte[] data, int index, int count)
 		{
-			Write(data, length, offset, null);
+			Write(loop, data, index, count, -1);
 		}
-		public void Write(byte[] data, int length)
+		public void Write(Loop loop, byte[] data, int index)
 		{
-			Write(data, length, -1);
+			Write(loop, data, index, data.Length - index);
 		}
-		public void Write(byte[] data)
+		public void Write(Loop loop, byte[] data)
 		{
-			Write(data, data.Length);
+			Write(loop, data, 0);
 		}
-		public void Write(byte[] data, int length, Action<Exception, int> callback)
+
+		public void Write(byte[] data, int index, int count, Action<Exception, int> callback, int offset)
 		{
-			Write(data, length, -1, callback);
+			Write(this.Loop, data, index, count, callback, offset);
+		}
+		public void Write(byte[] data, int index, int count, Action<Exception, int> callback)
+		{
+			Write(data, index, count, callback, -1);
+		}
+		public void Write(byte[] data, int index, Action<Exception, int> callback, int offset)
+		{
+			Write(this.Loop, data, index, data.Length - index, callback, offset);
+		}
+		public void Write(byte[] data, int index, Action<Exception, int> callback)
+		{
+			Write(this.Loop, data, index, callback);
+		}
+		public void Write(byte[] data, Action<Exception, int> callback, int offset)
+		{
+			Write(this.Loop, data, callback, offset);
 		}
 		public void Write(byte[] data, Action<Exception, int> callback)
 		{
-			Write(data, data.Length, callback);
+			Write(this.Loop, data, callback);
+		}
+		public void Write(byte[] data, int index, int count, int offset)
+		{
+			Write(data, index, count, null, offset);
+		}
+		public void Write(byte[] data, int index, int count)
+		{
+			Write(data, index, count, -1);
+		}
+		public void Write(byte[] data, int index)
+		{
+			Write(data, index, data.Length - index);
+		}
+		public void Write(byte[] data)
+		{
+			Write(data, 0);
 		}
 
-		public void Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback)
+		public int Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback, int offset)
 		{
-			Write(loop, encoding.GetBytes(text), callback);
+			var bytes = encoding.GetBytes(text);
+			Write(loop, bytes, callback, offset);
+			return bytes.Length;
 		}
-		public void Write(Loop loop, Encoding encoding, string text)
+		public int Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback)
 		{
-			Write(loop, encoding, text, null);
+			return Write(loop, encoding, text, callback, -1);
 		}
-		public void Write(Encoding encoding, string text, Action<Exception, int> callback)
+		public int Write(Loop loop, string text, Action<Exception, int> callback, int offset)
 		{
-			Write(Loop, encoding, text, callback);
+			return Write(loop, Encoding.Default, text, callback, offset);
 		}
-		public void Write(Encoding encoding, string text)
+		public int Write(Loop loop, string text, Action<Exception, int> callback)
 		{
-			Write(encoding, text, null);
+			return Write(loop, text, callback, -1);
+		}
+		public int Write(Loop loop, string text, int offset)
+		{
+			return Write(loop, text, null, offset);
+		}
+		public int Write(Loop loop, string text)
+		{
+			return Write(loop, text, -1);
+		}
+
+		public int Write(Encoding encoding, string text, Action<Exception, int> callback, int offset)
+		{
+			return Write(this.Loop, encoding, text, callback, offset);
+		}
+		public int Write(Encoding encoding, string text, Action<Exception, int> callback)
+		{
+			return Write(encoding, text, callback, -1);
+		}
+		public int Write(Encoding encoding, string text)
+		{
+			return Write(encoding, text, null);
+		}
+		public int Write(string text, Action<Exception, int> callback, int offset)
+		{
+			return Write(Encoding.Default, text, callback, offset);
+		}
+		public int Write(string text, Action<Exception, int> callback)
+		{
+			return Write(text, callback, -1);
+		}
+		public int Write(string text)
+		{
+			return Write(Encoding.Default, null);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
