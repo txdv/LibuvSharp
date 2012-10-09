@@ -6,30 +6,6 @@ using System.Collections.Generic;
 namespace LibuvSharp
 {
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct lin_stat
-	{
-		public ulong dev;
-		public uint ino;
-		public uint mode;
-		public uint nlink;
-		public uint uid;
-		public uint gid;
-		public ulong rdev;
-		public int size;
-		public int blksize;
-		public int blkcnt;
-		public int atime;
-		public int mtime;
-		public int ctime;
-
-		public override string ToString ()
-		{
-			return string.Format ("dev={0} ino={1} mode={2} nlink={3} uid={4} gid={5} rdev={6} size={7} atime={8} mtime={9} ctime={10}", dev, ino, mode, nlink, uid, gid, rdev, size, atime, mtime, ctime);
-		}
-
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
 	internal struct sockaddr
 	{
 		public short sin_family;

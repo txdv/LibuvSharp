@@ -319,20 +319,20 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		unsafe private static extern void uv_fs_req_stat(IntPtr req, lin_stat *stat);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_stat(IntPtr loop, IntPtr req, string path, uv_fs_cb callback);
 
-		unsafe public static void Stat(Loop loop, string path, Action<Exception> callback)
+		public static void Stat(Loop loop, string path, Action<Exception, UVFileStat> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => {
-				// TODO: do this
-				lin_stat *stats = (lin_stat *)fsr.Pointer;
-
 				if (callback != null) {
-					callback(ex);
+					UVFileStat stat = null;
+					if (UV.isUnix) {
+						stat = lin_stat.Convert(fsr.Pointer);
+					}
+					if (callback != null) {
+						callback(ex, stat);
+					}
 				}
 			};
 			int r = uv_fs_stat(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
@@ -342,14 +342,19 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fstat(IntPtr loop, IntPtr req, IntPtr file, Action<IntPtr> callback);
 
-		unsafe public void Stat(Loop loop, Action<Exception> callback)
+		unsafe public void Stat(Loop loop, Action<Exception, UVFileStat> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex, fsr2) => {
-				lin_stat stats = new lin_stat();
-				uv_fs_req_stat(fsr.Handle, &stats);
-				Console.WriteLine (stats);
-				callback(ex);
+				if (callback != null) {
+					UVFileStat stat = null;
+					if (UV.isUnix) {
+						stat = lin_stat.Convert(fsr.Pointer);
+					}
+					if (callback != null) {
+						callback(ex, stat);
+					}
+				}
 			};
 			int r = uv_fs_fstat(loop.NativeHandle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);

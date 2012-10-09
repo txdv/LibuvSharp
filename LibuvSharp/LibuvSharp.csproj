@@ -95,6 +95,8 @@
     <Compile Include="Threading\Tasks\LoopExtensions.cs" />
     <Compile Include="Threading\Tasks\UVDirectoryAsync.cs" />
     <Compile Include="Threading\Tasks\UVFileAsync.cs" />
+    <Compile Include="Internal\stat.cs" />
+    <Compile Include="UVFileStat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

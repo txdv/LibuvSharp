@@ -72,6 +72,38 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
+		static Task<R> FWrap<R>(Loop loop, Action<Loop, Action<Exception, R>> action)
+		{
+			var tcs = new TaskCompletionSource<R>();
+			try {
+				action(loop, (e, result) => {
+					if (e == null) {
+						tcs.SetResult(result);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
+		static Task<R> FWrap<R, T1>(Loop loop, T1 obj1, Action<Loop, T1, Action<Exception, R>> action)
+		{
+			var tcs = new TaskCompletionSource<R>();
+			try {
+				action(loop, obj1, (e, result) => {
+					if (e == null) {
+						tcs.SetResult(result);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
 		static Task<R> FWrap<R, T1, T2>(Loop loop, T1 obj1, T2 obj2, Action<Loop, T1, T2, Action<Exception, R>> action)
 		{
 			var tcs = new TaskCompletionSource<R>();
@@ -328,6 +360,24 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task ChownAsync(this UVFile file, int uid, int gid)
 		{
 			return file.ChownAsync(file.Loop, uid, gid);
+		}
+
+		public static Task<UVFileStat> Stat(Loop loop, string path)
+		{
+			return FWrap<UVFileStat, string>(loop, path, UVFile.Stat);
+		}
+		public static Task<UVFileStat> Stat(string path)
+		{
+			return Stat(Loop.Default, path);
+		}
+
+		public static Task<UVFileStat> StatAsync(this UVFile file, Loop loop)
+		{
+			return FWrap<UVFileStat>(loop, file.Stat);
+		}
+		public static Task<UVFileStat> StatAsync(this UVFile file)
+		{
+			return file.StatAsync(file.Loop);
 		}
 	}
 }
