@@ -30,6 +30,7 @@ namespace LibuvSharp
 
 		public Loop Loop { get; protected set; }
 		public IntPtr FileHandle { get; protected set; }
+		public Encoding Encoding { get; set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
@@ -286,7 +287,7 @@ namespace LibuvSharp
 		}
 		public int Write(Loop loop, string text, Action<Exception, int> callback, int offset)
 		{
-			return Write(loop, Encoding.Default, text, callback, offset);
+			return Write(loop, Encoding ?? Encoding.Default, text, callback, offset);
 		}
 		public int Write(Loop loop, string text, Action<Exception, int> callback)
 		{
