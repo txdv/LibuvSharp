@@ -276,6 +276,14 @@ namespace LibuvSharp
 		{
 			return Write(loop, encoding, text, callback, -1);
 		}
+		public int Write(Loop loop, Encoding encoding, string text, int offset)
+		{
+			return Write(loop, encoding, text, null, offset);
+		}
+		public int Write(Loop loop, Encoding encoding, string text)
+		{
+			return Write(loop, encoding, text, -1);
+		}
 		public int Write(Loop loop, string text, Action<Exception, int> callback, int offset)
 		{
 			return Write(loop, Encoding.Default, text, callback, offset);
@@ -299,23 +307,31 @@ namespace LibuvSharp
 		}
 		public int Write(Encoding encoding, string text, Action<Exception, int> callback)
 		{
-			return Write(encoding, text, callback, -1);
+			return Write(this.Loop, encoding, text, callback);
+		}
+		public int Write(Encoding encoding, string text, int offset)
+		{
+			return Write(this.Loop, encoding, text, offset);
 		}
 		public int Write(Encoding encoding, string text)
 		{
-			return Write(encoding, text, null);
+			return Write(this.Loop, encoding, text);
 		}
 		public int Write(string text, Action<Exception, int> callback, int offset)
 		{
-			return Write(Encoding.Default, text, callback, offset);
+			return Write(this.Loop, text, callback, offset);
 		}
 		public int Write(string text, Action<Exception, int> callback)
 		{
-			return Write(text, callback, -1);
+			return Write(this.Loop, text, callback);
+		}
+		public int Write(string text, int offset)
+		{
+			return Write(this.Loop, text, offset);
 		}
 		public int Write(string text)
 		{
-			return Write(Encoding.Default, null);
+			return Write(this.Loop, text);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
