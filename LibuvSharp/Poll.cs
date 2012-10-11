@@ -36,10 +36,8 @@ namespace LibuvSharp
 			poll_cb += pollcallback;
 		}
 
-		public void Start(PollEvent events, Action<PollEvent> callback)
+		public void Start(PollEvent events)
 		{
-			Event += callback;
-
 			int r = uv_poll_start(NativeHandle, (int)events, poll_cb);
 			Ensure.Success(r, Loop);
 		}
@@ -59,7 +57,7 @@ namespace LibuvSharp
 			OnEvent((PollEvent)events);
 		}
 
-		event Action<PollEvent> Event;
+		public event Action<PollEvent> Event;
 
 		void OnEvent(PollEvent events)
 		{
