@@ -9,13 +9,15 @@ namespace Test
 {
 	class MainClass
 	{
-		static IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8080);
+		static IPEndPoint ep = new IPEndPoint(IPAddress.Any, 8080);
 
 		public static async Task Server()
 		{
 			try {
-				var server = new TcpListener();
-				server.Bind(ep);
+				var server = new ListenerAsync<TcpListener, Tcp>(new TcpListener());
+				server.Listener.Bind(ep);
+				server.Listener.Listen();
+
 				var client = await server.AcceptStreamAsync();
 
 				client.Write(Encoding.ASCII, "Hello World!");
@@ -23,7 +25,7 @@ namespace Test
 				Console.WriteLine("From Client: {0}", str);
 
 				client.Shutdown();
-				server.Close();
+				server.Listener.Close();
 			} catch (Exception e) {
 				Console.WriteLine("Server Exception:");
 				Console.WriteLine(e);
@@ -49,7 +51,7 @@ namespace Test
 
 		public static void Main(string[] args)
 		{
-			Loop.Default.Run(async delegate {
+			Loop.Default.Run(async () => {
 				Console.WriteLine("Starting example.");
 				await Task.WhenAll(Server(), Client());
 				Console.WriteLine("All finished.");
