@@ -13,10 +13,7 @@ namespace LibuvSharp
 	}
 
 	// TODO:
-	// 1. fix stat
-	// 2. uv_fs_SYMLINK
-	// 3. uv_fs_readlink
-	// 4. uv_fs_utime uv_fs_futime
+	// 1. uv_fs_utime uv_fs_futime
 
 	public class UVFile
 	{
@@ -602,7 +599,57 @@ namespace LibuvSharp
 		{
 			Link(path, newPath, null);
 		}
-	}
 
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_symlink(IntPtr loop, IntPtr req, string path, string newPath, int flags, Action<IntPtr> callback);
+
+		public static void Symlink(Loop loop, string path, string newPath, Action<Exception> callback)
+		{
+			var fsr = new FileSystemRequest();
+			fsr.Callback = (ex, fsr2) => {
+				if (callback != null) {
+					callback(ex);
+				}
+			};
+			int r = uv_fs_symlink(loop.NativeHandle, fsr.Handle, path, newPath, 0, FileSystemRequest.StaticEnd);
+			Ensure.Success(r, loop);
+		}
+		public static void Symlink(Loop loop, string path, string newPath)
+		{
+			Symlink(loop, path, newPath, null);
+		}
+
+		public static void Symlink(string path, string newPath, Action<Exception> callback)
+		{
+			Symlink(Loop.Default, path, newPath, callback);
+		}
+		public static void Symlink(string path, string newPath)
+		{
+			Symlink(path, newPath, null);
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_readlink(IntPtr loop, IntPtr req, string path, Action<IntPtr> callback);
+
+		public static void Readlink(Loop loop, string path, Action<Exception, string> callback)
+		{
+			var fsr = new FileSystemRequest(path);
+			fsr.Callback = (ex, fsr2) => {
+				string res = null;
+				if (ex == null) {
+					res = Marshal.PtrToStringAuto(fsr.Pointer);
+				}
+				if (callback != null) {
+					callback(ex, res);
+				}
+			};
+			int r = uv_fs_readlink(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
+			Ensure.Success(r);
+		}
+		public static void Readlink(string path, Action<Exception, string> callback)
+		{
+			Readlink(Loop.Default, path, callback);
+		}
+	}
 }
 

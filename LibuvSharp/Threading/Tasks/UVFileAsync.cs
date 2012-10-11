@@ -182,6 +182,24 @@ namespace LibuvSharp.Threading.Tasks
 			return FWrap<UVFile, string, UVFileAccess>(loop, path, access, UVFile.Open);
 		}
 
+		public static Task Symlink(Loop loop, string path, string newPath)
+		{
+			return Wrap(loop, path, newPath, UVFile.Symlink);
+		}
+		public static Task Symlink(string path, string newPath)
+		{
+			return Symlink(Loop.Default, path, newPath);
+		}
+
+		public static Task<string> Readlink(Loop loop, string path)
+		{
+			return FWrap<string, string>(loop, path, UVFile.Readlink);
+		}
+		public static Task<string> Readlink(string path)
+		{
+			return Readlink(Loop.Default, path);
+		}
+
 		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index, int count, int offset)
 		{
 			var tcs = new TaskCompletionSource<int>();

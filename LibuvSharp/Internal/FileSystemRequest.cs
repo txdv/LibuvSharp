@@ -9,10 +9,18 @@ namespace LibuvSharp
 
 		protected uv_fs_t *fsrequest;
 
+		public string Path { get; private set; }
+
 		public FileSystemRequest()
 			: base(Size)
 		{
 			fsrequest = (uv_fs_t *)Handle;
+		}
+
+		public FileSystemRequest(string path)
+			: this()
+		{
+			Path = path;
 		}
 
 		public Action<Exception, FileSystemRequest> Callback { get; set; }
@@ -49,7 +57,7 @@ namespace LibuvSharp
 			Exception e = null;
 			if (Result.ToInt32() == -1) {
 				uv_err_t err = new uv_err_t(Error);
-				e = Ensure.Map(err);
+				e = Ensure.Map(err, (string.IsNullOrEmpty(Path) ? null : Path));
 			}
 
 			if (Callback != null) {
