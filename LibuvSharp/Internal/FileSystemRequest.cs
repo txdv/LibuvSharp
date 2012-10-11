@@ -23,7 +23,7 @@ namespace LibuvSharp
 			Path = path;
 		}
 
-		public Action<Exception, FileSystemRequest> Callback { get; set; }
+		public Action<Exception> Callback { get; set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void uv_fs_req_cleanup(IntPtr req);
@@ -61,7 +61,7 @@ namespace LibuvSharp
 			}
 
 			if (Callback != null) {
-				Callback(e, this);
+				Callback(e);
 			}
 			Dispose();
 		}

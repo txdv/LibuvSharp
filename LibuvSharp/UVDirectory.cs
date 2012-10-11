@@ -14,11 +14,7 @@ namespace LibuvSharp
 		public static void Create(Loop loop, string path, int mode, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => {
-				if (callback != null) {
-					callback(ex);
-				};
-			};
+			fsr.Callback = callback;
 			int r = uv_fs_mkdir(loop.NativeHandle, fsr.Handle, path, mode, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
@@ -57,11 +53,7 @@ namespace LibuvSharp
 		public static void Delete(Loop loop, string path, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => {
-				if (callback != null) {
-					callback(ex);
-				};
-			};
+			fsr.Callback = callback;
 			int r = uv_fs_rmdir(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
@@ -84,7 +76,7 @@ namespace LibuvSharp
 		public static void Rename(Loop loop, string path, string newPath, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => { callback(ex); };
+			fsr.Callback = callback;
 			int r = uv_fs_rename(loop.NativeHandle, fsr.Handle, path, newPath, fsr.End);
 			Ensure.Success(r, loop);
 		}
@@ -110,7 +102,7 @@ namespace LibuvSharp
 		unsafe public static void Read(Loop loop, string path, Action<Exception, string[]> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex, fsr2) => {
+			fsr.Callback = (ex) => {
 				if (ex != null) {
 					callback(ex, null);
 					return;
