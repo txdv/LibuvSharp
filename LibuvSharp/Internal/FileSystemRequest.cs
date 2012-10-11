@@ -46,12 +46,10 @@ namespace LibuvSharp
 
 		public void End(IntPtr ptr)
 		{
-			// good idea when you have only the pointer, but no need for it ...
-			// var fsr = new FileSystemRequest(ptr, false).Value.Target as FileSystemRequest;
 			Exception e = null;
 			if (Result.ToInt32() == -1) {
 				uv_err_t err = new uv_err_t(Error);
-				Callback(Ensure.Map(err), null);
+				e = Ensure.Map(err);
 			}
 
 			if (Callback != null) {
