@@ -6,7 +6,7 @@ namespace LibuvSharp.Threading.Tasks
 {
 	public static class UVTimerExtensions
 	{
-		public static Task StartAsync(this UVTimer timer, TimeSpan timeout)
+		public static Task StartAsync(this UVTimer timer, long timeout)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
@@ -17,6 +17,11 @@ namespace LibuvSharp.Threading.Tasks
 				tcs.SetException(e);
 			}
 			return tcs.Task;
+		}
+
+		public static Task StartAsync(this UVTimer timer, TimeSpan timeout)
+		{
+			return timer.StartAsync((long)timeout.TotalMilliseconds);
 		}
 	}
 }
