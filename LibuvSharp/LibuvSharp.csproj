@@ -60,7 +60,6 @@
     <Compile Include="Internal\uv_err_t.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
-    <Compile Include="FileSystemEvent.cs" />
     <Compile Include="Internal\FileSystemRequest.cs" />
     <Compile Include="Internal\PermaRequest.cs" />
     <Compile Include="Internal\uv_fs_t.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="Threading\Tasks\ListenerAsync.cs" />
     <Compile Include="IUVStreamExtensions.cs" />
     <Compile Include="UVFileStream.cs" />
+    <Compile Include="FileSystemWatcher.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
