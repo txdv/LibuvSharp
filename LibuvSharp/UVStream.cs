@@ -122,13 +122,6 @@ namespace LibuvSharp
 			}
 		}
 
-		public void Read(Encoding enc, Action<string> callback)
-		{
-			if (callback != null) {
-				ReadEvent = (data) => callback(enc.GetString(data.Buffer, data.Start, data.Length));
-			}
-		}
-
 		public void Read(Action<ByteBuffer> callback)
 		{
 			if (callback != null) {
@@ -162,37 +155,6 @@ namespace LibuvSharp
 
 			Ensure.Success(r, Loop);
 		}
-		public void Write(byte[] data, int index, int count)
-		{
-			Write(data, index, count, null);
-		}
-
-		public void Write(byte[] data, int count, Action<bool> callback)
-		{
-			Write(data, 0, count, callback);
-		}
-		public void Write(byte[] data, int count)
-		{
-			Write(data, count, null);
-		}
-
-		public void Write(byte[] data, Action<bool> callback)
-		{
-			Write(data, data.Length, callback);
-		}
-		public void Write(byte[] data)
-		{
-			Write(data, null);
-		}
-
-		public void Write(Encoding enc, string text, Action<bool> callback)
-		{
-			Write(enc.GetBytes(text), callback);
-		}
-		public void Write(Encoding enc, string text)
-		{
-			Write(enc, text, null);
-		}
 
 		public void Shutdown(Action callback)
 		{
@@ -201,11 +163,6 @@ namespace LibuvSharp
 				Close(callback);
 			};
 			uv_shutdown(cbr.Handle, NativeHandle, CallbackPermaRequest.StaticEnd);
-		}
-
-		public void Shutdown()
-		{
-			Shutdown(null);
 		}
 	}
 }
