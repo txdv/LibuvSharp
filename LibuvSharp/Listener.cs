@@ -23,26 +23,20 @@ namespace LibuvSharp
 		callback listen_cb;
 		void listen_callback(IntPtr handle, int status)
 		{
-			if (listenCallback != null) {
-				listenCallback();
-			}
+			OnIncommingStream();
 		}
 
 		protected abstract UVStream Create();
 
-		Action listenCallback;
-
-		public void Listen(int backlog, Action callback)
+		public void Listen(int backlog)
 		{
-			Ensure.ArgumentNotNull(callback, "callback");
-			listenCallback = callback;
 			int r = uv_listen(NativeHandle, backlog, listen_cb);
 			Ensure.Success(r, Loop);
 		}
 
-		public void Listen(Action callback)
+		public void Listen()
 		{
-			Listen(DefaultBacklog, callback);
+			Listen(DefaultBacklog);
 		}
 
 		public TStream AcceptStream()
@@ -51,6 +45,15 @@ namespace LibuvSharp
 			uv_accept(NativeHandle, stream.NativeHandle);
 			return stream as TStream;
 		}
+
+		private void OnIncommingStream()
+		{
+			if (IncommingStream != null) {
+				IncommingStream();
+			}
+		}
+
+		public event Action IncommingStream;
 	}
 }
 

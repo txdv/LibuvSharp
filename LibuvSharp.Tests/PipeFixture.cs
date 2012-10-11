@@ -24,7 +24,7 @@ namespace LibuvSharp.Tests
 
 			var server = new PipeListener();
 			server.Bind(name);
-			server.Listen(() => {
+			server.IncommingStream += () => {
 				var pipe = server.AcceptStream();
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
@@ -35,7 +35,8 @@ namespace LibuvSharp.Tests
 					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
-			});
+			};
+			server.Listen();
 
 			Pipe client = new Pipe();
 			client.Connect(name, (_) => {
@@ -94,7 +95,7 @@ namespace LibuvSharp.Tests
 
 				var server = new PipeListener();
 				server.Bind(name);
-				server.Listen(() => {
+				server.IncommingStream += () => {
 					var pipe = server.AcceptStream();
 					pipe.Resume();
 					pipe.Read(Encoding.ASCII, (str) => {
@@ -106,7 +107,8 @@ namespace LibuvSharp.Tests
 						pipe.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
 					});
-				});
+				};
+				server.Listen();
 
 				Pipe client = new Pipe();
 				client.Connect(name, (_) => {
@@ -157,7 +159,7 @@ namespace LibuvSharp.Tests
 
 			var server = new PipeListener();
 			server.Bind(name);
-			server.Listen(() => {
+			server.IncommingStream += () => {
 				var pipe = server.AcceptStream();
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
@@ -167,7 +169,8 @@ namespace LibuvSharp.Tests
 					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
-			});
+			};
+			server.Listen();
 
 			Pipe client = new Pipe();
 			client.Connect(name, (_) => {
@@ -219,7 +222,6 @@ namespace LibuvSharp.Tests
 			var t = new PipeListener();
 			Assert.Throws<ArgumentNullException>(() => new PipeListener(null));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
-			Assert.Throws<ArgumentNullException>(() => t.Listen(null));
 			t.Close();
 		}
 	}

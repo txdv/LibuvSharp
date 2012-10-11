@@ -26,7 +26,7 @@ namespace LibuvSharp.Tests
 
 			var server = new TcpListener();
 			server.Bind(ep);
-			server.Listen(() => {
+			server.IncommingStream += () => {
 				var socket = server.AcceptStream();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
@@ -37,7 +37,8 @@ namespace LibuvSharp.Tests
 					socket.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
-			});
+			};
+			server.Listen();
 
 			Tcp client = new Tcp();
 			client.Connect(ep, (_) => {
@@ -98,7 +99,7 @@ namespace LibuvSharp.Tests
 
 				var server = new TcpListener();
 				server.Bind(ep);
-				server.Listen(() => {
+				server.IncommingStream += () => {
 					var socket = server.AcceptStream();
 					socket.Resume();
 					socket.Read(Encoding.ASCII, (str) => {
@@ -110,7 +111,8 @@ namespace LibuvSharp.Tests
 						socket.Close(() => { close_cb_called++; });
 						server.Close(() => { close_cb_called++; });
 					});
-				});
+				};
+				server.Listen();
 
 				var client = new Tcp();
 				client.Connect(ep, (_) => {
@@ -162,7 +164,8 @@ namespace LibuvSharp.Tests
 
 			var server = new TcpListener();
 			server.Bind(ep);
-			server.Listen(() => {
+			server.Listen();
+			server.IncommingStream += () => {
 				var socket = server.AcceptStream();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
@@ -172,7 +175,7 @@ namespace LibuvSharp.Tests
 					socket.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
 				});
-			});
+			};
 
 			Tcp client = new Tcp();
 			client.Connect(ep, (_) => {
@@ -214,10 +217,10 @@ namespace LibuvSharp.Tests
 			TcpListener s2 = new TcpListener();
 
 			s1.Bind(IPAddress.Any, Default.Port);
-			s1.Listen(() => {});
+			s1.Listen();
 			s2.Bind(IPAddress.Any, Default.Port);
 
-			Assert.Throws<SocketException>(() => s2.Listen(() => {}), "Address already in use");
+			Assert.Throws<SocketException>(() => s2.Listen(), "Address already in use");
 
 			s1.Close();
 			s2.Close();
@@ -283,10 +286,11 @@ namespace LibuvSharp.Tests
 				called = true;
 			};
 
-			l.Listen(() => {
+			l.Listen();
+			l.IncommingStream += () => {
 				server = l.AcceptStream();
 				check();
-			});
+			};
 
 			Tcp t = new Tcp();
 			t.Connect("127.0.0.1", 8000, (e) => {
@@ -307,7 +311,6 @@ namespace LibuvSharp.Tests
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null as string, 8000));
 			Assert.Throws<ArgumentNullException>(() => t.Bind(null as IPAddress, 8000));
-			Assert.Throws<ArgumentNullException>(() => t.Listen(null));
 			t.Close();
 		}
 	}
