@@ -16,14 +16,15 @@ namespace LibuvSharp.Tests
 
 		public static void Simple(int times, int spawn)
 		{
-			Timer t = new Timer();
+			var t = new UVTimer();
 			int i = 0;
-			t.Start(TimeSpan.FromMilliseconds(spawn), () => {
+			t.Tick +=  () => {
 				i++;
 				if (i > times) {
 					t.Close();
 				}
-			});
+			};
+			t.Start(TimeSpan.FromMilliseconds(spawn));
 			var now = Loop.Default.Now;
 			Loop.Default.Run();
 			Assert.GreaterOrEqual(Loop.Default.Now - now, times * spawn);

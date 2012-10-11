@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace LibuvSharp.Threading.Tasks
 {
-	public static class TaskExtensions
+	public static class UVTimerExtensions
 	{
-		public static Task WaitAsync(this LibuvSharp.Timer timer, TimeSpan timeout)
+		public static Task StartAsync(this UVTimer timer, TimeSpan timeout)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				timer.Start(timeout, TimeSpan.Zero, () => {
+				timer.Start(timeout, () => {
 					tcs.SetResult(null);
 				});
 			} catch (Exception e) {

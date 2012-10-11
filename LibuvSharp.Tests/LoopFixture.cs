@@ -15,7 +15,7 @@ namespace LibuvSharp.Tests
 		[Test]
 		public void RunAsync()
 		{
-			var timer = new Timer();
+			var timer = new UVTimer();
 			Loop.Default.RunAsync();
 			timer.Close();
 		}

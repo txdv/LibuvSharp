@@ -41,7 +41,6 @@
     <Compile Include="Prepare.cs" />
     <Compile Include="Loop.cs" />
     <Compile Include="Udp.cs" />
-    <Compile Include="Timer.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="BaseHandle.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="Internal\WorkRequest.cs" />
     <Compile Include="Internal\uv_work_t.cs" />
     <Compile Include="Threading\LoopExtensions.cs" />
-    <Compile Include="Threading\Tasks\TasksExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopTaskScheduler.cs" />
     <Compile Include="Threading\Tasks\Loop.cs" />
     <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
@@ -99,6 +97,8 @@
     <Compile Include="IUVStreamExtensions.cs" />
     <Compile Include="UVFileStream.cs" />
     <Compile Include="FileSystemWatcher.cs" />
+    <Compile Include="UVTimer.cs" />
+    <Compile Include="Threading\Tasks\UVTimerExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
