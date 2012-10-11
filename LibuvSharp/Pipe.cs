@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class PipeListener : Listener
+	public class PipeListener : Listener<Pipe>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);

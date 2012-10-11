@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class TcpListener : Listener
+	public class TcpListener : Listener<Tcp>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
@@ -52,17 +52,6 @@ namespace LibuvSharp
 		protected override UVStream Create()
 		{
 			return new Tcp(Loop);
-		}
-
-		public void Listen(int backlog, Action<Tcp> callback)
-		{
-			Ensure.ArgumentNotNull(callback, "callback");
-			Listen(backlog, (UVStream stream) => callback(stream as Tcp));
-		}
-
-		public void Listen(Action<Tcp> callback)
-		{
-			Listen(DefaultBacklog, callback);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

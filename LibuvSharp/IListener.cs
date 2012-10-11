@@ -2,11 +2,12 @@ using System;
 
 namespace LibuvSharp
 {
-	public interface IListener
+	public interface IListener<TStream> where TStream : IUVStream
 	{
 		int DefaultBacklog { get; set; }
-		void Listen(int backlog, Action<UVStream> callback);
-		void Listen(Action<UVStream> callback);
+		void Listen(int backlog, Action callback);
+		void Listen(Action callback);
+		TStream AcceptStream();
 	}
 }
 

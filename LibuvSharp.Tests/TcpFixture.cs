@@ -26,7 +26,8 @@ namespace LibuvSharp.Tests
 
 			var server = new TcpListener();
 			server.Bind(ep);
-			server.Listen((socket) => {
+			server.Listen(() => {
+				var socket = server.AcceptStream();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
@@ -97,7 +98,8 @@ namespace LibuvSharp.Tests
 
 				var server = new TcpListener();
 				server.Bind(ep);
-				server.Listen((socket) => {
+				server.Listen(() => {
+					var socket = server.AcceptStream();
 					socket.Resume();
 					socket.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
@@ -160,7 +162,8 @@ namespace LibuvSharp.Tests
 
 			var server = new TcpListener();
 			server.Bind(ep);
-			server.Listen((socket) => {
+			server.Listen(() => {
+				var socket = server.AcceptStream();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
@@ -211,10 +214,10 @@ namespace LibuvSharp.Tests
 			TcpListener s2 = new TcpListener();
 
 			s1.Bind(IPAddress.Any, Default.Port);
-			s1.Listen((_) => {});
+			s1.Listen(() => {});
 			s2.Bind(IPAddress.Any, Default.Port);
 
-			Assert.Throws<SocketException>(() => s2.Listen((_) => {}), "Address already in use");
+			Assert.Throws<SocketException>(() => s2.Listen(() => {}), "Address already in use");
 
 			s1.Close();
 			s2.Close();
@@ -280,8 +283,8 @@ namespace LibuvSharp.Tests
 				called = true;
 			};
 
-			l.Listen((tcp) => {
-				server = tcp;
+			l.Listen(() => {
+				server = l.AcceptStream();
 				check();
 			});
 

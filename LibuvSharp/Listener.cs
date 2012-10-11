@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public abstract class Listener : Handle, IListener
+	public abstract class Listener<TStream> : Handle, IListener<TStream> where TStream : class, IUVStream
 	{
 		internal Listener(Loop loop, HandleType type)
 			: base(loop, type)
@@ -21,18 +21,18 @@ namespace LibuvSharp
 		public int DefaultBacklog { get; set; }
 
 		callback listen_cb;
-		void listen_callback(IntPtr req, int status)
+		void listen_callback(IntPtr handle, int status)
 		{
-			UVStream stream = Create();
-			uv_accept(req, stream.NativeHandle);
-			listenCallback(stream);
+			if (listenCallback != null) {
+				listenCallback();
+			}
 		}
 
 		protected abstract UVStream Create();
 
-		Action<UVStream> listenCallback;
+		Action listenCallback;
 
-		public void Listen(int backlog, Action<UVStream> callback)
+		public void Listen(int backlog, Action callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 			listenCallback = callback;
@@ -40,9 +40,16 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		public void Listen(Action<UVStream> callback)
+		public void Listen(Action callback)
 		{
 			Listen(DefaultBacklog, callback);
+		}
+
+		public TStream AcceptStream()
+		{
+			var stream = Create();
+			uv_accept(NativeHandle, stream.NativeHandle);
+			return stream as TStream;
 		}
 	}
 }

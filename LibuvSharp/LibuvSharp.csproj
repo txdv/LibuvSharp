@@ -91,7 +91,6 @@
     <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
     <Compile Include="Threading\Tasks\TcpExtensions.cs" />
     <Compile Include="Threading\Tasks\PipeExtensions.cs" />
-    <Compile Include="Threading\Tasks\IListenerExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopExtensions.cs" />
     <Compile Include="Threading\Tasks\UVDirectoryAsync.cs" />
     <Compile Include="Threading\Tasks\UVFileAsync.cs" />

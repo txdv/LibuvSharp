@@ -24,7 +24,8 @@ namespace LibuvSharp.Tests
 
 			var server = new PipeListener();
 			server.Bind(name);
-			server.Listen((pipe) => {
+			server.Listen(() => {
+				var pipe = server.AcceptStream();
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
@@ -93,7 +94,8 @@ namespace LibuvSharp.Tests
 
 				var server = new PipeListener();
 				server.Bind(name);
-				server.Listen((pipe) => {
+				server.Listen(() => {
+					var pipe = server.AcceptStream();
 					pipe.Resume();
 					pipe.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
@@ -155,7 +157,8 @@ namespace LibuvSharp.Tests
 
 			var server = new PipeListener();
 			server.Bind(name);
-			server.Listen((pipe) => {
+			server.Listen(() => {
+				var pipe = server.AcceptStream();
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
