@@ -18,7 +18,7 @@ void print_err()
 
 void print_req()
 {
-  printf("using System;\n\nnamespace LibuvSharp\n{\n\tpublic enum RequestType : int\n\t{\n");
+  printf("using System;\n\nnamespace LibuvSharp\n{\n\tenum RequestType : int\n\t{\n");
   printf("\t\tUV_UNKNOWN_REQ = 0,\n");
 #define XX(uc, lc) printf("\t\tUV_%s,\n", #uc);
   UV_REQ_TYPE_MAP(XX);

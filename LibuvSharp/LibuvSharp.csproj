@@ -77,7 +77,6 @@
     <Compile Include="ByteBufferCollection.cs" />
     <Compile Include="Internal\uv_process_options_t.cs" />
     <Compile Include="Internal\uv_handle_t.cs" />
-    <Compile Include="RequestType.cs" />
     <Compile Include="HandleType.cs" />
     <Compile Include="Internal\uv_process_t.cs" />
     <Compile Include="Internal\WorkRequest.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="UVTimer.cs" />
     <Compile Include="Threading\Tasks\UVTimerExtensions.cs" />
+    <Compile Include="Internal\RequestType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

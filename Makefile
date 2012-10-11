@@ -3,7 +3,7 @@ OBJ=$(addprefix libuv/, $(obj))
 
 uv=libuv/uv.a
 ev=libuv/src/unix/ev/ev.o
-gensrc=LibuvSharp/Internal/uv_err_code.cs LibuvSharp/HandleType.cs LibuvSharp/RequestType.cs
+gensrc=LibuvSharp/Internal/uv_err_code.cs LibuvSharp/HandleType.cs LibuvSharp/Internal/RequestType.cs
 
 all: libuv.so $(gensrc)
 
@@ -26,7 +26,7 @@ LibuvSharp/Internal/uv_err_code.cs: libuv/include/uv.h generate
 LibuvSharp/HandleType.cs: libuv/include/uv.h generate
 	./generate handle > $@
 
-LibuvSharp/RequestType.cs: libuv/include/uv.h generate
+LibuvSharp/Internal/RequestType.cs: libuv/include/uv.h generate
 	./generate req > $@
 clean:
 	make -C libuv clean

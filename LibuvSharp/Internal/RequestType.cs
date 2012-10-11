@@ -2,7 +2,7 @@ using System;
 
 namespace LibuvSharp
 {
-	public enum RequestType : int
+	enum RequestType : int
 	{
 		UV_UNKNOWN_REQ = 0,
 		UV_REQ,
