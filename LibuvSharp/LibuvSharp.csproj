@@ -98,6 +98,7 @@
     <Compile Include="UVFileStat.cs" />
     <Compile Include="Threading\Tasks\ListenerAsync.cs" />
     <Compile Include="IUVStreamExtensions.cs" />
+    <Compile Include="UVFileStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
