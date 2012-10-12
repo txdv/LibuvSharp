@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{2B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fibonacci", "Examples\Fibonacci.csproj", "{72A04DDD-3CC1-4357-89A8-39445E3A645D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashStream", "Examples\HashStream.csproj", "{72A04DDD-3CC1-4357-89A8-39445E3A645D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +22,12 @@ Global
 		{281B560A-E3B1-437C-9274-DD655E860E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{281B560A-E3B1-437C-9274-DD655E860E6E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72A04DDD-3CC1-4357-89A8-39445E3A645D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -29,6 +35,7 @@ Global
 		{8736CFDB-D7E1-4753-9D33-48FDE176BA7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{72A04DDD-3CC1-4357-89A8-39445E3A645D} = {2B4322CD-2CBD-4DD0-83A7-F12C6D4874D9}
 		{72A04DDD-3CC1-4357-89A8-39445E3A645D} = {2B4322CD-2CBD-4DD0-83A7-F12C6D4874D9}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
