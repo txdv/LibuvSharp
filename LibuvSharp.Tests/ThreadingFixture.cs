@@ -10,7 +10,7 @@ namespace LibuvSharp.Tests
 		[Test]
 		public void LoopBlocking()
 		{
-			TimeSpan span;
+			TimeSpan span = TimeSpan.Zero;
 			Loop.Default.QueueUserWorkItem(() => {
 				var now = DateTime.Now;
 				System.Threading.Thread.Sleep(1000);
@@ -18,7 +18,7 @@ namespace LibuvSharp.Tests
 			}, null);
 			Loop.Default.Run();
 
-			Assert.IsNotNull(span);
+			Assert.AreNotEqual(span, TimeSpan.Zero);
 			Assert.GreaterOrEqual(span.TotalMilliseconds, 1000);
 		}
 	}

@@ -39,8 +39,8 @@ namespace Test
 						Console.WriteLine("Supply an integer to the fib command");
 						return;
 					}
-					TimeSpan span;
-					BigInteger res;
+					TimeSpan span = TimeSpan.Zero;
+					BigInteger res = 0;
 					Loop.Default.QueueUserWorkItem(() => {
 						var now = DateTime.Now;
 						res = Fibonacci(n);

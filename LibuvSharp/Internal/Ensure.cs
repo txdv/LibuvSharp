@@ -51,7 +51,10 @@ namespace LibuvSharp
 		internal static void Success(int errorCode, Loop loop)
 		{
 			if (errorCode < 0) {
-				throw Success(loop);
+				var ex = Success(loop);
+				if (ex != null) {
+					throw ex;
+				}
 			}
 		}
 
