@@ -99,6 +99,7 @@
     <Compile Include="UVTimer.cs" />
     <Compile Include="Threading\Tasks\UVTimerExtensions.cs" />
     <Compile Include="Internal\RequestType.cs" />
+    <Compile Include="Internal\NativeMethods.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

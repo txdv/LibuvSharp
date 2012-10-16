@@ -43,9 +43,11 @@ namespace LibuvSharp.Tests
 		[Test]
 		public void Load()
 		{
-			Assert.Greater(Computer.Load.Last,    0);
-			Assert.Greater(Computer.Load.Five,    0);
-			Assert.Greater(Computer.Load.Fifteen, 0);
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				Assert.Greater(Computer.Load.Last,    0);
+				Assert.Greater(Computer.Load.Five,    0);
+				Assert.Greater(Computer.Load.Fifteen, 0);
+			}
 		}
 
 		[Test]

@@ -6,6 +6,7 @@ namespace LibuvSharp
 {
 	public class UVDirectory
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void uv_fs_cb(IntPtr IntPtr);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

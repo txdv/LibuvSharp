@@ -12,7 +12,7 @@ namespace LibuvSharp.Tests
 		public void CreateDirectory()
 		{
 			if (Directory.Exists(Default.Directory)) {
-				Directory.Delete(Default.Directory);
+				Directory.Delete(Default.Directory, true);
 			}
 
 			UVDirectory.Create(Default.Directory, 511, (e) => {

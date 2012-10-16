@@ -158,15 +158,24 @@ namespace LibuvSharp
 			}
 		}
 
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void walk_cb(IntPtr handle, IntPtr arg);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_walk(IntPtr loop, Action<IntPtr, IntPtr> cb, IntPtr arg);
+		static extern void uv_walk(IntPtr loop, walk_cb cb, IntPtr arg);
+
+		static walk_cb walk_callback = WalkCallback;
+		static void WalkCallback(IntPtr handle, IntPtr arg)
+		{
+			var gchandle = GCHandle.FromIntPtr(arg);
+			(gchandle.Target as Action<IntPtr>)(handle);
+		}
 
 		public void Walk(Action<IntPtr> callback)
 		{
-			var cb = new CAction<IntPtr, IntPtr>((handle, arg) => callback(handle));
-			uv_walk(NativeHandle, cb.Callback, IntPtr.Zero);
+			var gchandle = GCHandle.Alloc(callback, GCHandleType.Normal);
+			uv_walk(NativeHandle, walk_callback, GCHandle.ToIntPtr(gchandle));
+			gchandle.Free();
 		}
 
 		public IntPtr[] Handles {

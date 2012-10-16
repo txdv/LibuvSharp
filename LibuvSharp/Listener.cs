@@ -12,12 +12,6 @@ namespace LibuvSharp
 			listen_cb = listen_callback;
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_listen(IntPtr stream, int backlog, callback callback);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_accept(IntPtr server, IntPtr client);
-
 		public int DefaultBacklog { get; set; }
 
 		callback listen_cb;
@@ -30,7 +24,7 @@ namespace LibuvSharp
 
 		public void Listen(int backlog)
 		{
-			int r = uv_listen(NativeHandle, backlog, listen_cb);
+			int r = NativeMethods.uv_listen(NativeHandle, backlog, listen_cb);
 			Ensure.Success(r, Loop);
 		}
 
@@ -42,7 +36,8 @@ namespace LibuvSharp
 		public TStream AcceptStream()
 		{
 			var stream = Create();
-			uv_accept(NativeHandle, stream.NativeHandle);
+			int r = NativeMethods.uv_accept(NativeHandle, stream.NativeHandle);
+			Ensure.Success(r, Loop);
 			return stream as TStream;
 		}
 
