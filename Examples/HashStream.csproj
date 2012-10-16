@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{72A04DDD-3CC1-4357-89A8-39445E3A645D}</ProjectGuid>
+    <ProjectGuid>4DF92D96-8155-4C32-979B-D0FC9698122C</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>HashStream</RootNamespace>
     <AssemblyName>HashStream</AssemblyName>
