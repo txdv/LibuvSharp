@@ -18,6 +18,18 @@ namespace LibuvSharp
 		{
 			Ensure.ArgumentNotNull(callback, "path");
 
+			switch (access) {
+			case UVFileAccess.Read:
+				Readable = true;
+				break;
+			case UVFileAccess.Write:
+				Writeable = true;
+				break;
+			default:
+				throw new ArgumentException("access not supported");
+
+			}
+
 			UVFile.Open(Loop, path, access, (ex, file) => {
 				uvfile = file;
 				callback(ex);
@@ -41,6 +53,8 @@ namespace LibuvSharp
 		}
 
 		public event Action<Exception> Error;
+
+		public bool Readable { get; private set; }
 
 		byte[] buffer = new byte[0x1000];
 		bool reading = false;
@@ -131,6 +145,8 @@ namespace LibuvSharp
 				}
 			});
 		}
+
+		public bool Writeable { private set; get; }
 
 		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
