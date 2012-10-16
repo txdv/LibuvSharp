@@ -19,7 +19,9 @@ namespace LibuvSharp
 		private static extern sbyte *uv_err_name(uv_err_t error);
 
 		public uv_err_code code;
+		#pragma warning disable 414
 		int sys_errno_;
+		#pragma warning restore 414
 
 		public string Description {
 			get {

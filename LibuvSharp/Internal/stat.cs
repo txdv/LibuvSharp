@@ -6,6 +6,7 @@ namespace LibuvSharp
 	[StructLayout(LayoutKind.Sequential)]
 	struct lin_stat
 	{
+		#pragma warning disable 169
 		public ulong dev;
 		uint offset1;
 		public uint ino;
@@ -23,6 +24,7 @@ namespace LibuvSharp
 		public int atime;
 		public int mtime;
 		public int ctime;
+		#pragma warning restore 169
 
 		public override string ToString ()
 		{
