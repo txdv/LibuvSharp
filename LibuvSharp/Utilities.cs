@@ -24,7 +24,7 @@ namespace LibuvSharp.Utilities
 				}
 			};
 
-			readStream.Read((bb) => {
+			readStream.Data += ((bb) => {
 				writeStream.Write(bb.Buffer, bb.Start, bb.Length);
 				if (writeStream.WriteQueueSize > 0) {
 					pending = true;

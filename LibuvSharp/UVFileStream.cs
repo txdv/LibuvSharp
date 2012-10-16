@@ -95,9 +95,7 @@ namespace LibuvSharp
 			}
 
 			readposition += size;
-			if (readCallback != null) {
-				readCallback(new ByteBuffer(buffer, 0, size));
-			}
+			OnData(new ByteBuffer(buffer, 0, size));
 
 			if (reading) {
 				WorkRead();
@@ -120,12 +118,13 @@ namespace LibuvSharp
 			reading = false;
 		}
 
-		Action<ByteBuffer> readCallback;
-
-		public void Read(Action<ByteBuffer> callback)
+		void OnData(ByteBuffer data)
 		{
-			readCallback = callback;
+			if (Data != null) {
+				Data(data);
+			}
 		}
+		public event Action<ByteBuffer> Data;
 
 		int writeoffset = 0;
 		Queue<Tuple<byte[], int, int, Action<bool>>> queue = new Queue<Tuple<byte[], int, int, Action<bool>>>();

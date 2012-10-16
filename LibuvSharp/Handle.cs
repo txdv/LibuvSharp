@@ -25,7 +25,7 @@ namespace LibuvSharp
 			}
 		}
 
-		public IntPtr Data {
+		public IntPtr DataPointer {
 			get {
 				return handle->data;
 			}

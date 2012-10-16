@@ -10,13 +10,12 @@ namespace LibuvSharp.Threading.Tasks
 		{
 			var tcs = new TaskCompletionSource<ByteBuffer>();
 			Action<Exception> error = (e) => tcs.SetException(e);
+			Action<ByteBuffer> data = (buffer) => tcs.SetResult(buffer);
 			Action end = () => tcs.SetResult(null);
 			try {
 				stream.Error += error;
 				stream.Complete += end;
-				stream.Read((buffer) => {
-					tcs.SetResult(buffer);
-				});
+				stream.Data += data;
 				stream.Resume();
 			} catch (ArgumentException) {
 				tcs.SetResult(null);
@@ -27,6 +26,7 @@ namespace LibuvSharp.Threading.Tasks
 				stream.Pause();
 				stream.Error -= error;
 				stream.Complete -= end;
+				stream.Data -= data;
 				return bb.Result;
 			}, stream.Loop.Scheduler);
 		}

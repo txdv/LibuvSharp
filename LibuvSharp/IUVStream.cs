@@ -10,7 +10,7 @@ namespace LibuvSharp
 
 		bool Readable { get; }
 		event Action Complete;
-		void Read(Action<ByteBuffer> callback);
+		event Action<ByteBuffer> Data;
 		void Resume();
 		void Pause();
 

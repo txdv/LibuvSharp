@@ -19,7 +19,7 @@ public class HashStream : IDisposable
 		HashAlgorithm = algorithm;
 		Stream = stream;
 
-		Stream.Read((b) => {
+		Stream.Data += ((b) => {
 			HashAlgorithm.TransformBlock(b.Buffer, b.Start, b.Length, null, 0);
 		});
 
