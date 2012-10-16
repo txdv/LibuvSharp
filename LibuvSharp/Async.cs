@@ -12,8 +12,6 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int uv_async_init(IntPtr loop, IntPtr handle, IntPtr callback);
 
-		GCHandle GCHandle { get; set; }
-
 		public Async()
 			: this(null as Action<Async>)
 		{
