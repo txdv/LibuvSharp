@@ -27,7 +27,6 @@ namespace LibuvSharp
 		}
 
 		Action<IntPtr, int> cb;
-
 		public void Start(Action<int> callback)
 		{
 			cb = delegate (IntPtr ptr, int status) {

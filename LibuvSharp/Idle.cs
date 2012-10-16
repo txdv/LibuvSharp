@@ -26,7 +26,7 @@ namespace LibuvSharp
 			Ensure.Success(r, loop);
 		}
 
-		private Action<IntPtr, int> cb;
+		Action<IntPtr, int> cb;
 		public void Start(Action<int> callback)
 		{
 			cb = delegate (IntPtr ptr, int status) {
@@ -36,7 +36,7 @@ namespace LibuvSharp
 			Start(Marshal.GetFunctionPointerForDelegate(cb));
 		}
 
-		public void Start(Action <Idle, int> callback)
+		public void Start(Action<Idle, int> callback)
 		{
 			cb = delegate (IntPtr ptr, int status) {
 				callback(this, status);
@@ -56,7 +56,6 @@ namespace LibuvSharp
 			int r = uv_idle_stop(NativeHandle);
 			Ensure.Success(r, Loop);
 		}
-
 	}
 }
 
