@@ -34,6 +34,8 @@ namespace LibuvSharp
 
 		uv_stream_t *stream;
 
+		long PendingWrites { get; set; }
+
 		public long WriteQueueSize {
 			get {
 				return stream->write_queue_size.ToInt64();
@@ -138,16 +140,31 @@ namespace LibuvSharp
 			}
 		}
 
+		void OnDrain()
+		{
+			if (Drain != null) {
+				Drain();
+			}
+		}
+
+		public event Action Drain;
+
 		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
+
+			PendingWrites++;
 
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback += (status, cpr2) => {
 				datagchandle.Free();
+				PendingWrites--;
 				if (callback != null) {
 					callback(status == 0);
+				}
+				if (PendingWrites == 0) {
+					OnDrain();
 				}
 			};
 

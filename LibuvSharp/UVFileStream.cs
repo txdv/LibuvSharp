@@ -148,6 +148,7 @@ namespace LibuvSharp
 		void WorkWrite()
 		{
 			if (queue.Count == 0) {
+				OnDrain();
 				if (shutdown) {
 					uvfile.Truncate(writeoffset, Finish);
 				}
@@ -165,6 +166,15 @@ namespace LibuvSharp
 				}
 			});
 		}
+
+		void OnDrain()
+		{
+			if (Drain != null) {
+				Drain();
+			}
+		}
+
+		public event Action Drain;
 
 		public long WriteQueueSize { get; private set; }
 
@@ -185,6 +195,9 @@ namespace LibuvSharp
 		{
 			shutdown = true;
 			shutdownCallback = callback;
+			if (queue.Count == 0) {
+				uvfile.Truncate(writeoffset, Finish);
+			}
 		}
 
 		void Close(Action<Exception> callback)
