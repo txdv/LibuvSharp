@@ -27,19 +27,12 @@ namespace LibuvSharp
 		}
 
 		Action<IntPtr, int> cb;
-		public void Start(Action<int> callback)
+		public void Start(Action callback)
 		{
 			cb = delegate (IntPtr ptr, int status) {
-				callback(status);
-			};
-
-			Start(Marshal.GetFunctionPointerForDelegate(cb));
-		}
-
-		public void Start(Action<Idle, int> callback)
-		{
-			cb = delegate (IntPtr ptr, int status) {
-				callback(this, status);
+				if (callback != null) {
+					callback();
+				}
 			};
 
 			Start(Marshal.GetFunctionPointerForDelegate(cb));
