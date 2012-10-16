@@ -45,6 +45,7 @@ namespace LibuvSharp
 		public int gid;
 
 		// functions
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void uv_exit_cb(IntPtr Handle, int exit_status, int term_signal);
 
 		public uv_process_options_t(Process process, ProcessOptions options)

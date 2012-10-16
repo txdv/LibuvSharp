@@ -63,6 +63,11 @@ namespace LibuvSharp.Tests
 				ProcessSpawn("/usr/bin/which which", (res) => exitCode = res);
 				Loop.Default.Run();
 				Assert.AreEqual(exitCode.Value, 0);
+			} else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				string result = null;
+				ProcessSpawn("csc.exe", (res) => result = res);
+				Loop.Default.Run();
+				Assert.IsTrue(result.StartsWith("Microsoft "));
 			}
 		}
 	}
