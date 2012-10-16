@@ -93,7 +93,6 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.AddressFamily(ipAddress);
 			Ensure.ArgumentNotNull(data, "data");
-			Ensure.ArgumentNotNull(data, "callback");
 
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
