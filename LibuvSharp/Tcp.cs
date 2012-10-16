@@ -35,6 +35,8 @@ namespace LibuvSharp
 		public void Bind(IPAddress ipAddress, int port)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			Ensure.AddressFamily(ipAddress);
+
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				r = uv_tcp_bind(NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port));

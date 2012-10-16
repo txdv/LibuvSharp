@@ -57,6 +57,7 @@ namespace LibuvSharp
 		public void Bind(IPAddress ipAddress, int port)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			Ensure.AddressFamily(ipAddress);
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
@@ -90,6 +91,7 @@ namespace LibuvSharp
 		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			Ensure.AddressFamily(ipAddress);
 			Ensure.ArgumentNotNull(data, "data");
 			Ensure.ArgumentNotNull(data, "callback");
 

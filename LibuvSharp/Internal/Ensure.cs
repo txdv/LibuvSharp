@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -67,6 +68,14 @@ namespace LibuvSharp
 		{
 			if (argumentValue == null) {
 				throw new ArgumentNullException(argumentName);
+			}
+		}
+
+		public static void AddressFamily(IPAddress ipAddress)
+		{
+			if ((ipAddress.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork) &&
+			    (ipAddress.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6)) {
+				throw new ArgumentException("ipAddress has to be of AddressFamily InterNetwork or InterNetworkV6");
 			}
 		}
 	}

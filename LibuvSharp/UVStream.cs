@@ -131,6 +131,8 @@ namespace LibuvSharp
 
 		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
+			Ensure.ArgumentNotNull(data, "data");
+
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback += (status, cpr2) => {
