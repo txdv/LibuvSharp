@@ -15,6 +15,7 @@ namespace LibuvSharp
 		void Pause();
 
 		bool Writeable { get; }
+		long WriteQueueSize { get; }
 		void Write(byte[] data, int index, int count, Action<bool> callback);
 		void Shutdown(Action callback);
 	}
