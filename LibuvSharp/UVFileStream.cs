@@ -7,12 +7,27 @@ namespace LibuvSharp
 	{
 		public Loop Loop { get; private set; }
 
+		public UVFileStream()
+			: this(Loop.Default)
+		{
+		}
+
 		public UVFileStream(Loop loop)
 		{
 			Loop = loop;
 		}
 
 		UVFile uvfile;
+
+		public void OpenRead(string path, Action<Exception> callback)
+		{
+			Open(path, UVFileAccess.Read, callback);
+		}
+
+		public void OpenWrite(string path, Action<Exception> callback)
+		{
+			Open(path, UVFileAccess.Write, callback);
+		}
 
 		public void Open(string path, UVFileAccess access, Action<Exception> callback)
 		{
@@ -27,12 +42,13 @@ namespace LibuvSharp
 				break;
 			default:
 				throw new ArgumentException("access not supported");
-
 			}
 
 			UVFile.Open(Loop, path, access, (ex, file) => {
 				uvfile = file;
-				callback(ex);
+				if (callback != null) {
+					callback(ex);
+				}
 			});
 		}
 
@@ -80,7 +96,7 @@ namespace LibuvSharp
 
 			readposition += size;
 			if (readCallback != null) {
-				readCallback(new ByteBuffer(buffer, 0, size).Copy());
+				readCallback(new ByteBuffer(buffer, 0, size));
 			}
 
 			if (reading) {
@@ -116,7 +132,11 @@ namespace LibuvSharp
 
 		void HandleWrite(Exception ex, int size)
 		{
-			var cb = queue.Dequeue().Item4;
+			var tuple = queue.Dequeue();
+
+			WriteQueueSize -= tuple.Item3;
+
+			var cb = tuple.Item4;
 			if (cb != null) {
 				cb(ex == null);
 			}
@@ -146,11 +166,14 @@ namespace LibuvSharp
 			});
 		}
 
+		public long WriteQueueSize { get; private set; }
+
 		public bool Writeable { private set; get; }
 
 		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
 			queue.Enqueue(Tuple.Create(data, index, count, callback));
+			WriteQueueSize += count;
 			if (queue.Count == 1) {
 				WorkWrite();
 			}
