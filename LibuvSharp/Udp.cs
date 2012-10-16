@@ -87,7 +87,7 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
 
-		public void Send(IPAddress ipAddress, int port, byte[] data, int length, Action<bool> callback)
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.ArgumentNotNull(data, "data");
@@ -102,11 +102,12 @@ namespace LibuvSharp
 				}
 			};
 
+			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
 
 			int r;
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
-				buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+				buf[0] = new UnixBufferStruct(ptr, count);
 
 				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 					r = uv_udp_send_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
@@ -115,7 +116,7 @@ namespace LibuvSharp
 				}
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-				buf[0] = new WindowsBufferStruct(datagchandle.AddrOfPinnedObject(), length);
+				buf[0] = new WindowsBufferStruct(ptr, count);
 
 				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 					r = uv_udp_send_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
@@ -125,59 +126,89 @@ namespace LibuvSharp
 			}
 			Ensure.Success(r, Loop);
 		}
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index, Action<bool> callback)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(ipAddress, port, data, index, data.Length - index, callback);
+		}
 		public void Send(IPAddress ipAddress, int port, byte[] data, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, data.Length, callback);
+			Send(ipAddress, port, data, 0, data.Length, callback);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, int length)
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count)
 		{
-			Send(ipAddress, port, data, length, null);
+			Send(ipAddress, port, data, index, count, null);
+		}
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(ipAddress, port, data, index, data.Length - index);
 		}
 		public void Send(IPAddress ipAddress, int port, byte[] data)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, data.Length);
+			Send(ipAddress, port, data, 0, data.Length);
 		}
 
-		public void Send(string ipAddress, int port, byte[] data, int length, Action<bool> callback)
+		public void Send(string ipAddress, int port, byte[] data, int index, int count, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			Send(IPAddress.Parse(ipAddress), port, data, length, callback);
+			Send(IPAddress.Parse(ipAddress), port, data, index, count, callback);
+		}
+		public void Send(string ipAddress, int port, byte[] data, int index, Action<bool> callback)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
 		public void Send(string ipAddress, int port, byte[] data, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, data.Length, callback);
+			Send(ipAddress, port, data, 0, data.Length, callback);
 		}
-		public void Send(string ipAddress, int port, byte[] data, int length)
+		public void Send(string ipAddress, int port, byte[] data, int index, int count)
 		{
-			Send(ipAddress, port, data, length, null);
+			Send(ipAddress, port, data, index, count, null);
+		}
+		public void Send(string ipAddress, int port, byte[] data, int index)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(ipAddress, port, data, index, data.Length - index);
 		}
 		public void Send(string ipAddress, int port, byte[] data)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, data.Length);
+			Send(ipAddress, port, data, 0, data.Length);
 		}
 
-		public void Send(IPEndPoint endPoint, byte[] data, int length, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, int index, int count, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Send(endPoint.Address, endPoint.Port, data, length, callback);
+			Send(endPoint.Address, endPoint.Port, data, index, count, callback);
+		}
+		public void Send(IPEndPoint endPoint, byte[] data, int index, Action<bool> callback)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(endPoint, data, index, data.Length - index, callback);
 		}
 		public void Send(IPEndPoint endPoint, byte[] data, Action<bool> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, data.Length, callback);
+			Send(endPoint, data, 0, data.Length, callback);
 		}
-		public void Send(IPEndPoint endPoint, byte[] data, int length)
+		public void Send(IPEndPoint endPoint, byte[] data, int index, int count)
 		{
-			Send(endPoint, data, length, null);
+			Send(endPoint, data, index, count, null);
+		}
+		public void Send(IPEndPoint endPoint, byte[] data, int index)
+		{
+			Ensure.ArgumentNotNull(data, "data");
+			Send(endPoint, data, index, data.Length - index);
 		}
 		public void Send(IPEndPoint endPoint, byte[] data)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, data.Length);
+			Send(endPoint, data, 0, data.Length);
 		}
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
