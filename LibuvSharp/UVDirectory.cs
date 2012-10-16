@@ -94,9 +94,6 @@ namespace LibuvSharp
 			Rename(path, newPath, null);
 		}
 
-		[DllImport("__Internal", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int strlen(IntPtr ptr);
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_readdir(IntPtr loop, IntPtr req, string path, int flags, uv_fs_cb callback);
 
@@ -110,15 +107,15 @@ namespace LibuvSharp
 				}
 
 				int length = (int)fsr.Result;
-				List<string> list = new List<string>(length);
+				string[] res = new string[length];
 				sbyte *ptr = (sbyte *)fsr.Pointer;
 				for (int i = 0; i < length; i++) {
-					list.Add(new string(ptr));
-					ptr += strlen((IntPtr)ptr) + 1;
+					res[i] = new string(ptr);
+					ptr += res[i].Length + 1;
 				}
-				callback(ex, list.ToArray());
+				callback(ex, res);
 			};
-			uv_fs_readdir(loop.NativeHandle, fsr.Handle, path, 0, fsr.End);
+			uv_fs_readdir(loop.NativeHandle, fsr.Handle, path, 0, FileSystemRequest.StaticEnd);
 		}
 		public static void Read(string path, Action<Exception, string[]> callback)
 		{

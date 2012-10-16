@@ -14,7 +14,7 @@ namespace LibuvSharp
 		public FileSystemRequest()
 			: base(Size)
 		{
-			fsrequest = (uv_fs_t *)Handle;
+			fsrequest = (uv_fs_t *)(Handle + UV.Sizeof(RequestType.UV_REQ));
 		}
 
 		public FileSystemRequest(string path)
