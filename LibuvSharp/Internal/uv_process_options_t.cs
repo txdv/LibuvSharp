@@ -38,11 +38,11 @@ namespace LibuvSharp
 
 		public uint flags;
 
-		public int uid;
-		public int gid;
-
 		public int stdio_count;
 		uv_stdio_container_stream_t *stdio;
+
+		public int uid;
+		public int gid;
 
 		// functions
 		delegate void uv_exit_cb(IntPtr Handle, int exit_status, int term_signal);

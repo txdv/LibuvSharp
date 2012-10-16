@@ -18,6 +18,15 @@ namespace LibuvSharp
 			}
 		}
 
+		public RequestType RequestType {
+			get {
+				return request->type;
+			}
+			set {
+				request->type = value;
+			}
+		}
+
 		public GCHandle GCHandle {
 			get {
 				return GCHandle.FromIntPtr(Data);

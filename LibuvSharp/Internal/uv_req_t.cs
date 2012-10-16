@@ -7,6 +7,7 @@ namespace LibuvSharp
 	internal struct uv_req_t
 	{
 		public IntPtr data;
+		public RequestType type;
 	}
 }
 
