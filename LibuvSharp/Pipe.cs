@@ -90,7 +90,6 @@ namespace LibuvSharp
 				if (status == 0) {
 					callback(null);
 				} else {
-					pipe.Close();
 					callback(Ensure.Success(Loop, name));
 				}
 			};

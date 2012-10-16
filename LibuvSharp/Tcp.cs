@@ -107,7 +107,6 @@ namespace LibuvSharp
 				if (status == 0) {
 					callback(null);
 				} else {
-					socket.Close();
 					callback(Ensure.Success(Loop));
 				}
 			};

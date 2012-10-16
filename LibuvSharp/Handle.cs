@@ -64,7 +64,7 @@ namespace LibuvSharp
 		public event Action Closed;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_close(IntPtr handle, Action callback);
+		internal static extern void uv_close(IntPtr handle, Action callback);
 
 		public void Close(Action callback)
 		{
@@ -87,8 +87,7 @@ namespace LibuvSharp
 				Dispose();
 			});
 
-			int r = uv_close(NativeHandle, ca.Callback);
-			Ensure.Success(r, Loop);
+			uv_close(NativeHandle, ca.Callback);
 		}
 
 		public void Close()
