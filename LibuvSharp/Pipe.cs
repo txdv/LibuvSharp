@@ -36,7 +36,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Pipe : UVStream
+	public class Pipe : UVStream, IOpenFileDescriptor
 	{
 		unsafe uv_pipe_t *pipe_t;
 

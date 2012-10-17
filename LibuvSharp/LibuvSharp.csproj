@@ -102,6 +102,8 @@
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\uv_stream_t.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="IOpenFileDescriptor.cs" />
+    <Compile Include="IOpenFileDescriptorExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -30,7 +30,7 @@ namespace Test
 		public static void Main(string[] args)
 		{
 			var stdin = new Pipe();
-			stdin.Open((IntPtr)0);
+			stdin.Open(0);
 			stdin.Read(Encoding.ASCII, (str) => {
 				str = str.TrimEnd(new char[] { '\r', '\n' });
 				if (str.StartsWith("fib ")) {

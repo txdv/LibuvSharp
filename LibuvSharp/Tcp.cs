@@ -66,7 +66,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Tcp : UVStream
+	public class Tcp : UVStream, IOpenFileDescriptor
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
