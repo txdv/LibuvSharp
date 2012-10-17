@@ -40,7 +40,6 @@ namespace LibuvSharp.Utilities
 			};
 
 			readStream.Complete += () => {
-				readStream.Shutdown();
 				writeStream.Shutdown(() => call(null, null));
 			};
 
