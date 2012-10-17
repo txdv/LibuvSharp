@@ -15,7 +15,7 @@ $(uv): libuv/Makefile
 	make -C libuv libuv.a
 
 libuv.so: $(uv)
-	$(CC) -shared $(uv) -o libuv.so $(OBJ)
+	$(CC) -shared $(uv) -o libuv.so $(OBJ) -lrt -lm -ldl
 
 generate: generate.c libuv.so
 	$(CC) -Ilibuv/include/ -lpthread -ldl -lrt libuv.so $(ev) -lm generate.c -o generate
