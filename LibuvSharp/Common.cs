@@ -15,11 +15,13 @@ namespace LibuvSharp
 	[StructLayout(LayoutKind.Sequential, Size=16)]
 	internal struct sockaddr_in
 	{
+		public int a, b, c, d;
 	}
 
 	[StructLayout(LayoutKind.Sequential, Size=28)]
 	internal struct sockaddr_in6
 	{
+		public int a, b, c, d, e, f, g;
 	}
 
 	public static class UV
