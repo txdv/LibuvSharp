@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>4DF92D96-8155-4C32-979B-D0FC9698122C</ProjectGuid>
+    <ProjectGuid>{1F2780FB-C570-4E95-A3E1-DC3BD1E8D59D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>HashStream</RootNamespace>
     <AssemblyName>HashStream</AssemblyName>
