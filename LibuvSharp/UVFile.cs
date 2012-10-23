@@ -86,7 +86,7 @@ namespace LibuvSharp
 				callback(ex, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
 			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileHandle, ptr, (IntPtr)count, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
@@ -182,7 +182,7 @@ namespace LibuvSharp
 				}
 				datagchandle.Free();
 			};
-			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
 			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileHandle, ptr, (IntPtr)count, offset, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}

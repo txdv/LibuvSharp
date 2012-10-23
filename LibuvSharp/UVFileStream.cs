@@ -3,6 +3,22 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
+	struct QueueElement
+	{
+		public QueueElement(byte[] data, int index, int count, Action<bool> callback)
+		{
+			this.data = data;
+			this.index = index;
+			this.count = count;
+			this.callback = callback;
+		}
+
+		public byte[] data;
+		public int index;
+		public int count;
+		public Action<bool> callback;
+	}
+
 	public class UVFileStream : IUVStream
 	{
 		public Loop Loop { get; private set; }
@@ -127,15 +143,15 @@ namespace LibuvSharp
 		public event Action<ByteBuffer> Data;
 
 		int writeoffset = 0;
-		Queue<Tuple<byte[], int, int, Action<bool>>> queue = new Queue<Tuple<byte[], int, int, Action<bool>>>();
+		Queue<QueueElement> queue = new Queue<QueueElement>();
 
 		void HandleWrite(Exception ex, int size)
 		{
 			var tuple = queue.Dequeue();
 
-			WriteQueueSize -= tuple.Item3;
+			WriteQueueSize -= tuple.count;
 
-			var cb = tuple.Item4;
+			var cb = tuple.callback;
 			if (cb != null) {
 				cb(ex == null);
 			}
@@ -154,7 +170,7 @@ namespace LibuvSharp
 				return;
 			}
 			var item = queue.Peek();
-			uvfile.Write(item.Item1, item.Item2, item.Item3, HandleWrite, writeoffset);
+			uvfile.Write(item.data, item.index, item.count, HandleWrite, writeoffset);
 		}
 
 		void Finish(Exception ex)
@@ -181,7 +197,7 @@ namespace LibuvSharp
 
 		public void Write(byte[] data, int index, int count, Action<bool> callback)
 		{
-			queue.Enqueue(Tuple.Create(data, index, count, callback));
+			queue.Enqueue(new QueueElement(data, index, count, callback));
 			WriteQueueSize += count;
 			if (queue.Count == 1) {
 				WorkWrite();

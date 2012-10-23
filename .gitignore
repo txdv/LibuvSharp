@@ -3,8 +3,12 @@
 *.swp
 *.dll
 *.so
+*.mdf
+*.ldf
+*.suo
 obj
 generate
 bin/
 dlls/
 libs/
+packages/

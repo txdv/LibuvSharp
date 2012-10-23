@@ -47,7 +47,7 @@ namespace LibuvSharp
 		{
 			read_cb_unix = read_callback_u;
 			read_cb_win = read_callback_w;
-			stream = (uv_stream_t *)(handle + Handle.Size(HandleType.UV_HANDLE));
+			stream = (uv_stream_t *)(handle.ToInt64() + Handle.Size(HandleType.UV_HANDLE));
 		}
 
 		internal UVStream(Loop loop, int size)
@@ -161,7 +161,7 @@ namespace LibuvSharp
 				}
 			};
 
-			IntPtr ptr = datagchandle.AddrOfPinnedObject() + index;
+			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
 
 			int r;
 			if (UV.isUnix) {
