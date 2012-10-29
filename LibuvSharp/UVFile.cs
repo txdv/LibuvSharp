@@ -34,7 +34,7 @@ namespace LibuvSharp
 
 		public static void Open(Loop loop, string path, UVFileAccess access, Action<Exception, UVFile> callback)
 		{
-			var fsr = new FileSystemRequest();
+			var fsr = new FileSystemRequest(path);
 			fsr.Callback = (ex) => {
 				UVFile file = null;
 				if (fsr.Result != IntPtr.Zero) {
