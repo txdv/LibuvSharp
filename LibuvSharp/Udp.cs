@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -238,7 +239,7 @@ namespace LibuvSharp
 		}
 
 		bool receive_init = false;
-		public void Receive(Action<IPEndPoint, ByteBuffer> callback)
+		public void Receive(Action<IPEndPoint, ArraySegment<byte>> callback)
 		{
 			Ensure.ArgumentNotNull(callback, "callback");
 
@@ -260,11 +261,11 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(encoding, "encoding");
 			Ensure.ArgumentNotNull(callback, "callback");
 
-			Receive((ep, data) => callback(ep, encoding.GetString(data.Buffer, data.Start, data.Length)));
+			Receive((ep, data) => callback(ep, encoding.GetString(data.Array, data.Offset, data.Count)));
 		}
 
-		Action<IPEndPoint, ByteBuffer> Message = null;
-		void OnMessage(IPEndPoint endPoint, ByteBuffer data)
+		Action<IPEndPoint, ArraySegment<byte>> Message = null;
+		void OnMessage(IPEndPoint endPoint, ArraySegment<byte> data)
 		{
 			if (Message != null) {
 				Message(endPoint, data);

@@ -7,7 +7,7 @@ namespace LibuvSharp
 	{
 		public static void Read(this IUVStream stream, Encoding enc, Action<string> callback)
 		{
-			stream.Data += (data) => callback(enc.GetString(data.Buffer, data.Start, data.Length));
+			stream.Data += (data) => callback(enc.GetString(data.Array, data.Offset, data.Count));
 		}
 
 		public static void Write(this IUVStream stream, byte[] data, int index, int count)
@@ -33,11 +33,11 @@ namespace LibuvSharp
 			stream.Write(data, null);
 		}
 
-		public static void Write(this IUVStream stream, ByteBuffer data, Action<bool> callback)
+		public static void Write(this IUVStream stream, ArraySegment<byte> data, Action<bool> callback)
 		{
-			stream.Write(data.Buffer, data.Start, data.Length, callback);
+			stream.Write(data.Array, data.Offset, data.Count, callback);
 		}
-		public static void Write(this IUVStream stream, ByteBuffer data)
+		public static void Write(this IUVStream stream, ArraySegment<byte> data)
 		{
 			stream.Write(data, null);
 		}

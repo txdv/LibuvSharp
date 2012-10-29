@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace LibuvSharp
@@ -10,7 +11,7 @@ namespace LibuvSharp
 
 		bool Readable { get; }
 		event Action Complete;
-		event Action<ByteBuffer> Data;
+		event Action<ArraySegment<byte>> Data;
 		void Resume();
 		void Pause();
 

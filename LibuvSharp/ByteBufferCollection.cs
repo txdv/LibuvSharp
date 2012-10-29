@@ -4,23 +4,16 @@ using System.Linq;
 
 namespace LibuvSharp
 {
-	public class ByteBufferCollection
+	public class ByteBufferCollection : List<ArraySegment<byte>>
 	{
-		List<ByteBuffer> buffers = new List<ByteBuffer>();
-
 		public ByteBufferCollection()
 		{
 		}
 
-		public void Add(ByteBuffer buffer)
+		List<ArraySegment<byte>> Clone()
 		{
-			buffers.Add(buffer);
-		}
-
-		List<ByteBuffer> Clone()
-		{
-			List<ByteBuffer> r = new List<ByteBuffer>();
-			foreach (var buffer in buffers) {
+			List<ArraySegment<byte>> r = new List<ArraySegment<byte>>();
+			foreach (var buffer in this) {
 				r.Add(buffer);
 			}
 			return r;
@@ -29,10 +22,10 @@ namespace LibuvSharp
 		public void Skip(int restLength)
 		{
 			foreach (var buffer in Clone()) {
-				int r = restLength - buffer.Length;
+				int r = restLength - buffer.Count;
 				if (r >= 0) {
-					buffer.Skip(buffer.Length);
-					buffers.Remove(buffer);
+					buffer.Skip(buffer.Count);
+					Remove(buffer);
 					restLength = r;
 				} else {
 					// it is the last buffer we need to skip
@@ -45,11 +38,11 @@ namespace LibuvSharp
 
 		public bool HasLength(int length)
 		{
-			foreach (var buffer in buffers) {
-				if (length < buffer.Length) {
+			foreach (var buffer in this) {
+				if (length < buffer.Count) {
 					return true;
 				}
-				length -= buffer.Length;
+				length -= buffer.Count;
 			}
 			return false;
 		}
@@ -57,38 +50,36 @@ namespace LibuvSharp
 		public int Length {
 			get {
 				int length = 0;
-				foreach (var buffer in buffers) {
-					length += buffer.Length;
+				foreach (var buffer in this) {
+					length += buffer.Count;
 				}
 				return length;
 			}
 		}
 
-		public byte this[int index] {
-			get {
-				int position = index;
-				foreach (var buffer in buffers) {
-					if (position < buffer.Length) {
-						return buffer.Buffer[buffer.Start + position];
-					} else {
-						position -= buffer.Length;
-					}
+		public byte Get(int index) {
+			int position = index;
+			foreach (var buffer in this) {
+				if (position < buffer.Count) {
+					return buffer.Array[buffer.Offset + position];
+				} else {
+					position -= buffer.Count;
 				}
-				throw new Exception();
 			}
+			throw new Exception();
 		}
 
 		public void CopyTo(byte[] destination, int length)
 		{
 			int startPos = 0;
-			foreach (var buffer in buffers) {
-				int rest = length - buffer.Length;
+			foreach (var buffer in this) {
+				int rest = length - buffer.Count;
 				if (rest <= 0) {
-					Buffer.BlockCopy(buffer.Buffer, buffer.Start, destination, startPos, length);
+					Buffer.BlockCopy(buffer.Array, buffer.Offset, destination, startPos, length);
 					break;
 				} else {
-					Buffer.BlockCopy(buffer.Buffer, buffer.Start, destination, startPos, buffer.Length);
-					startPos += buffer.Length;
+					Buffer.BlockCopy(buffer.Array, buffer.Offset, destination, startPos, buffer.Count);
+					startPos += buffer.Count;
 					length = rest;
 				}
 			}
@@ -97,9 +88,9 @@ namespace LibuvSharp
 		public int FirstByte(byte val)
 		{
 			int pos = 0;
-			foreach (var buffer in buffers) {
-				for (int i = 0; i < buffer.Length; i++) {
-					if (buffer.Buffer[i + buffer.Start] == val) {
+			foreach (var buffer in this) {
+				for (int i = 0; i < buffer.Count; i++) {
+					if (buffer.Array[i + buffer.Offset] == val) {
 						return pos;
 					} else {
 						pos++;
@@ -111,8 +102,8 @@ namespace LibuvSharp
 
 		public byte CurrentByte {
 			get {
-				var buffer = buffers.First();
-				return buffer.CurrentByte;
+				var buffer = this.First();
+				return buffer.Array[buffer.Offset];
 			}
 		}
 
@@ -131,11 +122,11 @@ namespace LibuvSharp
 				return false;
 			}
 
-			result = this[size - 1];
+			result = Get(size - 1);
 
 			for (int i = size - 2; i >= 0; i--) {
 				result <<= 8;
-				result |= this[i];
+				result |= Get(i);
 			}
 
 			return true;
@@ -189,7 +180,7 @@ namespace LibuvSharp
 		public bool ReadByte(out byte result)
 		{
 			try {
-				result = this[0];
+				result = Get(0);
 				return true;
 			} catch {
 				result = 0;

@@ -124,14 +124,14 @@ namespace LibuvSharp
 
 		public event Action<Exception> Error;
 
-		void OnData(ByteBuffer data)
+		void OnData(ArraySegment<byte> data)
 		{
 			if (Data != null) {
 				Data(data);
 			}
 		}
 
-		public event Action<ByteBuffer> Data;
+		public event Action<ArraySegment<byte>> Data;
 
 		void OnDrain()
 		{

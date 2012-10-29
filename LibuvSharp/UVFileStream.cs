@@ -111,7 +111,7 @@ namespace LibuvSharp
 			}
 
 			readposition += size;
-			OnData(new ByteBuffer(buffer, 0, size));
+			OnData(new ArraySegment<byte>(buffer, 0, size));
 
 			if (reading) {
 				WorkRead();
@@ -134,13 +134,13 @@ namespace LibuvSharp
 			reading = false;
 		}
 
-		void OnData(ByteBuffer data)
+		void OnData(ArraySegment<byte> data)
 		{
 			if (Data != null) {
 				Data(data);
 			}
 		}
-		public event Action<ByteBuffer> Data;
+		public event Action<ArraySegment<byte>> Data;
 
 		int writeoffset = 0;
 		Queue<QueueElement> queue = new Queue<QueueElement>();

@@ -6,11 +6,11 @@ namespace LibuvSharp.Threading.Tasks
 {
 	public static class IUVStreamExtensions
 	{
-		public static Task<ByteBuffer> ReadAsync(this IUVStream stream)
+		public static Task<ArraySegment<byte>?> ReadAsync(this IUVStream stream)
 		{
-			var tcs = new TaskCompletionSource<ByteBuffer>();
+			var tcs = new TaskCompletionSource<ArraySegment<byte>?>();
 			Action<Exception> error = (e) => tcs.SetException(e);
-			Action<ByteBuffer> data = (buffer) => tcs.SetResult(buffer);
+			Action<ArraySegment<byte>> data = (buffer) => tcs.SetResult(buffer);
 			Action end = () => tcs.SetResult(null);
 			try {
 				stream.Error += error;

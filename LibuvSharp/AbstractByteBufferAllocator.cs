@@ -36,7 +36,7 @@ namespace LibuvSharp
 
 		public abstract IntPtr Alloc(int size);
 		public abstract void Dispose(bool disposing);
-		public abstract ByteBuffer Retrieve(int size);
+		public abstract ArraySegment<byte> Retrieve(int size);
 	}
 }
 
