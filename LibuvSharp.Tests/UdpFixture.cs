@@ -27,22 +27,26 @@ namespace LibuvSharp.Tests
 			Udp server = new Udp();
 
 			server.Bind(ep);
-			server.Receive(Encoding.ASCII, (rinfo, str) => {
+			server.Message += (ip, data) => {
+				var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 				Assert.AreEqual(str, "PING");
 				sv_recv_cb_called++;
-				server.Send(rinfo, Encoding.ASCII.GetBytes("PONG"), (s) => {
+				server.Send(ip, Encoding.ASCII.GetBytes("PONG"), (s) => {
 					sv_send_cb_called++;
 					server.Close(() => { close_cb_called++; });
 				});
-			});
+			};
+			server.Resume();
 
 			client.Send(ep, Encoding.ASCII.GetBytes("PING"), (s) => {
 				cl_send_cb_called++;
-				client.Receive(Encoding.ASCII, (rinfo, str) => {
+				client.Message += (ip, data) => {
+					var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 					Assert.AreEqual(str, "PONG");
 					cl_recv_cb_called++;
 					client.Close(() => { close_cb_called++; });
-				});
+				};
+				client.Resume();
 			});
 
 
@@ -88,11 +92,6 @@ namespace LibuvSharp.Tests
 			Assert.Throws<ArgumentNullException>(() => u.Bind(null));
 			Assert.Throws<ArgumentNullException>(() => u.Bind(null as string, 0));
 			Assert.Throws<ArgumentNullException>(() => u.Bind(null as IPAddress, 0));
-
-			// receive
-			Assert.Throws<ArgumentNullException>(() => u.Receive(null));
-			Assert.Throws<ArgumentNullException>(() => u.Receive(Encoding.ASCII, null));
-			Assert.Throws<ArgumentNullException>(() => u.Receive(null, (_, __) => { }));
 
 			// send
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }));
