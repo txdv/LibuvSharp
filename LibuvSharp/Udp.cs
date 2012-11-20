@@ -238,33 +238,37 @@ namespace LibuvSharp
 			OnMessage(UV.GetIPEndPoint(sockaddr), Loop.ByteBufferAllocator.Retrieve(n));
 		}
 
-		bool receive_init = false;
-		public void Receive(Action<IPEndPoint, ArraySegment<byte>> callback)
+		bool receiving = false;
+		public void Resume()
 		{
-			Ensure.ArgumentNotNull(callback, "callback");
-
-			if (!receive_init) {
-				int r;
-				if (UV.isUnix) {
-					r = uv_udp_recv_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, recv_start_cb_unix);
-				} else {
-					r = uv_udp_recv_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
-				}
-				Ensure.Success(r, Loop);
-				receive_init = true;
+			if (receiving) {
+				return;
 			}
-			Message += callback;
+
+			int r;
+			if (UV.isUnix) {
+				r = uv_udp_recv_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, recv_start_cb_unix);
+			} else {
+				r = uv_udp_recv_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
+			}
+			Ensure.Success(r, Loop);
+			receiving = true;
 		}
 
-		public void Receive(Encoding encoding, Action<IPEndPoint, string> callback)
+		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_recv_stop(IntPtr handle);
+
+		public void Pause()
 		{
-			Ensure.ArgumentNotNull(encoding, "encoding");
-			Ensure.ArgumentNotNull(callback, "callback");
-
-			Receive((ep, data) => callback(ep, encoding.GetString(data.Array, data.Offset, data.Count)));
+			if (!receiving) {
+				return;
+			}
+			int r = uv_udp_recv_stop(NativeHandle);
+			Ensure.Success(r);
 		}
 
-		Action<IPEndPoint, ArraySegment<byte>> Message = null;
+		public event Action<IPEndPoint, ArraySegment<byte>> Message;
+
 		void OnMessage(IPEndPoint endPoint, ArraySegment<byte> data)
 		{
 			if (Message != null) {
