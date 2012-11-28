@@ -235,7 +235,11 @@ namespace LibuvSharp
 				return;
 			}
 
-			OnMessage(UV.GetIPEndPoint(sockaddr), Loop.ByteBufferAllocator.Retrieve(n));
+			if (Message != null) {
+				Message(new UdpMessage(UV.GetIPEndPoint(sockaddr),
+				                       Loop.ByteBufferAllocator.Retrieve(n),
+				                       (flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0));
+			}
 		}
 
 		bool receiving = false;
@@ -267,14 +271,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		public event Action<IPEndPoint, ArraySegment<byte>> Message;
-
-		void OnMessage(IPEndPoint endPoint, ArraySegment<byte> data)
-		{
-			if (Message != null) {
-				Message(endPoint, data);
-			}
-		}
+		public event Action<UdpMessage> Message;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_ttl(IntPtr handle, int ttl);

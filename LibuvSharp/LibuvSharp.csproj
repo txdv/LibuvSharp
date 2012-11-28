@@ -104,6 +104,8 @@
     <Compile Include="IOpenFileDescriptorExtensions.cs" />
     <Compile Include="ByteBufferCollection.cs" />
     <Compile Include="ArraySegmentExtensions.cs" />
+    <Compile Include="UdpMessage.cs" />
+    <Compile Include="Internal\uv_udp_flags.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
