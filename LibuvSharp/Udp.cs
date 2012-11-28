@@ -213,6 +213,31 @@ namespace LibuvSharp
 			Send(endPoint, data, 0, data.Length);
 		}
 
+		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data, Action<bool> callback)
+		{
+			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
+		}
+		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data)
+		{
+			Send(ipAddress, port, data, null);
+		}
+		public void Send(string ipAddress, int port, ArraySegment<byte> data, Action<bool> callback)
+		{
+			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
+		}
+		public void Send(string ipAddress, int port, ArraySegment<byte> data)
+		{
+			Send(ipAddress, port, data, null);
+		}
+		public void Send(IPEndPoint ep, ArraySegment<byte> data, Action<bool> callback)
+		{
+			Send(ep.Address, ep.Port, data, callback);
+		}
+		public void Send(IPEndPoint ep, ArraySegment<byte> data)
+		{
+			Send(ep, data, null);
+		}
+
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_recv_start_win(IntPtr handle, alloc_callback_win alloc_callback, recv_start_callback_win callback);
 
