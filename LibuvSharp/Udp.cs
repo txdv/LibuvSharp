@@ -287,10 +287,9 @@ namespace LibuvSharp
 				var ep = UV.GetIPEndPoint(sockaddr);
 
 				if (dualstack && ep.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
-					var str = ep.Address.ToString();
-					if (str.StartsWith("::ffff:")) {
-						// it's a ipv4 address disguised as an ipv6, let's retrieve the ipv4 version
-						ep = new IPEndPoint(IPAddress.Parse(str.Substring("::ffff:".Length)), ep.Port);
+					var data = ep.Address.GetAddressBytes();
+					if (IsMapping(data)) {
+						ep = new IPEndPoint(GetMapping(data), ep.Port);
 					}
 				}
 
@@ -298,6 +297,30 @@ namespace LibuvSharp
 				                       Loop.ByteBufferAllocator.Retrieve(n),
 				                       (flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0));
 			}
+		}
+
+		bool IsMapping(byte[] data)
+		{
+			if (data.Length != 16) {
+				return false;
+			}
+
+			for (int i = 0; i < 10; i++) {
+				if (data[i] != 0) {
+					return false;
+				}
+			}
+
+			return data[10] == data[11] && data[11] == 0xff;
+		}
+
+		IPAddress GetMapping(byte[] data)
+		{
+			var ip = new byte[4];
+			for (int i = 0; i < 4; i++) {
+				ip[i] = data[12 + i];
+			}
+			return new IPAddress(data);
 		}
 
 		bool receiving = false;
