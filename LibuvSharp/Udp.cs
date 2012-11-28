@@ -56,9 +56,8 @@ namespace LibuvSharp
 		}
 
 		bool dualstack = false;
-		private void Bind(IPAddress ipAddress, int port, short flags)
+		void Bind(IPAddress ipAddress, int port, short flags)
 		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.AddressFamily(ipAddress);
 
 			dualstack = (flags & (short)uv_udp_flags.UV_UDP_IPV6ONLY) == 0
@@ -78,6 +77,8 @@ namespace LibuvSharp
 		}
 		public void Bind(IPAddress ipAddress, int port)
 		{
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+
 			short flags;
 
 			switch (ipAddress.AddressFamily) {
