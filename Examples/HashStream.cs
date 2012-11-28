@@ -20,7 +20,7 @@ public class HashStream : IDisposable
 		Stream = stream;
 
 		Stream.Data += ((b) => {
-			HashAlgorithm.TransformBlock(b.Buffer, b.Start, b.Length, null, 0);
+			HashAlgorithm.TransformBlock(b.Array, b.Offset, b.Count, null, 0);
 		});
 
 		Stream.Complete += () => {
