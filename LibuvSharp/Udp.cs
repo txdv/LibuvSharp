@@ -55,10 +55,14 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		public void Bind(IPAddress ipAddress, int port)
+		bool dualstack = false;
+		private void Bind(IPAddress ipAddress, int port, short flags)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.AddressFamily(ipAddress);
+
+			dualstack = (flags & (short)uv_udp_flags.UV_UDP_IPV6ONLY) == 0
+				&& ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6;
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
@@ -67,6 +71,24 @@ namespace LibuvSharp
 				r = uv_udp_bind6(NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), 0);
 			}
 			Ensure.Success(r, Loop);
+		}
+		public void Bind(int port)
+		{
+			Bind(IPAddress.IPv6Any, port, 0);
+		}
+		public void Bind(IPAddress ipAddress, int port)
+		{
+			short flags;
+
+			switch (ipAddress.AddressFamily) {
+			case System.Net.Sockets.AddressFamily.InterNetworkV6:
+				flags = (short)uv_udp_flags.UV_UDP_IPV6ONLY;
+			break;
+			default:
+				flags = 0;
+				break;
+			}
+			Bind(ipAddress, port, flags);
 		}
 		public void Bind(string ipAddress, int port)
 		{
@@ -261,7 +283,17 @@ namespace LibuvSharp
 			}
 
 			if (Message != null) {
-				Message(new UdpMessage(UV.GetIPEndPoint(sockaddr),
+				var ep = UV.GetIPEndPoint(sockaddr);
+
+				if (dualstack && ep.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
+					var str = ep.Address.ToString();
+					if (str.StartsWith("::ffff:")) {
+						// it's a ipv4 address disguised as an ipv6, let's retrieve the ipv4 version
+						ep = new IPEndPoint(IPAddress.Parse(str.Substring("::ffff:".Length)), ep.Port);
+					}
+				}
+
+				Message(new UdpMessage(ep,
 				                       Loop.ByteBufferAllocator.Retrieve(n),
 				                       (flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0));
 			}
