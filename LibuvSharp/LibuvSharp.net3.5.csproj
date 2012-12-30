@@ -76,7 +76,6 @@
     <Compile Include="DefaultByteBufferAllocator.cs" />
     <Compile Include="AbstractByteBufferAllocator.cs" />
     <Compile Include="ByteBuffer.cs" />
-    <Compile Include="ByteBufferCollection.cs" />
     <Compile Include="Internal\uv_process_options_t.cs" />
     <Compile Include="Internal\uv_handle_t.cs" />
     <Compile Include="HandleType.cs" />
