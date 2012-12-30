@@ -29,7 +29,7 @@ namespace LibuvSharp
 		Action<IntPtr, int> cb;
 		public void Start(Action callback)
 		{
-			cb = delegate (IntPtr ptr, int status) {
+			cb = (ptr, status) => {
 				if (callback != null) {
 					callback();
 				}
