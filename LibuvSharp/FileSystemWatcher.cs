@@ -63,7 +63,7 @@ namespace LibuvSharp
 
 		public event Action<string, FileSystemEvent> Change;
 
-		protected void OnChange(string filename, FileSystemEvent @event)
+		void OnChange(string filename, FileSystemEvent @event)
 		{
 			if (Change != null) {
 				Change(filename, @event);
