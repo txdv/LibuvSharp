@@ -11,10 +11,10 @@ namespace LibuvSharp
 
 	public class TTY : UVStream
 	{
-		public IntPtr FileDescriptor { get; private set; }
+		public int FileDescriptor { get; private set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_tty_init(IntPtr loop, IntPtr tty, IntPtr fd, int readable);
+		static extern int uv_tty_init(IntPtr loop, IntPtr tty, int fd, int readable);
 
 		public TTY(int fd)
 			: this(Loop.Default, fd)
@@ -26,32 +26,12 @@ namespace LibuvSharp
 		{
 		}
 
-		public TTY(IntPtr fd)
-			: this(Loop.Default, fd)
-		{
-		}
-
-		public TTY(Loop loop, IntPtr fd)
-			: this(loop, fd, true)
-		{
-		}
-
 		public TTY(int fd, bool readable)
 			: this(Loop.Default, fd, readable)
 		{
 		}
 
 		public TTY(Loop loop, int fd, bool readable)
-			: this(loop, (IntPtr)fd, readable)
-		{
-		}
-
-		public TTY(IntPtr fd, bool readable)
-			: this(Loop.Default, fd, readable)
-		{
-		}
-
-		public TTY(Loop loop, IntPtr fd, bool readable)
 			: base(loop, HandleType.UV_TTY)
 		{
 			FileDescriptor = fd;
