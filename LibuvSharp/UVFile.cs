@@ -264,6 +264,40 @@ namespace LibuvSharp
 			Write(data, 0);
 		}
 
+		public void Write(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback, int offset)
+		{
+			Write(loop, data.Array, data.Offset, data.Count, callback, offset);
+		}
+		public void Write(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback)
+		{
+			Write(loop, data, callback, -1);
+		}
+		public void Write(Loop loop, ArraySegment<byte> data, int offset)
+		{
+			Write(loop, data, null, offset);
+		}
+		public void Write(Loop loop, ArraySegment<byte> data)
+		{
+			Write(loop, data, null);
+		}
+
+		public void Write(ArraySegment<byte> data, Action<Exception, int> callback, int offset)
+		{
+			Write(Loop, data, callback, offset);
+		}
+		public void Write(ArraySegment<byte> data, Action<Exception, int> callback)
+		{
+			Write(data, callback, -1);
+		}
+		public void Write(ArraySegment<byte> data, int offset)
+		{
+			Write(data, null, offset);
+		}
+		public void Write(ArraySegment<byte> data)
+		{
+			Write(data, null);
+		}
+
 		public int Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback, int offset)
 		{
 			var bytes = encoding.GetBytes(text);
