@@ -487,25 +487,6 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_sendfile(IntPtr loop, IntPtr req, IntPtr out_fd, int in_fd, int offset, int length, uv_fs_cb callback);
-
-		public void Send(Loop loop, Tcp socket, int offset, int length, Action<Exception, int> callback)
-		{
-			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex) => {
-				if (callback != null) {
-					callback(ex, (int)fsr.Result);
-				};
-			};
-			int r = uv_fs_sendfile(loop.NativeHandle, fsr.Handle, socket.NativeHandle, FileDescriptor, offset, length, FileSystemRequest.StaticEnd);
-			Ensure.Success(r, loop);
-		}
-		public void Send(Tcp socket, int offset, int length, Action<Exception, int> callback)
-		{
-			Send(Loop.Default, socket, offset, length, callback);
-		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fchmod(IntPtr loop, IntPtr req, int fd, int mode, Action<IntPtr> callback);
 
 		public void Chmod(Loop loop, int mode, Action<Exception> callback)
