@@ -380,7 +380,11 @@ namespace LibuvSharp
 		public void Sync(Loop loop, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex) => { callback(ex); };
+			fsr.Callback = (ex) => {
+				if (callback != null) {
+					callback(ex);
+				}
+			};
 			int r = uv_fs_fsync(loop.NativeHandle, fsr.Handle, FileHandle, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
