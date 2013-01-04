@@ -17,7 +17,7 @@ namespace LibuvSharp
 		callback listen_cb;
 		void listen_callback(IntPtr handle, int status)
 		{
-			OnIncommingStream();
+			OnConnection();
 		}
 
 		protected abstract UVStream Create();
@@ -33,7 +33,7 @@ namespace LibuvSharp
 			Listen(DefaultBacklog);
 		}
 
-		public TStream AcceptStream()
+		public TStream Accept()
 		{
 			var stream = Create();
 			int r = NativeMethods.uv_accept(NativeHandle, stream.NativeHandle);
@@ -41,14 +41,14 @@ namespace LibuvSharp
 			return stream as TStream;
 		}
 
-		private void OnIncommingStream()
+		void OnConnection()
 		{
-			if (IncommingStream != null) {
-				IncommingStream();
+			if (Connection != null) {
+				Connection();
 			}
 		}
 
-		public event Action IncommingStream;
+		public event Action Connection;
 	}
 }
 

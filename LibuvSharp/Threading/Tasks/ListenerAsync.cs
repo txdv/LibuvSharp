@@ -15,22 +15,22 @@ namespace LibuvSharp.Threading.Tasks
 		public ListenerAsync(TListener listener)
 		{
 			Listener = listener;
-			listener.IncommingStream += HandleIncommingStream;
+			listener.Connection += HandleConnection;
 		}
 
 		bool disposed = false;
 		public void Dispose()
 		{
 			if (!disposed) {
-				Listener.IncommingStream -= HandleIncommingStream;
+				Listener.Connection -= HandleConnection;
 				disposed = true;
 			}
 		}
 
-		void HandleIncommingStream()
+		void HandleConnection()
 		{
 			if (queue.Count > 0) {
-				queue.Dequeue().SetResult(Listener.AcceptStream());;
+				queue.Dequeue().SetResult(Listener.Accept());;
 			} else {
 				WaitingConnections++;
 			}
@@ -41,7 +41,7 @@ namespace LibuvSharp.Threading.Tasks
 			var tcs = new TaskCompletionSource<TStream>();
 			if (WaitingConnections > 0) {
 				WaitingConnections--;
-				tcs.SetResult(Listener.AcceptStream());
+				tcs.SetResult(Listener.Accept());
 			} else {
 				queue.Enqueue(tcs);
 			}

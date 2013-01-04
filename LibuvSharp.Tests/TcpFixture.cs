@@ -26,8 +26,8 @@ namespace LibuvSharp.Tests
 
 			var server = new TcpListener();
 			server.Bind(ep);
-			server.IncommingStream += () => {
-				var socket = server.AcceptStream();
+			server.Connection += () => {
+				var socket = server.Accept();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
@@ -99,8 +99,8 @@ namespace LibuvSharp.Tests
 
 				var server = new TcpListener();
 				server.Bind(ep);
-				server.IncommingStream += () => {
-					var socket = server.AcceptStream();
+				server.Connection += () => {
+					var socket = server.Accept();
 					socket.Resume();
 					socket.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
@@ -165,8 +165,8 @@ namespace LibuvSharp.Tests
 			var server = new TcpListener();
 			server.Bind(ep);
 			server.Listen();
-			server.IncommingStream += () => {
-				var socket = server.AcceptStream();
+			server.Connection += () => {
+				var socket = server.Accept();
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
@@ -287,8 +287,8 @@ namespace LibuvSharp.Tests
 			};
 
 			l.Listen();
-			l.IncommingStream += () => {
-				server = l.AcceptStream();
+			l.Connection += () => {
+				server = l.Accept();
 				check();
 			};
 
