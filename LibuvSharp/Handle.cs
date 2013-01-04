@@ -160,9 +160,9 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern HandleType uv_guess_handle(IntPtr fd);
+		static extern HandleType uv_guess_handle(int fd);
 
-		public static HandleType Guess(IntPtr fd)
+		public static HandleType Guess(int fd)
 		{
 			return uv_guess_handle(fd);
 		}
