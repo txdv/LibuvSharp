@@ -82,12 +82,20 @@ namespace LibuvSharp
 			uv_tcp_init(loop.NativeHandle, NativeHandle);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_open(IntPtr handle, IntPtr sock);
+		[DllImport("uv", EntryPoint = "uv_tcp_open", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_tcp_open_win(IntPtr handle, IntPtr sock);
+
+		[DllImport("uv", EntryPoint = "uv_tcp_open", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_tcp_open_lin(IntPtr handle, int sock);
 
 		public void Open(IntPtr socket)
 		{
-			int r = uv_tcp_open(NativeHandle, socket);
+			int r;
+			if (UV.IsUnix) {
+				r = uv_tcp_open_lin(NativeHandle, socket.ToInt32());
+			} else {
+				r = uv_tcp_open_win(NativeHandle, socket);
+			}
 			Ensure.Success(r);
 		}
 

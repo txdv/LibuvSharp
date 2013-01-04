@@ -61,11 +61,11 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_open(IntPtr handle, int file);
+		static extern int uv_pipe_open(IntPtr handle, int fd);
 
-		public void Open(IntPtr fileDescriptor)
+		public void Open(IntPtr fd)
 		{
-			int r = uv_pipe_open(NativeHandle, fileDescriptor.ToInt32());
+			int r = uv_pipe_open(NativeHandle, fd.ToInt32());
 			Ensure.Success(r);
 		}
 
