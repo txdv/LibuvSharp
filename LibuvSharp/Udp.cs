@@ -26,6 +26,16 @@ namespace LibuvSharp
 		recv_start_callback_win recv_start_cb_win;
 		recv_start_callback_unix recv_start_cb_unix;
 
+		AbstractByteBufferAllocator allocator;
+		public AbstractByteBufferAllocator ByteBufferAllocator {
+			get {
+				return allocator ?? Loop.ByteBufferAllocator;
+			}
+			set {
+				allocator = value;
+			}
+		}
+
 		public Udp()
 			: this(Loop.Default)
 		{
@@ -301,9 +311,13 @@ namespace LibuvSharp
 					}
 				}
 
-				Message(new UdpMessage(ep,
-				                       Loop.ByteBufferAllocator.Retrieve(n),
-				                       (flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0));
+				var msg = new UdpMessage(
+					ep,
+					ByteBufferAllocator.Retrieve(n),
+					(flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0
+				);
+
+				Message(msg);
 			}
 		}
 
@@ -340,9 +354,9 @@ namespace LibuvSharp
 
 			int r;
 			if (UV.isUnix) {
-				r = uv_udp_recv_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, recv_start_cb_unix);
+				r = uv_udp_recv_start_unix(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, recv_start_cb_unix);
 			} else {
-				r = uv_udp_recv_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
+				r = uv_udp_recv_start_win(NativeHandle, ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
 			}
 			Ensure.Success(r, Loop);
 			receiving = true;

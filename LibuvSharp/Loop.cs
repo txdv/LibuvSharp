@@ -65,7 +65,7 @@ namespace LibuvSharp
 		}
 
 		public Loop()
-			: this(uv_loop_new(), new CopyingByteBufferAllocator())
+			: this(new CopyingByteBufferAllocator())
 		{
 		}
 

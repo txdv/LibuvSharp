@@ -42,6 +42,16 @@ namespace LibuvSharp
 			}
 		}
 
+		AbstractByteBufferAllocator allocator;
+		public AbstractByteBufferAllocator ByteBufferAllocator {
+			get {
+				return allocator ?? Loop.ByteBufferAllocator;
+			}
+			set {
+				allocator = value;
+			}
+		}
+
 		internal UVStream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
@@ -64,9 +74,9 @@ namespace LibuvSharp
 		{
 			int r;
 			if (UV.isUnix) {
-				r = uv_read_start_unix(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
+				r = uv_read_start_unix(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
 			} else {
-				r = uv_read_start_win(NativeHandle, Loop.ByteBufferAllocator.AllocCallbackWin, read_cb_win);
+				r = uv_read_start_win(NativeHandle, ByteBufferAllocator.AllocCallbackWin, read_cb_win);
 			}
 			Ensure.Success(r, Loop);
 		}
@@ -102,7 +112,7 @@ namespace LibuvSharp
 					Close();
 				}
 			} else {
-				OnData(Loop.ByteBufferAllocator.Retrieve(size.ToInt32()));
+				OnData(ByteBufferAllocator.Retrieve(size.ToInt32()));
 			}
 		}
 
