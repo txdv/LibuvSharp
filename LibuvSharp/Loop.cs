@@ -140,21 +140,21 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
-		protected void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing) {
-				GC.SuppressFinalize(this);
+				if (ByteBufferAllocator != null) {
+					ByteBufferAllocator.Dispose();
+					ByteBufferAllocator = null;
+				}
 			}
 
-			if (NativeHandle != Default.NativeHandle) {
+			if (NativeHandle != Default.NativeHandle && NativeHandle != IntPtr.Zero) {
 				uv_loop_delete(NativeHandle);
-			}
-
-			if (ByteBufferAllocator != null) {
-				ByteBufferAllocator.Dispose();
-				ByteBufferAllocator = null;
+				NativeHandle = IntPtr.Zero;
 			}
 		}
 

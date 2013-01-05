@@ -41,19 +41,16 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected void Dispose(bool disposing)
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
 			if (Handle != IntPtr.Zero) {
 				if (destroy != null) {
 					destroy(Handle);
 				}
-				
+
 				UV.Free(Handle);
 				Handle = IntPtr.Zero;
 			}

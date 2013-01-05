@@ -104,17 +104,19 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
+			if (NativeHandle != IntPtr.Zero) {
+				UV.Free(NativeHandle);
+				NativeHandle = IntPtr.Zero;
 			}
 
-			UV.Free(NativeHandle);
-			GCHandle.Free();
-			NativeHandle = IntPtr.Zero;
+			if (GCHandle.IsAllocated) {
+				GCHandle.Free();
+			}
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

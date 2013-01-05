@@ -26,9 +26,6 @@ namespace LibuvSharp
 
 		public override void Dispose(bool disposing)
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
 			Free();
 		}
 

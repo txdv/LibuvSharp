@@ -19,14 +19,11 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected void Dispose(bool disposing)
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
 			if (GCHandle.IsAllocated) {
 				GCHandle.Free();
 			}

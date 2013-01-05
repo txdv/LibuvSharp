@@ -52,14 +52,11 @@ namespace LibuvSharp
 		public virtual void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		public virtual void Dispose(bool disposing)
 		{
-			if (disposing) {
-				GC.SuppressFinalize(this);
-			}
-
 			if (Data != IntPtr.Zero) {
 				if (GCHandle.IsAllocated) {
 					GCHandle.Free();

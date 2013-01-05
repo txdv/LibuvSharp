@@ -22,6 +22,7 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		UnixBufferStruct AllocUnix(IntPtr data, int size)
