@@ -32,7 +32,7 @@ namespace LibuvSharp
 		public static Loop Default {
 			get {
 				if (@default == null) {
-					@default = new Loop(uv_default_loop(), new DefaultByteBufferAllocator());
+					@default = new Loop(uv_default_loop(), new CopyingByteBufferAllocator());
 				}
 				return @default;
 			}
@@ -65,7 +65,7 @@ namespace LibuvSharp
 		}
 
 		public Loop()
-			: this(uv_loop_new(), new DefaultByteBufferAllocator())
+			: this(uv_loop_new(), new CopyingByteBufferAllocator())
 		{
 		}
 

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class DefaultByteBufferAllocator : AbstractByteBufferAllocator
+	public class CopyingByteBufferAllocator : AbstractByteBufferAllocator
 	{
 		public byte[] Buffer { get; protected set; }
 		public int Size { get; protected set; }
