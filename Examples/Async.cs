@@ -46,10 +46,11 @@ static class AsyncExtensions
 			throw new ArgumentException("encoding");
 		}
 		var buffer = await stream.ReadAsync();
-		if (buffer == null) {
+		if (!buffer.HasValue) {
 			return null;
 		}
-		return encoding.GetString(buffer.Buffer, buffer.Start, buffer.Length);
+		var b = buffer.Value;
+		return encoding.GetString(b.Array, b.Offset, b.Count);
 	}
 
 	public static Task QueueUserWorkItemAsync(this Loop loop, Action work)
