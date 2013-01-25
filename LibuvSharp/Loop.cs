@@ -4,6 +4,13 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
+	enum uv_run_mode : int
+	{
+		UV_RUN_DEFAULT = 0,
+		UV_RUN_ONCE,
+		UV_RUN_NOWAIT
+	};
+
 	public partial class Loop : IDisposable
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -16,10 +23,7 @@ namespace LibuvSharp
 		static extern void uv_loop_delete(IntPtr ptr);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_run(IntPtr loop);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_run_once(IntPtr loop);
+		static extern void uv_run(IntPtr loop, uv_run_mode mode);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_update_time(IntPtr loop);
@@ -97,18 +101,17 @@ namespace LibuvSharp
 
 		public void Run()
 		{
-			uv_run(NativeHandle);
+			uv_run(NativeHandle, uv_run_mode.UV_RUN_DEFAULT);
 		}
 
 		public void RunOnce()
 		{
-			uv_run_once(NativeHandle);
+			uv_run(NativeHandle, uv_run_mode.UV_RUN_ONCE);
 		}
 
 		public void RunAsync()
 		{
-			async.Send();
-			RunOnce();
+			uv_run(NativeHandle, uv_run_mode.UV_RUN_NOWAIT);
 		}
 
 		public void UpdateTime()
