@@ -104,6 +104,7 @@
     <Compile Include="UdpMessage.cs" />
     <Compile Include="Internal\uv_udp_flags.cs" />
     <Compile Include="CopyingByteBufferAllocator.cs" />
+    <Compile Include="LoopBackend.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

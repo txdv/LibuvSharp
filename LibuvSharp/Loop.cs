@@ -230,6 +230,16 @@ namespace LibuvSharp
 			}
 			RefCount--;
 		}
+
+		LoopBackend loopBackend;
+		public LoopBackend Backend {
+			get {
+				if (loopBackend == null) {
+					loopBackend = new LoopBackend(this);
+				}
+				return loopBackend;
+			}
+		}
 	}
 }
 
