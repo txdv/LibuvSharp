@@ -3,16 +3,20 @@ output=../bin/Debug/
 includes=../bin/Debug/LibuvSharp.dll,System.Numerics
 
 files= \
-	$(output)FibonacciAsync.exe   \
-	$(output)TcpAsync.exe         \
-	$(output)UVDirectoryAsync.exe \
-	$(output)DirectoryAsync.exe   \
-	$(output)UVTimerAsync.exe     \
+	DirectoryAsync.exe   \
+	FibonacciAsync.exe   \
+	Fibonacci.exe        \
+	HashStream.exe       \
+	TcpAsync.exe         \
+	UVDirectoryAsync.exe \
+	UVTimerAsync.exe     \
 
-all: $(files)
+binaries=$(addprefix $(output), $(files))
+
+all: $(binaries)
 
 $(output)%.exe: %.cs $(basesrc)
 	gmcs -sdk:4.5 $^ -r:$(includes) -out:$@
 
 clean:
-	rm -rvf $(files)
+	rm -rvf $(binaries)
