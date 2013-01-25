@@ -1,6 +1,8 @@
 * Finish UVFile.Stat for other operating systems (struct layout of stat may be different)
 * Windows structlayout for uv_process_options_t.
 * Not (yet?) exposed:
+  - uv_poll_init_socket
+  - uv_getaddrinfo
   - uv_udp_set_membership
   - uv_udp_getsockname
   - uv_read2
@@ -9,11 +11,6 @@
   - uv_inet_ntop
   - uv_inet_pton
   - uv_setup_args
-* update filewatcher (new struct flag)
-  maybe use a more convenient representation in the callback.
-* update poll
-  maybe use a more convenient representation in the callback.
-* Add Open interface?
 * Revaluated throwing ArgumentException in Ensure.Success.
 * Not to expose:
   - Threading and locking functionality
