@@ -8,6 +8,11 @@ namespace LibuvSharp
 		public byte[] Buffer { get; protected set; }
 		public GCHandle GCHandle { get; protected set; }
 
+		public BufferPin(int count)
+			: this(new byte[count])
+		{
+		}
+
 		public BufferPin(byte[] buffer)
 			: this(buffer, 0, buffer.LongLength)
 		{
@@ -28,6 +33,11 @@ namespace LibuvSharp
 			Buffer = buffer;
 			Offset = (IntPtr)offset;
 			Count = (IntPtr)count;
+			Alloc();
+		}
+
+		public void Alloc()
+		{
 			GCHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
 			Pointer = GCHandle.AddrOfPinnedObject();
 		}
@@ -40,6 +50,7 @@ namespace LibuvSharp
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -47,6 +58,7 @@ namespace LibuvSharp
 			if (GCHandle.IsAllocated) {
 				GCHandle.Free();
 			}
+			Pointer = IntPtr.Zero;
 		}
 
 		public IntPtr Pointer { get; protected set; }

@@ -27,15 +27,19 @@ namespace LibuvSharp
 
 		UnixBufferStruct AllocUnix(IntPtr data, int size)
 		{
-			return new UnixBufferStruct(Alloc(size), size);
+			IntPtr ptr;
+			size = Alloc(size, out ptr);
+			return new UnixBufferStruct(ptr, size);
 		}
 
 		WindowsBufferStruct AllocWin(IntPtr data, int size)
 		{
-			return new WindowsBufferStruct(Alloc(size), size);
+			IntPtr ptr;
+			size = Alloc(size, out ptr);
+			return new WindowsBufferStruct(ptr, size);
 		}
 
-		public abstract IntPtr Alloc(int size);
+		public abstract int Alloc(int size, out IntPtr pointer);
 		public abstract void Dispose(bool disposing);
 		public abstract ArraySegment<byte> Retrieve(int size);
 	}

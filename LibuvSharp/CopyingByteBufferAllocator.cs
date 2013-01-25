@@ -5,37 +5,32 @@ namespace LibuvSharp
 {
 	public class CopyingByteBufferAllocator : AbstractByteBufferAllocator
 	{
-		public byte[] Buffer { get; protected set; }
-		public int Size { get; protected set; }
-		GCHandle GCHandle { get; set; }
+		BufferPin pin;
 
-		public override IntPtr Alloc(int size)
-		{
-			if (Buffer == null) {
-				Buffer = new byte[size];
-				Size = size;
-				GCHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
-			} else if (Size < size) {
-				Free();
-				Buffer = new byte[size];
-				Size = size;
-				GCHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
+		public byte[] Buffer {
+			get {
+				return pin.Buffer;
 			}
-			return GCHandle.AddrOfPinnedObject();
+		}
+
+		public override int Alloc(int size, out IntPtr ptr)
+		{
+			if (pin == null) {
+				pin = new BufferPin(size);
+			} else if (pin.Buffer.Length < size) {
+				pin.Dispose();
+				pin = new BufferPin(size);
+			}
+			ptr = pin.Start;
+			return pin.Count.ToInt32();
 		}
 
 		public override void Dispose(bool disposing)
 		{
-			Free();
-		}
-
-		void Free()
-		{
-			if (GCHandle.IsAllocated) {
-				GCHandle.Free();
+			if (pin != null) {
+				pin.Dispose();
 			}
-			Buffer = null;
-			Size = 0;
+			pin = null;
 		}
 
 		public override ArraySegment<byte> Retrieve(int size)
