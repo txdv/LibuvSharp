@@ -45,7 +45,6 @@
     <Compile Include="Udp.cs" />
     <Compile Include="Tcp.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="BaseHandle.cs" />
     <Compile Include="DynamicLibrary.cs" />
     <Compile Include="Computer.cs" />
     <Compile Include="Async.cs" />
