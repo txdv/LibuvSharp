@@ -28,7 +28,8 @@ namespace LibuvSharp.Tests
 		{
 			int async_cb_called = 0;
 			object o = new object();
-			var async = new Async((a) => {
+			var async = new Async();
+			async.Callback += (a) => {
 				int n;
 				lock (o) {
 					n = ++async_cb_called;
@@ -37,7 +38,7 @@ namespace LibuvSharp.Tests
 				if (n == 3) {
 					a.Close();
 				}
-			});
+			};
 
 			new Thread(() => {
 				while (true) {

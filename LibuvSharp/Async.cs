@@ -13,22 +13,12 @@ namespace LibuvSharp
 		internal static extern int uv_async_init(IntPtr loop, IntPtr handle, IntPtr callback);
 
 		public Async()
-			: this(null as Action<Async>)
-		{
-		}
-
-		public Async(Action<Async> callback)
-			: this(Loop.Default, callback)
-		{
-		}
-
-		public Async(Loop loop)
-			: this(loop, null)
+			: this(Loop.Default)
 		{
 		}
 
 		async_cb cb;
-		public Async(Loop loop, Action<Async> callback)
+		public Async(Loop loop)
 			: base(loop, HandleType.UV_ASYNC)
 		{
 			cb = (_, status) => {
@@ -36,8 +26,6 @@ namespace LibuvSharp
 			};
 
 			uv_async_init(loop.NativeHandle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
-
-			Callback += callback;
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -64,23 +52,14 @@ namespace LibuvSharp
 		Queue<T> queue = new Queue<T>();
 
 		public AsyncWatcher()
-			: this(null as Action<T>)
-		{
-		}
-
-		public AsyncWatcher(Action<T> callback)
-			: this(Loop.Default, callback)
+			: this(Loop.Default)
 		{
 		}
 
 		public AsyncWatcher(Loop loop)
-			: this(loop, null)
 		{
-		}
-
-		public AsyncWatcher(Loop loop, Action<T> callback)
-		{
-			async = new Async(loop, (_) => {
+			async = new Async(loop);
+			async.Callback += (_) => {
 				Queue<T> tmp;
 				lock (queue) {
 					tmp = new Queue<T>();
@@ -91,11 +70,7 @@ namespace LibuvSharp
 				while (tmp.Count > 0) {
 					OnCallback(tmp.Dequeue());
 				}
-			});
-
-			if (callback != null) {
-				Callback += callback;
-			}
+			};
 		}
 
 		public void Unref()
