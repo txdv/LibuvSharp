@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class CopyingByteBufferAllocator : AbstractByteBufferAllocator
+	public class CopyingByteBufferAllocator : ByteBufferAllocatorBase
 	{
 		BufferPin pin;
 

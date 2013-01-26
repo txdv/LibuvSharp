@@ -42,8 +42,8 @@ namespace LibuvSharp
 			}
 		}
 
-		AbstractByteBufferAllocator allocator;
-		public AbstractByteBufferAllocator ByteBufferAllocator {
+		ByteBufferAllocatorBase allocator;
+		public ByteBufferAllocatorBase ByteBufferAllocator {
 			get {
 				return allocator ?? Loop.ByteBufferAllocator;
 			}

@@ -44,12 +44,12 @@ namespace LibuvSharp
 
 		public IntPtr NativeHandle { get; protected set; }
 
-		public AbstractByteBufferAllocator ByteBufferAllocator { get; protected set; }
+		public ByteBufferAllocatorBase ByteBufferAllocator { get; protected set; }
 
 		Async async;
 		AsyncCallback callback;
 
-		internal Loop(IntPtr handle, AbstractByteBufferAllocator allocator)
+		internal Loop(IntPtr handle, ByteBufferAllocatorBase allocator)
 		{
 			NativeHandle = handle;
 			ByteBufferAllocator = allocator;
@@ -73,7 +73,7 @@ namespace LibuvSharp
 		{
 		}
 
-		public Loop(AbstractByteBufferAllocator allocator)
+		public Loop(ByteBufferAllocatorBase allocator)
 			: this(uv_loop_new(), allocator)
 		{
 		}

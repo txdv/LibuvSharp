@@ -26,8 +26,8 @@ namespace LibuvSharp
 		recv_start_callback_win recv_start_cb_win;
 		recv_start_callback_unix recv_start_cb_unix;
 
-		AbstractByteBufferAllocator allocator;
-		public AbstractByteBufferAllocator ByteBufferAllocator {
+		ByteBufferAllocatorBase allocator;
+		public ByteBufferAllocatorBase ByteBufferAllocator {
 			get {
 				return allocator ?? Loop.ByteBufferAllocator;
 			}

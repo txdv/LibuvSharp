@@ -70,7 +70,6 @@
     <Compile Include="Internal\uv_pipe_t.cs" />
     <Compile Include="Internal\CallbackPermaRequest.cs" />
     <Compile Include="Internal\ConnectRequest.cs" />
-    <Compile Include="AbstractByteBufferAllocator.cs" />
     <Compile Include="Internal\uv_process_options_t.cs" />
     <Compile Include="Internal\uv_handle_t.cs" />
     <Compile Include="HandleType.cs" />
@@ -104,6 +103,7 @@
     <Compile Include="Internal\uv_udp_flags.cs" />
     <Compile Include="CopyingByteBufferAllocator.cs" />
     <Compile Include="LoopBackend.cs" />
+    <Compile Include="ByteBufferAllocatorBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

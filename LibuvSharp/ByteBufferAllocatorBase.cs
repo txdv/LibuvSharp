@@ -3,18 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public abstract class AbstractByteBufferAllocator : IDisposable
+	public abstract class ByteBufferAllocatorBase : IDisposable
 	{
 		internal Handle.alloc_callback_unix AllocCallbackUnix { get; set; }
 		internal Handle.alloc_callback_win AllocCallbackWin { get; set; }
 
-		public AbstractByteBufferAllocator()
+		public ByteBufferAllocatorBase()
 		{
 			AllocCallbackUnix = AllocUnix;
 			AllocCallbackWin = AllocWin;
 		}
 
-		~AbstractByteBufferAllocator()
+		~ByteBufferAllocatorBase()
 		{
 			Dispose(false);
 		}
