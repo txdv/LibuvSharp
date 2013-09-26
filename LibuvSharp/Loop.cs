@@ -240,6 +240,14 @@ namespace LibuvSharp
 				return loopBackend;
 			}
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern IntPtr uv_stop(IntPtr loop);
+
+		public void Stop()
+		{
+			uv_stop(NativeHandle);
+		}
 	}
 }
 
