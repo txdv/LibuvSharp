@@ -163,6 +163,31 @@ namespace LibuvSharp
 			Console.WriteLine("]");
 		}
 #endif
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static uint uv_version();
+
+		public static Version Version {
+			get {
+				uint version = uv_version();
+				return new Version((int)(version & 0xFF0000) >> 16, (int)(version & 0xFF00) >> 8, (int)(version & 0xFF));
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		unsafe internal extern static sbyte *uv_version_string();
+
+		unsafe public static string VersionString {
+			get {
+				return new string(uv_version_string());
+			}
+		}
+
+		public static bool IsPreRelease {
+			get {
+				return VersionString.EndsWith("-pre");
+			}
+		}
 	}
 }
 
