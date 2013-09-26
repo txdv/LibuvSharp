@@ -9,7 +9,7 @@ namespace LibuvSharp.Tests
 	public class AsyncFixture
 	{
 		[TestCase]
-		public static void ArgumentNullExceptions()
+		public void ArgumentNullExceptions()
 		{
 			Assert.Throws<ArgumentNullException>(() => new Async(null as Loop));
 			Assert.Throws<ArgumentNullException>(() => new AsyncWatcher<int>(null as Loop));
@@ -24,7 +24,7 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void Simple()
+		public void Simple()
 		{
 			int async_cb_called = 0;
 			object o = new object();

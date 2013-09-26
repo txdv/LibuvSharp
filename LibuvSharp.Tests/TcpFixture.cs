@@ -10,13 +10,13 @@ namespace LibuvSharp.Tests
 	public class TcpFixture
 	{
 		[TestCase]
-		public static void Simple()
+		public void Simple()
 		{
 			Simple(Default.IPv4.IPEndPoint);
 			Simple(Default.IPv6.IPEndPoint);
 		}
 
-		public static void Simple(IPEndPoint ep)
+		public void Simple(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -80,13 +80,13 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void Stress()
+		public void Stress()
 		{
 			Stress(Default.IPv4.IPEndPoint);
 			Stress(Default.IPv6.IPEndPoint);
 		}
 
-		public static void Stress(IPEndPoint ep)
+		public void Stress(IPEndPoint ep)
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -148,13 +148,13 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void OneSideClose()
+		public void OneSideClose()
 		{
 			OneSideClose(Default.IPv4.IPEndPoint);
 			OneSideClose(Default.IPv6.IPEndPoint);
 		}
 
-		public static void OneSideClose(IPEndPoint ep)
+		public void OneSideClose(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -210,8 +210,8 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		[Test]
-		public static void TakenPort()
+		[TestCase]
+		public void TakenPort()
 		{
 			TcpListener s1 = new TcpListener();
 			TcpListener s2 = new TcpListener();
@@ -231,8 +231,8 @@ namespace LibuvSharp.Tests
 			return new Tcp();
 		}
 
-		[Test]
-		public static void NotNullConnect()
+		[TestCase]
+		public void NotNullConnect()
 		{
 			Action<Exception> cb = (_) => { };
 			int port = 8000;
@@ -249,8 +249,8 @@ namespace LibuvSharp.Tests
 			Assert.Throws<ArgumentNullException>(() => Create().Connect(ip, port, null));
 		}
 
-		[Test]
-		public static void ConnectToNotListeningPort()
+		[TestCase]
+		public void ConnectToNotListeningPort()
 		{
 			Tcp socket = new Tcp();
 			socket.Connect("127.0.0.1", 7999, (e) => {
@@ -260,8 +260,8 @@ namespace LibuvSharp.Tests
 			Loop.Default.Run();
 		}
 
-		[Test]
-		public static void PeerAndSockname()
+		[TestCase]
+		public void PeerAndSockname()
 		{
 			Tcp client = null;
 			Tcp server = null;
@@ -303,8 +303,8 @@ namespace LibuvSharp.Tests
 			Assert.IsTrue(called);
 		}
 
-		[Test]
-		public static void NotNullListener()
+		[TestCase]
+		public void NotNullListener()
 		{
 			var t = new TcpListener();
 			Assert.Throws<ArgumentNullException>(() => new TcpListener(null));

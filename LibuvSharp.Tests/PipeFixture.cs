@@ -9,12 +9,12 @@ namespace LibuvSharp.Tests
 	public class PipeFixture
 	{
 		[TestCase]
-		public static void Simple()
+		public void Simple()
 		{
 			Simple(Default.Pipename);
 		}
 
-		public static void Simple(string name)
+		public void Simple(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -77,12 +77,12 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void Stress()
+		public void Stress()
 		{
 			Stress(Default.Pipename);
 		}
 
-		public static void Stress(string name)
+		public void Stress(string name)
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -144,12 +144,12 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void OneSideClose()
+		public void OneSideClose()
 		{
 			OneSideClose(Default.Pipename);
 		}
 
-		public static void OneSideClose(string name)
+		public void OneSideClose(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -206,7 +206,7 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void ConnectToNotListeningFile()
+		public void ConnectToNotListeningFile()
 		{
 			Pipe pipe = new Pipe();
 			pipe.Connect("NOT_EXISTING", (e) => {
@@ -217,7 +217,7 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void NotNullListener()
+		public void NotNullListener()
 		{
 			var t = new PipeListener();
 			Assert.Throws<ArgumentNullException>(() => new PipeListener(null));

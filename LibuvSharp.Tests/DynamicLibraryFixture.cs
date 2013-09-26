@@ -7,7 +7,7 @@ namespace LibuvSharp.Tests
 	public class DynamicLibraryFixture
 	{
 		[TestCase]
-		public static void Error()
+		public void Error()
 		{
 			IntPtr ptr;
 

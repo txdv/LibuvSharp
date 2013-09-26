@@ -9,13 +9,13 @@ namespace LibuvSharp.Tests
 	public class UdpFixture
 	{
 		[TestCase]
-		public static void Run()
+		public void Run()
 		{
 			Run(Default.IPv4.IPEndPoint);
 			Run(Default.IPv6.IPEndPoint);
 		}
 
-		public static void Run(IPEndPoint ep)
+		public void Run(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -73,13 +73,13 @@ namespace LibuvSharp.Tests
 		}
 
 		[TestCase]
-		public static void NotNullUdp()
+		public void NotNullUdp()
 		{
 			NotNullUdp(Default.IPv4.IPEndPoint);
 			NotNullUdp(Default.IPv6.IPEndPoint);
 		}
 
-		public static void NotNullUdp(IPEndPoint ep)
+		public void NotNullUdp(IPEndPoint ep)
 		{
 			var u = new Udp();
 			Action<bool> cb = (_) => { };

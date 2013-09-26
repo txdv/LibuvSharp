@@ -7,14 +7,14 @@ namespace LibuvSharp.Tests
 	public class TimerFixture
 	{
 		[TestCase]
-		public static void Simple()
+		public void Simple()
 		{
 			Simple(10, 10);
 			Simple(2, 50);
 			Simple(50, 1);
 		}
 
-		public static void Simple(int times, int spawn)
+		public void Simple(int times, int spawn)
 		{
 			var t = new UVTimer();
 			int i = 0;
@@ -27,7 +27,7 @@ namespace LibuvSharp.Tests
 			t.Start(TimeSpan.FromMilliseconds(spawn));
 			var now = Loop.Default.Now;
 			Loop.Default.Run();
-			Assert.GreaterOrEqual(Loop.Default.Now - now, times * spawn);
+			Assert.GreaterOrEqual(Loop.Default.Now - now, (ulong)(times * spawn));
 			Assert.IsTrue(t.IsClosed);
 		}
 	}
