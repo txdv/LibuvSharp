@@ -73,13 +73,12 @@ public class HashStream : IDisposable
 
 	public static void Main(string[] args)
 	{
-		int n;
-		if (args.Length > 1 && int.TryParse(args[1], out n)) {
-		} else {
-			n = 1;
+		if (args.Length == 0) {
+			Console.WriteLine("Provide some filenames in the arguments");
+			return;
 		}
 
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < args.Length; i++) {
 			Compute(Loop.Default, args[0]);
 		}
 		var now = DateTime.Now;
