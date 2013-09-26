@@ -29,7 +29,7 @@ namespace LibuvSharp
 		static extern void uv_update_time(IntPtr loop);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern long uv_now(IntPtr loop);
+		static extern ulong uv_now(IntPtr loop);
 
 		static Loop @default;
 
@@ -119,7 +119,7 @@ namespace LibuvSharp
 			uv_update_time(NativeHandle);
 		}
 
-		public long Now {
+		public ulong Now {
 			get {
 				return uv_now(NativeHandle);
 			}

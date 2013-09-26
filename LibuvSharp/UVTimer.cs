@@ -9,7 +9,7 @@ namespace LibuvSharp
 		internal static extern int uv_timer_init(IntPtr loop, IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_start(IntPtr timer, callback callback, long timeout, long repeat);
+		internal static extern int uv_timer_start(IntPtr timer, callback callback, ulong timeout, ulong repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_timer_stop(IntPtr timer);
@@ -18,10 +18,10 @@ namespace LibuvSharp
 		internal static extern int uv_timer_again(IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern void uv_timer_set_repeat(IntPtr timer, long repeat);
+		internal static extern void uv_timer_set_repeat(IntPtr timer, ulong repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern long uv_timer_get_repeat(IntPtr timer);
+		internal static extern ulong uv_timer_get_repeat(IntPtr timer);
 
 		callback cb;
 		Action onehit;
@@ -38,7 +38,7 @@ namespace LibuvSharp
 			cb = OnTick;
 		}
 
-		public long LongRepeat {
+		public ulong LongRepeat {
 			get {
 				return uv_timer_get_repeat(NativeHandle);
 			}
@@ -52,13 +52,13 @@ namespace LibuvSharp
 				return TimeSpan.FromMilliseconds(LongRepeat);
 			}
 			set {
-				LongRepeat = (long)value.TotalMilliseconds;
+				LongRepeat = (ulong)value.TotalMilliseconds;
 			}
 		}
 
 		public bool Running { get; private set; }
 
-		public void Start(long timeout, long repeat)
+		public void Start(ulong timeout, ulong repeat)
 		{
 			if (Running) {
 				Stop();
@@ -84,27 +84,27 @@ namespace LibuvSharp
 
 		public event Action Tick;
 
-		public void Start(long repeat)
+		public void Start(ulong repeat)
 		{
 			Start(0, repeat);
 		}
 		public void Start(TimeSpan timeout, TimeSpan repeat)
 		{
-			Start((long)timeout.TotalMilliseconds, (long)repeat.TotalMilliseconds);
+			Start((ulong)timeout.TotalMilliseconds, (ulong)repeat.TotalMilliseconds);
 		}
 		public void Start(TimeSpan repeat)
 		{
 			Start(TimeSpan.Zero, repeat);
 		}
 
-		public void Start(long timeout, Action callback)
+		public void Start(ulong timeout, Action callback)
 		{
 			onehit = callback;
 			Start(timeout, 0);
 		}
 		public void Start(TimeSpan timeout, Action callback)
 		{
-			Start((long)timeout.TotalMilliseconds, callback);
+			Start((ulong)timeout.TotalMilliseconds, callback);
 		}
 
 		public void Stop()
