@@ -8,7 +8,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class UdpFixture
 	{
-		[Test]
+		[TestCase]
 		public static void Run()
 		{
 			Run(Default.IPv4.IPEndPoint);
@@ -72,7 +72,7 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		[Test]
+		[TestCase]
 		public static void NotNullUdp()
 		{
 			NotNullUdp(Default.IPv4.IPEndPoint);

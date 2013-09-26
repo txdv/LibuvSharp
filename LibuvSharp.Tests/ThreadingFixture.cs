@@ -7,7 +7,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class ThreadingFixture
 	{
-		[Test]
+		[TestCase]
 		public void LoopBlocking()
 		{
 			TimeSpan span = TimeSpan.Zero;

@@ -6,7 +6,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class TimerFixture
 	{
-		[Test]
+		[TestCase]
 		public static void Simple()
 		{
 			Simple(10, 10);

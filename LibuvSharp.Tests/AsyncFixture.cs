@@ -8,7 +8,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class AsyncFixture
 	{
-		[Test]
+		[TestCase]
 		public static void ArgumentNullExceptions()
 		{
 			Assert.Throws<ArgumentNullException>(() => new Async(null as Loop));
@@ -23,7 +23,7 @@ namespace LibuvSharp.Tests
 			asyncWatcher.Close ();
 		}
 
-		[Test]
+		[TestCase]
 		public static void Simple()
 		{
 			int async_cb_called = 0;

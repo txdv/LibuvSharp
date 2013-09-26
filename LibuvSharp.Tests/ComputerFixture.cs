@@ -7,14 +7,14 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class ComputerFixture
 	{
-		[Test]
+		[TestCase]
 		public void Base()
 		{
 			Assert.Greater(Computer.HighResolutionTime, 0);
 			Assert.Greater(Computer.Uptime, 0);
 		}
 
-		[Test]
+		[TestCase]
 		public void CpuInfo()
 		{
 			Assert.NotNull(Computer.CpuInfo);
@@ -32,7 +32,7 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[Test]
+		[TestCase]
 		public void MemoryInfo()
 		{
 			Assert.Greater(Computer.Memory.Free, 0);
@@ -40,7 +40,7 @@ namespace LibuvSharp.Tests
 			Assert.Greater(Computer.Memory.Used, 0);
 		}
 
-		[Test]
+		[TestCase]
 		public void Load()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
@@ -50,7 +50,7 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[Test]
+		[TestCase]
 		public void NetworkInfo()
 		{
 			Assert.NotNull(Computer.NetworkInterfaces);

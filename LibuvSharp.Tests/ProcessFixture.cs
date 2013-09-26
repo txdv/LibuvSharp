@@ -7,7 +7,7 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class ProcessFixture
 	{
-		[Test]
+		[TestCase]
 		public void Base()
 		{
 			Assert.NotNull(Process.Title);
@@ -50,7 +50,7 @@ namespace LibuvSharp.Tests
 			return p;
 		}
 
-		[Test]
+		[TestCase]
 		public void ProcessSpawn()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {

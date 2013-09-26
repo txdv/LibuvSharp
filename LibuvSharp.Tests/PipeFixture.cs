@@ -205,7 +205,7 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		[Test]
+		[TestCase]
 		public static void ConnectToNotListeningFile()
 		{
 			Pipe pipe = new Pipe();
@@ -216,7 +216,7 @@ namespace LibuvSharp.Tests
 			Loop.Default.Run();
 		}
 
-		[Test]
+		[TestCase]
 		public static void NotNullListener()
 		{
 			var t = new PipeListener();

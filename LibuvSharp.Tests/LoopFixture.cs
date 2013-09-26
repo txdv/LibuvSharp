@@ -6,13 +6,13 @@ namespace LibuvSharp.Tests
 	[TestFixture]
 	public class LoopFixture
 	{
-		[Test]
+		[TestCase]
 		public void NoAdditionalResources()
 		{
 			Loop.Default.Run();
 		}
 
-		[Test]
+		[TestCase]
 		public void RunAsync()
 		{
 			var timer = new UVTimer();
@@ -20,7 +20,7 @@ namespace LibuvSharp.Tests
 			timer.Close();
 		}
 
-		[Test]
+		[TestCase]
 		public void Handles()
 		{
 			Assert.Greater(Loop.Default.Handles.Length, 0);
@@ -31,7 +31,7 @@ namespace LibuvSharp.Tests
 			Assert.Greater(Loop.Default.ActiveHandlesCount, 0);
 		}
 
-		[Test]
+		[TestCase]
 		public void Data()
 		{
 			Assert.IsTrue(Loop.Default.Data == IntPtr.Zero);
