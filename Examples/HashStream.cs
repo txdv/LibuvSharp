@@ -78,9 +78,10 @@ public class HashStream : IDisposable
 			return;
 		}
 
-		for (int i = 0; i < args.Length; i++) {
-			Compute(Loop.Default, args[0]);
+		foreach (var arg in args) {
+			Compute(Loop.Default, arg);
 		}
+
 		var now = DateTime.Now;
 		Loop.Default.Run();
 		Console.WriteLine ((DateTime.Now - now).TotalMilliseconds);
