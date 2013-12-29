@@ -84,6 +84,6 @@ public class HashStream : IDisposable
 
 		var now = DateTime.Now;
 		Loop.Default.Run();
-		Console.WriteLine ((DateTime.Now - now).TotalMilliseconds);
+		Console.WriteLine((DateTime.Now - now).TotalMilliseconds);
 	}
 }
