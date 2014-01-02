@@ -28,7 +28,7 @@ namespace LibuvSharp.Threading.Tasks
 				stream.Complete -= end;
 				stream.Data -= data;
 				return bb.Result;
-			}, stream.Loop.Scheduler);
+			});
 		}
 
 		public static Task WriteAsync(this IUVStream stream, byte[] data, int index, int count)
