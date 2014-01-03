@@ -66,5 +66,18 @@ namespace LibuvSharp.Threading.Tasks
 				SynchronizationContext.SetSynchronizationContext(previousContext);
 			}
 		}
+
+		public static Task QueueUserWorkItemAsync(this Loop loop, Action work)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				loop.QueueUserWorkItem(work, () => {
+					tcs.SetResult(null);
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
 	}
 }
