@@ -14,18 +14,18 @@ namespace Test
 		public static async Task Server()
 		{
 			try {
-				var server = new ListenerAsync<TcpListener, Tcp>(new TcpListener());
-				server.Listener.Bind(ep);
-				server.Listener.Listen();
+				var server = new TcpListener();
+				server.Bind(ep);
+				server.Listen();
 
-				var client = await server.AcceptStreamAsync();
+				var client = await server.AcceptAsync();
 
 				client.Write(Encoding.ASCII, "Hello World!");
 				var str = await client.ReadStringAsync();
 				Console.WriteLine("From Client: {0}", str);
 
 				client.Shutdown();
-				server.Listener.Close();
+				server.Close();
 			} catch (Exception e) {
 				Console.WriteLine("Server Exception:");
 				Console.WriteLine(e);
