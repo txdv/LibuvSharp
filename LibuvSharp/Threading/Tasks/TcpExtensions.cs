@@ -56,6 +56,58 @@ namespace LibuvSharp.Threading.Tasks
 			}
 			return tcs.Task;
 		}
+
+		public static Task ConnectAsync(this Tcp tcp, IPEndPoint ep, TimeSpan timeout)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				tcp.Connect(ep, timeout, (e) => {
+					if (e == null) {
+						tcs.SetResult(null);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
+
+		public static Task ConnectAsync(this Tcp tcp, IPAddress ipAddress, int port, TimeSpan timeout)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				tcp.Connect(ipAddress, port, timeout, (e) => {
+					if (e == null) {
+						tcs.SetResult(null);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
+
+		public static Task ConnectAsync(this Tcp tcp, string ipAddress, int port, TimeSpan timeout)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				tcp.Connect(ipAddress, port, timeout, (e) => {
+					if (e == null) {
+						tcs.SetResult(null);
+					} else {
+						tcs.SetException(e);
+					}
+				});
+			} catch (Exception e) {
+				tcs.SetException(e);
+			}
+			return tcs.Task;
+		}
+
 	}
 }
 
