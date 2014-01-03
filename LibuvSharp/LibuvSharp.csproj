@@ -87,7 +87,6 @@
     <Compile Include="Threading\Tasks\UVFileAsync.cs" />
     <Compile Include="Internal\stat.cs" />
     <Compile Include="UVFileStat.cs" />
-    <Compile Include="Threading\Tasks\ListenerAsync.cs" />
     <Compile Include="IUVStreamExtensions.cs" />
     <Compile Include="UVFileStream.cs" />
     <Compile Include="FileSystemWatcher.cs" />
@@ -104,6 +103,7 @@
     <Compile Include="CopyingByteBufferAllocator.cs" />
     <Compile Include="LoopBackend.cs" />
     <Compile Include="ByteBufferAllocatorBase.cs" />
+    <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
