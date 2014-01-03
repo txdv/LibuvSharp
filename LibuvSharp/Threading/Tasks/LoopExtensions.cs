@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
@@ -46,6 +47,24 @@ namespace LibuvSharp.Threading.Tasks
 				}
 			});
 			return tcs.Task;
+		}
+
+		public static void Run(this Loop loop, Func<Task> asyncMethod)
+		{
+			var previousContext = SynchronizationContext.Current;
+			try {
+				SynchronizationContext.SetSynchronizationContext(new LoopSynchronizationContext(loop));
+				var task = asyncMethod();
+				task.ContinueWith((t) => {
+					loop.Unref();
+					loop.Sync(() => { });
+				});
+				task.Start(loop.Scheduler);
+				loop.Ref();
+				loop.Run();
+			} finally {
+				SynchronizationContext.SetSynchronizationContext(previousContext);
+			}
 		}
 	}
 }

@@ -20,13 +20,11 @@ namespace LibuvSharp.Threading.Tasks
 
 		protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
 		{
-			TryExecuteTask(task);
-			return true;
+			return false;
 		}
 
 		protected override void QueueTask(Task task)
 		{
-			TryExecuteTask(task);
 		}
 	}
 }
