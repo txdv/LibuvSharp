@@ -104,6 +104,7 @@
     <Compile Include="LoopBackend.cs" />
     <Compile Include="ByteBufferAllocatorBase.cs" />
     <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
+    <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
