@@ -44,13 +44,12 @@ namespace Test
 					}
 					TimeSpan span = TimeSpan.Zero;
 					BigInteger res = 0;
-					Loop.Default.QueueUserWorkItem(() => {
+					await Loop.Default.QueueUserWorkItemAsync(() => {
 						var now = DateTime.Now;
 						res = Fibonacci(n);
 						span = DateTime.Now - now;
-					}, () => {
-						Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 					});
+					Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 				} else if (str == "quit") {
 					break;
 				} else if (str == "help") {
@@ -69,9 +68,7 @@ namespace Test
 		{
 			var stdin = new Pipe();
 			stdin.Open((IntPtr)0);
-			Loop.Default.Run(async delegate {
-				await MainAsync();
-			});
+			Loop.Default.Run(MainAsync);
 		}
 	}
 }

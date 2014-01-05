@@ -25,17 +25,4 @@ static class AsyncExtensions
 		var b = buffer.Value;
 		return encoding.GetString(b.Array, b.Offset, b.Count);
 	}
-
-	public static Task QueueUserWorkItemAsync(this Loop loop, Action work)
-	{
-		var tcs = new TaskCompletionSource<object>();
-		try {
-			loop.QueueUserWorkItem(work, () => {
-				tcs.SetResult(null);
-			});
-		} catch (Exception e) {
-			tcs.SetException(e);
-		}
-		return tcs.Task;
-	}
 }
