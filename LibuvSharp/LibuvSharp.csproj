@@ -105,6 +105,7 @@
     <Compile Include="ByteBufferAllocatorBase.cs" />
     <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
+    <Compile Include="Threading\HelperFunctions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

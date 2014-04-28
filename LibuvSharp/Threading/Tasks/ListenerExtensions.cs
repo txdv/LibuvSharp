@@ -21,20 +21,23 @@ namespace LibuvSharp.Threading.Tasks
 				return tcs.Task;
 			}
 
+			Action<Exception, T> finish = null;
+
 			Action connectioncb = () => {
 				try {
-					tcs.SetResult(listener.Accept());
+					finish(null, listener.Accept());
 				} catch (Exception ex) {
-					tcs.SetException(ex);
+					finish(ex, null);
 				}
 			};
 
+			finish = HelperFunctions.Finish(tcs, () => {
+				listener.Connection -= connectioncb;
+			});
+
 			listener.Connection += connectioncb;
 
-			return tcs.Task.ContinueWith((task) => {
-				listener.Connection -= connectioncb;
-				return task.Result;
-			});
+			return tcs.Task;
 		}
 	}
 }

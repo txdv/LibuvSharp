@@ -9,26 +9,32 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task<ArraySegment<byte>?> ReadAsync(this IUVStream stream)
 		{
 			var tcs = new TaskCompletionSource<ArraySegment<byte>?>();
-			Action<Exception> error = (e) => tcs.SetException(e);
-			Action<ArraySegment<byte>> data = (buffer) => tcs.SetResult(buffer);
-			Action end = () => tcs.SetResult(null);
+
+			bool finished = false;
+
+			Action<Exception, ArraySegment<byte>?> finish = null;
+
+			Action<Exception> error = (e) => finish(e, null);
+			Action<ArraySegment<byte>> data = (val) => finish(null, val);
+			Action end = () => finish(null, null);
+
+			finish = HelperFunctions.Finish(tcs, () => {
+				stream.Pause();
+				stream.Error -= error;
+				stream.Complete -= end;
+				stream.Data -= data;
+			});
+
 			try {
 				stream.Error += error;
 				stream.Complete += end;
 				stream.Data += data;
 				stream.Resume();
-			} catch (ArgumentException) {
-				tcs.SetResult(null);
 			} catch (Exception e) {
-				tcs.SetException(e);
+				finish(e, null);
 			}
-			return tcs.Task.ContinueWith((bb) => {
-				stream.Pause();
-				stream.Error -= error;
-				stream.Complete -= end;
-				stream.Data -= data;
-				return bb.Result;
-			});
+
+			return tcs.Task;
 		}
 
 		public static Task WriteAsync(this IUVStream stream, byte[] data, int index, int count)
