@@ -10,8 +10,6 @@ namespace LibuvSharp.Threading.Tasks
 		{
 			var tcs = new TaskCompletionSource<ArraySegment<byte>?>();
 
-			bool finished = false;
-
 			Action<Exception, ArraySegment<byte>?> finish = null;
 
 			Action<Exception> error = (e) => finish(e, null);
