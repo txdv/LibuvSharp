@@ -106,6 +106,7 @@
     <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
     <Compile Include="Threading\HelperFunctions.cs" />
+    <Compile Include="Threading\Tasks\UVFileStreamExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
