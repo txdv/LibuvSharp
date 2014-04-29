@@ -66,6 +66,46 @@ namespace LibuvSharp
 			stream.Shutdown(null);
 		}
 
+		public static void End(this IUVStream stream, byte[] data, int index, int count, Action callback)
+		{
+			stream.Write(data, index, count);
+			stream.Shutdown(callback);
+		}
+		public static void End(this IUVStream stream, byte[] data, int index, int count)
+		{
+			stream.End(data, index, count, null);
+		}
+
+		public static void End(this IUVStream stream, byte[] data, int count, Action callback)
+		{
+			stream.Write(data, count);
+			stream.Shutdown(callback);
+		}
+		public static void End(this IUVStream stream, byte[] data, int count)
+		{
+			stream.Write(data, count, null);
+		}
+
+		public static void End(this IUVStream stream, byte[] data, Action callback)
+		{
+			stream.Write(data);
+			stream.Shutdown(callback);
+		}
+		public static void End(this IUVStream stream, byte[] data)
+		{
+			stream.Write(data, null);
+		}
+
+		public static void End(this IUVStream stream, ArraySegment<byte> data, Action callback)
+		{
+			stream.Write(data);
+			stream.Shutdown(callback);
+		}
+		public static void End(this IUVStream stream, ArraySegment<byte> data)
+		{
+			stream.End(data, null);
+		}
+
 		public static int End(this IUVStream stream, Encoding encoding, string text, Action callback)
 		{
 			int size = stream.Write(encoding, text);
