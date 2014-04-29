@@ -48,9 +48,17 @@ namespace LibuvSharp
 			stream.Write(bytes, callback);
 			return bytes.Length;
 		}
+		public static int Write(this IUVStream stream, string text, Action<bool> callback)
+		{
+			return stream.Write(Encoding.Default, text, callback);
+		}
 		public static int Write(this IUVStream stream, Encoding enc, string text)
 		{
 			return stream.Write(enc, text, null);
+		}
+		public static int Write(this IUVStream stream, string text)
+		{
+			return stream.Write(Encoding.Default, text);
 		}
 
 		public static void Shutdown(this IUVStream stream)
