@@ -65,6 +65,25 @@ namespace LibuvSharp
 		{
 			stream.Shutdown(null);
 		}
+
+		public static int End(this IUVStream stream, Encoding encoding, string text, Action callback)
+		{
+			int size = stream.Write(encoding, text);
+			stream.Shutdown(callback);
+			return size;
+		}
+		public static int End(this IUVStream stream, string text, Action callback)
+		{
+			return stream.End(Encoding.Default, text, callback);
+		}
+		public static int End(this IUVStream stream, Encoding encoding, string text)
+		{
+			return stream.End(encoding, text, null);
+		}
+		public static int End(this IUVStream stream, string text)
+		{
+			return stream.End(Encoding.Default, text);
+		}
 	}
 }
 
