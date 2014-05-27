@@ -17,6 +17,7 @@ namespace LibuvSharp
 
 	public class UVFile
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void uv_fs_cb(IntPtr IntPtr);
 
 		public UVFile(int fd)
