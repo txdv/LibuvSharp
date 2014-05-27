@@ -53,22 +53,23 @@ namespace LibuvSharp.Tests
 		[TestCase]
 		public void ProcessSpawn()
 		{
+			string command = "csc.exe";
+			string resultString = "Microsoft ";
+			
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				string result = null;
-				ProcessSpawn("/usr/bin/which which", (res) => result = res);
-				Loop.Default.Run();
-				Assert.AreEqual(result, "/usr/bin/which\n");
-
-				int? exitCode = null;
-				ProcessSpawn("/usr/bin/which which", (res) => exitCode = res);
-				Loop.Default.Run();
-				Assert.AreEqual(exitCode.Value, 0);
-			} else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-				string result = null;
-				ProcessSpawn("csc.exe", (res) => result = res);
-				Loop.Default.Run();
-				Assert.IsTrue(result.StartsWith("Microsoft "));
+				command = "/usr/bin/which which";
+				resultString = "/usr/bin/which\n";
 			}
+
+			string result = null;
+			ProcessSpawn(command, (res) => result = res);
+			Loop.Default.Run();
+			Assert.AreEqual(result, resultString);
+
+			int? exitCode = null;
+			ProcessSpawn(command, (res) => exitCode = res);
+			Loop.Default.Run();
+			Assert.AreEqual(exitCode.Value, 0);
 		}
 	}
 }
