@@ -6,7 +6,7 @@ namespace LibuvSharp
 	public class Prepare : Handle
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_prepare_init(IntPtr loop, IntPtr prepare);
+		internal static extern int uv_prepare_init(LoopSafeHandle loop, IntPtr prepare);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_prepare_start(IntPtr idle, IntPtr callback);

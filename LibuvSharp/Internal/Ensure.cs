@@ -9,7 +9,7 @@ namespace LibuvSharp
 	internal class Ensure
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_last_error(IntPtr loop);
+		internal static extern uv_err_t uv_last_error(LoopSafeHandle loop);
 
 		internal static Exception Map(uv_err_t error, string name = null)
 		{

@@ -8,7 +8,7 @@ namespace LibuvSharp
 	public class TcpListener : Listener<Tcp>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
+		internal static extern int uv_tcp_init(LoopSafeHandle loop, IntPtr handle);
 
 		public TcpListener()
 			: this(Loop.Default)
@@ -69,7 +69,7 @@ namespace LibuvSharp
 	public class Tcp : UVStream, IOpenFileDescriptor
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
+		internal static extern int uv_tcp_init(LoopSafeHandle loop, IntPtr handle);
 
 		public Tcp()
 			: this(Loop.Default)

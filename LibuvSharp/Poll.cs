@@ -14,7 +14,7 @@ namespace LibuvSharp
 		delegate void poll_callback(IntPtr handle, int status, int events);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_poll_init(IntPtr loop, IntPtr handle, int fd);
+		static extern int uv_poll_init(LoopSafeHandle loop, IntPtr handle, int fd);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_poll_start(IntPtr handle, int events, poll_callback callback);

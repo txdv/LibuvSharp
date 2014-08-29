@@ -6,7 +6,7 @@ namespace LibuvSharp
 	public class Idle : Handle
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_idle_init(IntPtr loop, IntPtr idle);
+		internal static extern int uv_idle_init(LoopSafeHandle loop, IntPtr idle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_idle_start(IntPtr idle, IntPtr callback);

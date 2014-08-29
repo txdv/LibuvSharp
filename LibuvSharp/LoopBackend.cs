@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	public class LoopBackend
 	{
-		IntPtr nativeHandle;
+		LoopSafeHandle nativeHandle;
 
 		internal LoopBackend(Loop loop)
 		{
@@ -13,7 +13,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_backend_fd(IntPtr loop);
+		static extern int uv_backend_fd(LoopSafeHandle loop);
 
 		public int FileDescriptor {
 			get {
@@ -22,7 +22,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_backend_timeout(IntPtr loop);
+		static extern int uv_backend_timeout(LoopSafeHandle loop);
 
 		public int Timeout {
 			get {

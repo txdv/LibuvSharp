@@ -36,7 +36,7 @@ namespace LibuvSharp
 		public Encoding Encoding { get; set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
+		private static extern int uv_fs_open(LoopSafeHandle loop, IntPtr req, string path, int flags, int mode, uv_fs_cb callback);
 
 		public static void Open(Loop loop, string path, UVFileAccess access, Action<Exception, UVFile> callback)
 		{
@@ -59,7 +59,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_close(IntPtr loop, IntPtr req, int fd, uv_fs_cb callback);
+		private static extern int uv_fs_close(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
 		public void Close(Loop loop, Action<Exception> callback)
 		{
@@ -82,7 +82,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, uv_fs_cb callback);
+		private static extern int uv_fs_read(LoopSafeHandle loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, uv_fs_cb callback);
 
 		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
 		{
@@ -176,7 +176,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, uv_fs_cb fs_cb);
+		private static extern int uv_fs_write(LoopSafeHandle loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, uv_fs_cb fs_cb);
 
 		public void Write(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
 		{
@@ -373,7 +373,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_stat(IntPtr loop, IntPtr req, string path, uv_fs_cb callback);
+		private static extern int uv_fs_stat(LoopSafeHandle loop, IntPtr req, string path, uv_fs_cb callback);
 
 		public static void Stat(Loop loop, string path, Action<Exception, UVFileStat> callback)
 		{
@@ -394,7 +394,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fstat(IntPtr loop, IntPtr req, int fd, uv_fs_cb callback);
+		private static extern int uv_fs_fstat(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
 		unsafe public void Stat(Loop loop, Action<Exception, UVFileStat> callback)
 		{
@@ -415,7 +415,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fsync(IntPtr loop, IntPtr req, int fd, uv_fs_cb callback);
+		private static extern int uv_fs_fsync(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
 		public void Sync(Loop loop, Action<Exception> callback)
 		{
@@ -442,7 +442,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fdatasync(IntPtr loop, IntPtr req, int fd, uv_fs_cb callback);
+		private static extern int uv_fs_fdatasync(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
 		public void DataSync(Loop loop, Action<Exception> callback)
 		{
@@ -465,7 +465,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, int fd, long offset, uv_fs_cb callback);
+		private static extern int uv_fs_ftruncate(LoopSafeHandle loop, IntPtr req, int fd, long offset, uv_fs_cb callback);
 
 		public void Truncate(Loop loop, int offset, Action<Exception> callback)
 		{
@@ -488,7 +488,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fchmod(IntPtr loop, IntPtr req, int fd, int mode, uv_fs_cb callback);
+		private static extern int uv_fs_fchmod(LoopSafeHandle loop, IntPtr req, int fd, int mode, uv_fs_cb callback);
 
 		public void Chmod(Loop loop, int mode, Action<Exception> callback)
 		{
@@ -511,7 +511,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_chmod(IntPtr loop, IntPtr req, string path, int mode, uv_fs_cb callback);
+		private static extern int uv_fs_chmod(LoopSafeHandle loop, IntPtr req, string path, int mode, uv_fs_cb callback);
 
 		public static void Chmod(Loop loop, string path, int mode, Action<Exception> callback)
 		{
@@ -534,7 +534,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_chown(IntPtr loop, IntPtr req, string path, int uid, int gid, uv_fs_cb callback);
+		private static extern int uv_fs_chown(LoopSafeHandle loop, IntPtr req, string path, int uid, int gid, uv_fs_cb callback);
 
 		public static void Chown(Loop loop, string path, int uid, int gid, Action<Exception> callback)
 		{
@@ -557,7 +557,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_fchown(IntPtr loop, IntPtr req, int fd, int uid, int gid, uv_fs_cb callback);
+		private static extern int uv_fs_fchown(LoopSafeHandle loop, IntPtr req, int fd, int uid, int gid, uv_fs_cb callback);
 
 		public void Chown(Loop loop, int uid, int gid, Action<Exception> callback)
 		{
@@ -580,7 +580,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_unlink(IntPtr loop, IntPtr req, string path, uv_fs_cb callback);
+		private static extern int uv_fs_unlink(LoopSafeHandle loop, IntPtr req, string path, uv_fs_cb callback);
 
 		public static void Unlink(Loop loop, string path, Action<Exception> callback)
 		{
@@ -603,7 +603,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_link(IntPtr loop, IntPtr req, string path, string newPath, uv_fs_cb callback);
+		private static extern int uv_fs_link(LoopSafeHandle loop, IntPtr req, string path, string newPath, uv_fs_cb callback);
 
 		public static void Link(Loop loop, string path, string newPath, Action<Exception> callback)
 		{
@@ -626,7 +626,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_symlink(IntPtr loop, IntPtr req, string path, string newPath, int flags, uv_fs_cb callback);
+		private static extern int uv_fs_symlink(LoopSafeHandle loop, IntPtr req, string path, string newPath, int flags, uv_fs_cb callback);
 
 		public static void Symlink(Loop loop, string path, string newPath, Action<Exception> callback)
 		{
@@ -650,7 +650,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_readlink(IntPtr loop, IntPtr req, string path, uv_fs_cb callback);
+		private static extern int uv_fs_readlink(LoopSafeHandle loop, IntPtr req, string path, uv_fs_cb callback);
 
 		public static void Readlink(Loop loop, string path, Action<Exception, string> callback)
 		{

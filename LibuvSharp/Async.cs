@@ -10,7 +10,7 @@ namespace LibuvSharp
 		delegate void async_cb(IntPtr handle, int status);
 
 		[DllImport("uv", CallingConvention=CallingConvention.Cdecl)]
-		internal static extern int uv_async_init(IntPtr loop, IntPtr handle, IntPtr callback);
+		internal static extern int uv_async_init(LoopSafeHandle loop, IntPtr handle, IntPtr callback);
 
 		public Async()
 			: this(Loop.Default)
