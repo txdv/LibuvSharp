@@ -1,24 +1,23 @@
 using System;
 
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class ComputerFixture
 	{
-		[TestCase]
+		[Fact]
 		public void Base()
 		{
-			Assert.Greater(Computer.HighResolutionTime, 0);
-			Assert.Greater(Computer.Uptime, 0);
+			Assert.True(Computer.HighResolutionTime > 0);
+			Assert.True(Computer.Uptime > 0);
 		}
 
-		[TestCase]
+		[Fact]
 		public void CpuInfo()
 		{
 			Assert.NotNull(Computer.CpuInfo);
-			Assert.Greater(Computer.CpuInfo.Length, 0);
+			Assert.True(Computer.CpuInfo.Length > 0);
 			foreach (var cpu in Computer.CpuInfo) {
 				Assert.NotNull(cpu);
 				Assert.NotNull(cpu.Name);
@@ -32,25 +31,25 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[TestCase]
+		[Fact]
 		public void MemoryInfo()
 		{
-			Assert.Greater(Computer.Memory.Free, 0);
-			Assert.Greater(Computer.Memory.Total, 0);
-			Assert.Greater(Computer.Memory.Used, 0);
+			Assert.True(Computer.Memory.Free > 0);
+			Assert.True(Computer.Memory.Total > 0);
+			Assert.True(Computer.Memory.Used > 0);
 		}
 
-		[TestCase]
+		[Fact]
 		public void Load()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				Assert.Greater(Computer.Load.Last,    0);
-				Assert.Greater(Computer.Load.Five,    0);
-				Assert.Greater(Computer.Load.Fifteen, 0);
+				Assert.True(Computer.Load.Last    > 0);
+				Assert.True(Computer.Load.Five    > 0);
+				Assert.True(Computer.Load.Fifteen > 0);
 			}
 		}
 
-		[TestCase]
+		[Fact]
 		public void NetworkInfo()
 		{
 			Assert.NotNull(Computer.NetworkInterfaces);

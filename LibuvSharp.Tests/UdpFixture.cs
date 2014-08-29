@@ -1,21 +1,20 @@
 using System;
 using System.Text;
 using System.Net;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class UdpFixture
 	{
-		[TestCase]
+		[Fact]
 		public void Run()
 		{
-			Run(Default.IPv4.IPEndPoint);
-			Run(Default.IPv6.IPEndPoint);
+			RunTest(Default.IPv4.IPEndPoint);
+			RunTest(Default.IPv6.IPEndPoint);
 		}
 
-		public void Run(IPEndPoint ep)
+		public void RunTest(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -30,7 +29,7 @@ namespace LibuvSharp.Tests
 			server.Message += (msg) => {
 				var data = msg.Data;
 				var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-				Assert.AreEqual(str, "PING");
+				Assert.Equal(str, "PING");
 				sv_recv_cb_called++;
 				server.Send(msg.IPEndPoint, Encoding.ASCII.GetBytes("PONG"), (s) => {
 					sv_send_cb_called++;
@@ -44,7 +43,7 @@ namespace LibuvSharp.Tests
 				client.Message += (msg) => {
 					var data = msg.Data;
 					var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
-					Assert.AreEqual(str, "PONG");
+					Assert.Equal(str, "PONG");
 					cl_recv_cb_called++;
 					client.Close(() => { close_cb_called++; });
 				};
@@ -52,19 +51,19 @@ namespace LibuvSharp.Tests
 			});
 
 
-			Assert.AreEqual(0, close_cb_called);
-			Assert.AreEqual(0, cl_send_cb_called);
-			Assert.AreEqual(0, cl_recv_cb_called);
-			Assert.AreEqual(0, sv_send_cb_called);
-			Assert.AreEqual(0, sv_recv_cb_called);
+			Assert.Equal(0, close_cb_called);
+			Assert.Equal(0, cl_send_cb_called);
+			Assert.Equal(0, cl_recv_cb_called);
+			Assert.Equal(0, sv_send_cb_called);
+			Assert.Equal(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(2, close_cb_called);
-			Assert.AreEqual(1, cl_send_cb_called);
-			Assert.AreEqual(1, cl_recv_cb_called);
-			Assert.AreEqual(1, sv_send_cb_called);
-			Assert.AreEqual(1, sv_recv_cb_called);
+			Assert.Equal(2, close_cb_called);
+			Assert.Equal(1, cl_send_cb_called);
+			Assert.Equal(1, cl_recv_cb_called);
+			Assert.Equal(1, sv_send_cb_called);
+			Assert.Equal(1, sv_recv_cb_called);
 
 
 #if DEBUG
@@ -72,14 +71,14 @@ namespace LibuvSharp.Tests
 #endif
 		}
 
-		[TestCase]
+		[Fact]
 		public void NotNullUdp()
 		{
-			NotNullUdp(Default.IPv4.IPEndPoint);
-			NotNullUdp(Default.IPv6.IPEndPoint);
+			NotNullUdpTest(Default.IPv4.IPEndPoint);
+			NotNullUdpTest(Default.IPv6.IPEndPoint);
 		}
 
-		public void NotNullUdp(IPEndPoint ep)
+		public void NotNullUdpTest(IPEndPoint ep)
 		{
 			var u = new Udp();
 			Action<bool> cb = (_) => { };

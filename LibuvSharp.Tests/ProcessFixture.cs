@@ -1,20 +1,21 @@
 using System;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class ProcessFixture
 	{
-		[TestCase]
+		[Fact]
 		public void Base()
 		{
 			Assert.NotNull(Process.Title);
-			Assert.IsNotNullOrEmpty(Process.ExecutablePath);
+			var path = Process.ExecutablePath;
+			Assert.NotNull(path);
+			Assert.NotEqual(path, string.Empty);
 		}
 
-		Process ProcessSpawn(string command, Action<int> callback)
+		Process ProcessSpawnTest(string command, Action<int> callback)
 		{
 			var args = command.Split(new char[] { ' ' });
 			return Process.Spawn(new ProcessOptions() {
@@ -25,7 +26,7 @@ namespace LibuvSharp.Tests
 			});
 		}
 
-		Process ProcessSpawn(string command, Action<string> callback)
+		Process ProcessSpawnTest(string command, Action<string> callback)
 		{
 			var stdout = new Pipe() { Writeable = true };
 
@@ -50,7 +51,7 @@ namespace LibuvSharp.Tests
 			return p;
 		}
 
-		[TestCase]
+		[Fact]
 		public void ProcessSpawn()
 		{
 			string command = "csc.exe";
@@ -58,18 +59,18 @@ namespace LibuvSharp.Tests
 			
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
 				command = "/usr/bin/which which";
-				resultString = "/usr/bin/which\n";
+				resultString = "/bin/which\n";
 			}
 
 			string result = null;
-			ProcessSpawn(command, (res) => result = res);
+			ProcessSpawnTest(command, (res) => result = res);
 			Loop.Default.Run();
-			Assert.AreEqual(result, resultString);
+			Assert.Equal(result, resultString);
 
 			int? exitCode = null;
-			ProcessSpawn(command, (res) => exitCode = res);
+			ProcessSpawnTest(command, (res) => exitCode = res);
 			Loop.Default.Run();
-			Assert.AreEqual(exitCode.Value, 0);
+			Assert.Equal(exitCode.Value, 0);
 		}
 	}
 }

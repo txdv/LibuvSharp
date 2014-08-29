@@ -1,14 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class DirectoryFixture
 	{
-		[TestCase]
+		[Fact]
 		public void CreateDirectory()
 		{
 			if (Directory.Exists(Default.Directory)) {
@@ -16,8 +15,8 @@ namespace LibuvSharp.Tests
 			}
 
 			UVDirectory.Create(Default.Directory, 511, (e) => {
-				Assert.IsNull(e);
-				Assert.IsTrue(Directory.Exists(Default.Directory));
+				Assert.Null(e);
+				Assert.True(Directory.Exists(Default.Directory));
 				Directory.Delete(Default.Directory);
 			});
 
@@ -31,7 +30,7 @@ namespace LibuvSharp.Tests
 			}
 
 			UVDirectory.Delete(Default.Directory, (e) => {
-				Assert.IsNull(e);
+				Assert.Null(e);
 			});
 
 			Loop.Default.Run();
@@ -44,16 +43,16 @@ namespace LibuvSharp.Tests
 			}
 
 			UVDirectory.Rename(Default.Directory, Default.SecondDirectory, (e) => {
-				Assert.IsNull(e);
-				Assert.IsFalse(Directory.Exists(Default.Directory));
-				Assert.IsTrue(Directory.Exists(Default.SecondDirectory));
+				Assert.Null(e);
+				Assert.False(Directory.Exists(Default.Directory));
+				Assert.True(Directory.Exists(Default.SecondDirectory));
 				Directory.Delete(Default.SecondDirectory);
 			});
 
 			Loop.Default.Run();
 		}
 
-		[TestCase]
+		[Fact]
 		public void ReadEmptyDirectory()
 		{
 			if (!Directory.Exists(Default.Directory)) {
@@ -61,16 +60,16 @@ namespace LibuvSharp.Tests
 			}
 
 			UVDirectory.Read(Default.Directory, (e, list) => {
-				Assert.IsNull(e);
-				Assert.IsNotNull(list);
-				Assert.AreEqual(list.Length, 0);
+				Assert.Null(e);
+				Assert.NotNull(list);
+				Assert.Equal(list.Length, 0);
 				Directory.Delete(Default.Directory);
 			});
 
 			Loop.Default.Run();
 		}
 
-		[TestCase]
+		[Fact]
 		public void ReadNotEmptyDirectory()
 		{
 			Directory.CreateDirectory(Default.Directory);
@@ -79,11 +78,11 @@ namespace LibuvSharp.Tests
 
 
 			UVDirectory.Read(Default.Directory, (e, list) => {
-				Assert.IsNull(e);
-				Assert.IsNotNull(list);
-				Assert.AreEqual(list.Length, 2);
-				Assert.IsTrue(list.Contains("dir"));
-				Assert.IsTrue(list.Contains("file"));
+				Assert.Null(e);
+				Assert.NotNull(list);
+				Assert.Equal(list.Length, 2);
+				Assert.True(list.Contains("dir"));
+				Assert.True(list.Contains("file"));
 
 				Directory.Delete(Default.Directory, true);
 			});

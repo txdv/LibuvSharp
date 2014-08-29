@@ -1,13 +1,12 @@
 using System;
 using LibuvSharp.Threading;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class ThreadingFixture
 	{
-		[TestCase]
+		[Fact]
 		public void LoopBlocking()
 		{
 			TimeSpan span = TimeSpan.Zero;
@@ -18,8 +17,8 @@ namespace LibuvSharp.Tests
 			}, null);
 			Loop.Default.Run();
 
-			Assert.AreNotEqual(span, TimeSpan.Zero);
-			Assert.GreaterOrEqual(span.TotalMilliseconds, 1000);
+			Assert.NotEqual(span, TimeSpan.Zero);
+			Assert.True(span.TotalMilliseconds >= 1000);
 		}
 	}
 }

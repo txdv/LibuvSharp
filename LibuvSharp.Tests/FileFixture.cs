@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
@@ -14,8 +14,8 @@ namespace LibuvSharp.Tests
 			}
 
 			UVFile.Open(Default.File, UVFileAccess.Write, (e, file) => {
-				Assert.IsNull(e);
-				Assert.IsNotNull(file);
+				Assert.Null(e);
+				Assert.NotNull(file);
 			});
 
 			Loop.Default.Run();

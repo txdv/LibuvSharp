@@ -2,21 +2,21 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class TcpFixture
 	{
-		[TestCase]
+		[Fact]
 		public void Simple()
 		{
-			Simple(Default.IPv4.IPEndPoint);
-			Simple(Default.IPv6.IPEndPoint);
+			SimpleTest(Default.IPv4.IPEndPoint);
+			SimpleTest(Default.IPv6.IPEndPoint);
 		}
 
-		public void Simple(IPEndPoint ep)
+		public void SimpleTest(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -31,7 +31,7 @@ namespace LibuvSharp.Tests
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
-					Assert.AreEqual("PING", str);
+					Assert.Equal("PING", str);
 					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					socket.Close(() => { close_cb_called++; });
@@ -46,24 +46,24 @@ namespace LibuvSharp.Tests
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
-					Assert.AreEqual("PONG", str);
+					Assert.Equal("PONG", str);
 					client.Close(() => { close_cb_called++; });
 				});
 			});
 
-			Assert.AreEqual(0, close_cb_called);
-			Assert.AreEqual(0, cl_send_cb_called);
-			Assert.AreEqual(0, cl_recv_cb_called);
-			Assert.AreEqual(0, sv_send_cb_called);
-			Assert.AreEqual(0, sv_recv_cb_called);
+			Assert.Equal(0, close_cb_called);
+			Assert.Equal(0, cl_send_cb_called);
+			Assert.Equal(0, cl_recv_cb_called);
+			Assert.Equal(0, sv_send_cb_called);
+			Assert.Equal(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(3, close_cb_called);
-			Assert.AreEqual(1, cl_send_cb_called);
-			Assert.AreEqual(1, cl_recv_cb_called);
-			Assert.AreEqual(1, sv_send_cb_called);
-			Assert.AreEqual(1, sv_recv_cb_called);
+			Assert.Equal(3, close_cb_called);
+			Assert.Equal(1, cl_send_cb_called);
+			Assert.Equal(1, cl_recv_cb_called);
+			Assert.Equal(1, sv_send_cb_called);
+			Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 			Assert.AreEqual(1, UV.PointerCount);
@@ -79,14 +79,14 @@ namespace LibuvSharp.Tests
 			return sb.ToString();
 		}
 
-		[TestCase]
+		[Fact]
 		public void Stress()
 		{
-			Stress(Default.IPv4.IPEndPoint);
-			Stress(Default.IPv6.IPEndPoint);
+			StressTest(Default.IPv4.IPEndPoint);
+			StressTest(Default.IPv6.IPEndPoint);
 		}
 
-		public void Stress(IPEndPoint ep)
+		public void StressTest(IPEndPoint ep)
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -104,7 +104,7 @@ namespace LibuvSharp.Tests
 					socket.Resume();
 					socket.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
-						Assert.AreEqual(Times("PING", times), str);
+						Assert.Equal(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
 							socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
@@ -122,24 +122,24 @@ namespace LibuvSharp.Tests
 					}
 					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
-						Assert.AreEqual(Times("PONG", times), str);
+						Assert.Equal(Times("PONG", times), str);
 						client.Close(() => { close_cb_called++; });
 					});
 				});
 
-				Assert.AreEqual(0, close_cb_called);
-				Assert.AreEqual(0, cl_send_cb_called);
-				Assert.AreEqual(0, cl_recv_cb_called);
-				Assert.AreEqual(0, sv_send_cb_called);
-				Assert.AreEqual(0, sv_recv_cb_called);
+				Assert.Equal(0, close_cb_called);
+				Assert.Equal(0, cl_send_cb_called);
+				Assert.Equal(0, cl_recv_cb_called);
+				Assert.Equal(0, sv_send_cb_called);
+				Assert.Equal(0, sv_recv_cb_called);
 
 				Loop.Default.Run();
 
-				Assert.AreEqual(3, close_cb_called);
-				Assert.AreEqual(times, cl_send_cb_called);
-				Assert.AreEqual(1, cl_recv_cb_called);
-				Assert.AreEqual(times, sv_send_cb_called);
-				Assert.AreEqual(1, sv_recv_cb_called);
+				Assert.Equal(3, close_cb_called);
+				Assert.Equal(times, cl_send_cb_called);
+				Assert.Equal(1, cl_recv_cb_called);
+				Assert.Equal(times, sv_send_cb_called);
+				Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 				Assert.AreEqual(1, UV.PointerCount);
@@ -147,14 +147,14 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[TestCase]
+		[Fact]
 		public void OneSideClose()
 		{
-			OneSideClose(Default.IPv4.IPEndPoint);
-			OneSideClose(Default.IPv6.IPEndPoint);
+			OneSideCloseTest(Default.IPv4.IPEndPoint);
+			OneSideCloseTest(Default.IPv6.IPEndPoint);
 		}
 
-		public void OneSideClose(IPEndPoint ep)
+		public void OneSideCloseTest(IPEndPoint ep)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -170,7 +170,7 @@ namespace LibuvSharp.Tests
 				socket.Resume();
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
-					Assert.AreEqual("PING", str);
+					Assert.Equal("PING", str);
 					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 					socket.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
@@ -181,7 +181,7 @@ namespace LibuvSharp.Tests
 			client.Connect(ep, (_) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
-					Assert.AreEqual("PONG", str);
+					Assert.Equal("PONG", str);
 				});
 
 				client.Complete += () => {
@@ -191,26 +191,26 @@ namespace LibuvSharp.Tests
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
 
-			Assert.AreEqual(0, close_cb_called);
-			Assert.AreEqual(0, cl_send_cb_called);
-			Assert.AreEqual(0, cl_recv_cb_called);
-			Assert.AreEqual(0, sv_send_cb_called);
-			Assert.AreEqual(0, sv_recv_cb_called);
+			Assert.Equal(0, close_cb_called);
+			Assert.Equal(0, cl_send_cb_called);
+			Assert.Equal(0, cl_recv_cb_called);
+			Assert.Equal(0, sv_send_cb_called);
+			Assert.Equal(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(3, close_cb_called);
-			Assert.AreEqual(1, cl_send_cb_called);
-			Assert.AreEqual(1, cl_recv_cb_called);
-			Assert.AreEqual(1, sv_send_cb_called);
-			Assert.AreEqual(1, sv_recv_cb_called);
+			Assert.Equal(3, close_cb_called);
+			Assert.Equal(1, cl_send_cb_called);
+			Assert.Equal(1, cl_recv_cb_called);
+			Assert.Equal(1, sv_send_cb_called);
+			Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
 
-		[TestCase]
+		[Fact]
 		public void TakenPort()
 		{
 			TcpListener s1 = new TcpListener();
@@ -220,7 +220,7 @@ namespace LibuvSharp.Tests
 			s1.Listen();
 			s2.Bind(IPAddress.Any, Default.Port);
 
-			Assert.Throws<SocketException>(() => s2.Listen(), "Address already in use");
+			Assert.Throws<SocketException>(() => s2.Listen());
 
 			s1.Close();
 			s2.Close();
@@ -231,7 +231,7 @@ namespace LibuvSharp.Tests
 			return new Tcp();
 		}
 
-		[TestCase]
+		[Fact]
 		public void NotNullConnect()
 		{
 			Action<Exception> cb = (_) => { };
@@ -249,18 +249,18 @@ namespace LibuvSharp.Tests
 			Assert.Throws<ArgumentNullException>(() => Create().Connect(ip, port, null));
 		}
 
-		[TestCase]
+		[Fact]
 		public void ConnectToNotListeningPort()
 		{
 			Tcp socket = new Tcp();
 			socket.Connect("127.0.0.1", 7999, (e) => {
-				Assert.IsNotNull(e);
+				Assert.NotNull(e);
 			});
 
 			Loop.Default.Run();
 		}
 
-		[TestCase]
+		[Fact]
 		public void PeerAndSockname()
 		{
 			Tcp client = null;
@@ -275,9 +275,9 @@ namespace LibuvSharp.Tests
 					return;
 				}
 
-				Assert.AreEqual(client.Sockname, server.Peername);
-				Assert.AreEqual(client.Peername, server.Sockname);
-				Assert.AreEqual(server.Sockname.Port, 8000);
+				Assert.Equal(client.Sockname, server.Peername);
+				Assert.Equal(client.Peername, server.Sockname);
+				Assert.Equal(server.Sockname.Port, 8000);
 
 				client.Shutdown();
 				server.Shutdown();
@@ -300,10 +300,10 @@ namespace LibuvSharp.Tests
 
 			Loop.Default.Run();
 
-			Assert.IsTrue(called);
+			Assert.True(called);
 		}
 
-		[TestCase]
+		[Fact]
 		public void NotNullListener()
 		{
 			var t = new TcpListener();

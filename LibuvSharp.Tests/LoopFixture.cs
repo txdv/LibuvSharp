@@ -1,18 +1,17 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class LoopFixture
 	{
-		[TestCase]
+		[Fact]
 		public void NoAdditionalResources()
 		{
 			Loop.Default.Run();
 		}
 
-		[TestCase]
+		[Fact]
 		public void RunAsync()
 		{
 			var timer = new UVTimer();
@@ -20,25 +19,25 @@ namespace LibuvSharp.Tests
 			timer.Close();
 		}
 
-		[TestCase]
+		[Fact]
 		public void Handles()
 		{
-			Assert.Greater(Loop.Default.Handles.Length, 0);
+			Assert.True(Loop.Default.Handles.Length > 0);
 		}
 
 		public void ActiveHandlesCount()
 		{
-			Assert.Greater(Loop.Default.ActiveHandlesCount, 0);
+			Assert.True(Loop.Default.ActiveHandlesCount > 0);
 		}
 
-		[TestCase]
+		[Fact]
 		public void Data()
 		{
-			Assert.IsTrue(Loop.Default.Data == IntPtr.Zero);
+			Assert.True(Loop.Default.Data == IntPtr.Zero);
 			Loop.Default.Data = new IntPtr(42);
-			Assert.AreEqual(Loop.Default.Data.ToInt32(), 42);
+			Assert.Equal(Loop.Default.Data.ToInt32(), 42);
 			Loop.Default.Data = IntPtr.Zero;
-			Assert.IsTrue(Loop.Default.Data == IntPtr.Zero);
+			Assert.True(Loop.Default.Data == IntPtr.Zero);
 		}
 	}
 }

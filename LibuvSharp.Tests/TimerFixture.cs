@@ -1,19 +1,15 @@
 using System;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class TimerFixture
 	{
-		[TestCase]
-		public void Simple()
-		{
-			Simple(10, 10);
-			Simple(2, 50);
-			Simple(50, 1);
-		}
-
+		[Theory]
+		[InlineData(10, 10)]
+		[InlineData(2,  50)]
+		[InlineData(50,  1)]
 		public void Simple(int times, int spawn)
 		{
 			var t = new UVTimer();
@@ -27,8 +23,8 @@ namespace LibuvSharp.Tests
 			t.Start(TimeSpan.FromMilliseconds(spawn));
 			var now = Loop.Default.Now;
 			Loop.Default.Run();
-			Assert.GreaterOrEqual(Loop.Default.Now - now, (ulong)(times * spawn));
-			Assert.IsTrue(t.IsClosed);
+			Assert.True(Loop.Default.Now - now >= (ulong)(times * spawn));
+			Assert.True(t.IsClosed);
 		}
 	}
 }

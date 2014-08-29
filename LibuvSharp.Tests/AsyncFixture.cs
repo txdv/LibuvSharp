@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class AsyncFixture
 	{
-		[TestCase]
+		[Fact]
 		public void ArgumentNullExceptions()
 		{
 			Assert.Throws<ArgumentNullException>(() => new Async(null as Loop));
@@ -23,7 +22,7 @@ namespace LibuvSharp.Tests
 			asyncWatcher.Close ();
 		}
 
-		[TestCase]
+		[Fact]
 		public void Simple()
 		{
 			int async_cb_called = 0;

@@ -1,20 +1,19 @@
 using System;
 using System.Net;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	[TestFixture]
 	public class PipeFixture
 	{
-		[TestCase]
+		[Fact]
 		public void Simple()
 		{
-			Simple(Default.Pipename);
+			SimpleTest(Default.Pipename);
 		}
 
-		public void Simple(string name)
+		public void SimpleTest(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -29,7 +28,7 @@ namespace LibuvSharp.Tests
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
-					Assert.AreEqual("PING", str);
+					Assert.Equal("PING", str);
 					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
 					pipe.Close(() => { close_cb_called++; });
@@ -44,24 +43,24 @@ namespace LibuvSharp.Tests
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
-					Assert.AreEqual("PONG", str);
+					Assert.Equal("PONG", str);
 					client.Close(() => { close_cb_called++; });
 				});
 			});
 
-			Assert.AreEqual(0, close_cb_called);
-			Assert.AreEqual(0, cl_send_cb_called);
-			Assert.AreEqual(0, cl_recv_cb_called);
-			Assert.AreEqual(0, sv_send_cb_called);
-			Assert.AreEqual(0, sv_recv_cb_called);
+			Assert.Equal(0, close_cb_called);
+			Assert.Equal(0, cl_send_cb_called);
+			Assert.Equal(0, cl_recv_cb_called);
+			Assert.Equal(0, sv_send_cb_called);
+			Assert.Equal(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(3, close_cb_called);
-			Assert.AreEqual(1, cl_send_cb_called);
-			Assert.AreEqual(1, cl_recv_cb_called);
-			Assert.AreEqual(1, sv_send_cb_called);
-			Assert.AreEqual(1, sv_recv_cb_called);
+			Assert.Equal(3, close_cb_called);
+			Assert.Equal(1, cl_send_cb_called);
+			Assert.Equal(1, cl_recv_cb_called);
+			Assert.Equal(1, sv_send_cb_called);
+			Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 			Assert.AreEqual(1, UV.PointerCount);
@@ -76,13 +75,13 @@ namespace LibuvSharp.Tests
 			return sb.ToString();
 		}
 
-		[TestCase]
+		[Fact]
 		public void Stress()
 		{
-			Stress(Default.Pipename);
+			StressTest(Default.Pipename);
 		}
 
-		public void Stress(string name)
+		public void StressTest(string name)
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -100,7 +99,7 @@ namespace LibuvSharp.Tests
 					pipe.Resume();
 					pipe.Read(Encoding.ASCII, (str) => {
 						sv_recv_cb_called++;
-						Assert.AreEqual(Times("PING", times), str);
+						Assert.Equal(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
 							pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
@@ -118,24 +117,24 @@ namespace LibuvSharp.Tests
 					}
 					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
-						Assert.AreEqual(Times("PONG", times), str);
+						Assert.Equal(Times("PONG", times), str);
 						client.Close(() => { close_cb_called++; });
 					});
 				});
 
-				Assert.AreEqual(0, close_cb_called);
-				Assert.AreEqual(0, cl_send_cb_called);
-				Assert.AreEqual(0, cl_recv_cb_called);
-				Assert.AreEqual(0, sv_send_cb_called);
-				Assert.AreEqual(0, sv_recv_cb_called);
+				Assert.Equal(0, close_cb_called);
+				Assert.Equal(0, cl_send_cb_called);
+				Assert.Equal(0, cl_recv_cb_called);
+				Assert.Equal(0, sv_send_cb_called);
+				Assert.Equal(0, sv_recv_cb_called);
 
 				Loop.Default.Run();
 
-				Assert.AreEqual(3, close_cb_called);
-				Assert.AreEqual(times, cl_send_cb_called);
-				Assert.AreEqual(1, cl_recv_cb_called);
-				Assert.AreEqual(times, sv_send_cb_called);
-				Assert.AreEqual(1, sv_recv_cb_called);
+				Assert.Equal(3, close_cb_called);
+				Assert.Equal(times, cl_send_cb_called);
+				Assert.Equal(1, cl_recv_cb_called);
+				Assert.Equal(times, sv_send_cb_called);
+				Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 				Assert.AreEqual(1, UV.PointerCount);
@@ -143,13 +142,13 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		[TestCase]
+		[Fact]
 		public void OneSideClose()
 		{
-			OneSideClose(Default.Pipename);
+			OneSideCloseTest(Default.Pipename);
 		}
 
-		public void OneSideClose(string name)
+		public void OneSideCloseTest(string name)
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -164,7 +163,7 @@ namespace LibuvSharp.Tests
 				pipe.Resume();
 				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
-					Assert.AreEqual("PING", str);
+					Assert.Equal("PING", str);
 					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 					pipe.Close(() => { close_cb_called++; });
 					server.Close(() => { close_cb_called++; });
@@ -176,7 +175,7 @@ namespace LibuvSharp.Tests
 			client.Connect(name, (_) => {
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
-					Assert.AreEqual("PONG", str);
+					Assert.Equal("PONG", str);
 				});
 
 				client.Complete += () => {
@@ -186,37 +185,37 @@ namespace LibuvSharp.Tests
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
 
-			Assert.AreEqual(0, close_cb_called);
-			Assert.AreEqual(0, cl_send_cb_called);
-			Assert.AreEqual(0, cl_recv_cb_called);
-			Assert.AreEqual(0, sv_send_cb_called);
-			Assert.AreEqual(0, sv_recv_cb_called);
+			Assert.Equal(0, close_cb_called);
+			Assert.Equal(0, cl_send_cb_called);
+			Assert.Equal(0, cl_recv_cb_called);
+			Assert.Equal(0, sv_send_cb_called);
+			Assert.Equal(0, sv_recv_cb_called);
 
 			Loop.Default.Run();
 
-			Assert.AreEqual(3, close_cb_called);
-			Assert.AreEqual(1, cl_send_cb_called);
-			Assert.AreEqual(1, cl_recv_cb_called);
-			Assert.AreEqual(1, sv_send_cb_called);
-			Assert.AreEqual(1, sv_recv_cb_called);
+			Assert.Equal(3, close_cb_called);
+			Assert.Equal(1, cl_send_cb_called);
+			Assert.Equal(1, cl_recv_cb_called);
+			Assert.Equal(1, sv_send_cb_called);
+			Assert.Equal(1, sv_recv_cb_called);
 
 #if DEBUG
 			Assert.AreEqual(1, UV.PointerCount);
 #endif
 		}
 
-		[TestCase]
+		[Fact]
 		public void ConnectToNotListeningFile()
 		{
 			Pipe pipe = new Pipe();
 			pipe.Connect("NOT_EXISTING", (e) => {
-				Assert.IsNotNull(e);
-				Assert.AreEqual(e.GetType(), typeof(System.IO.FileNotFoundException));
+				Assert.NotNull(e);
+				Assert.Equal(e.GetType(), typeof(System.IO.FileNotFoundException));
 			});
 			Loop.Default.Run();
 		}
 
-		[TestCase]
+		[Fact]
 		public void NotNullListener()
 		{
 			var t = new PipeListener();
