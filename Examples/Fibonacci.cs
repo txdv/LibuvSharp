@@ -1,9 +1,10 @@
 /*
- * An example which proves how wrong the 'node is cancer' article is wrong about
+ * An example which proves how wrong the 'node is cancer' article is about
  * event loops. Well, the Fibonacci calculation is not executed in the
  * event loop, but in a different thread, but the api exposed in the loop
- * class makes it easy to utilize the thread pool.
- * */
+ * class makes it easy to utilize the thread pool avoiding blocking the
+ * main event loop with long calclulations.
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,8 +30,7 @@ namespace Test
 
 		public static void Main(string[] args)
 		{
-			var stdin = new Pipe();
-			stdin.Open(0);
+			var stdin = new TTY(0);
 			stdin.Read(Encoding.ASCII, (str) => {
 				str = str.TrimEnd(new char[] { '\r', '\n' });
 				if (str.StartsWith("fib ")) {
