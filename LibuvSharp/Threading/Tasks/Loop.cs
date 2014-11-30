@@ -23,6 +23,24 @@ namespace LibuvSharp
 			}
 		}
 
+		public bool Run(Func<Task> asyncMethod)
+		{
+			var previousContext = SynchronizationContext.Current;
+			try {
+				var loop = this;
+				SynchronizationContext.SetSynchronizationContext(new LoopSynchronizationContext(loop));
+				var task = asyncMethod();
+				task.ContinueWith((t) => {
+					loop.Unref();
+					loop.Sync(() => { });
+				});
+				loop.Ref();
+				return loop.Run();
+			} finally {
+				SynchronizationContext.SetSynchronizationContext(previousContext);
+			}
+		}
+
 		public static Loop Current {
 			get {
 				if (currentLoop != null) {

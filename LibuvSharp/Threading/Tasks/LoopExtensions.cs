@@ -49,23 +49,6 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static void Run(this Loop loop, Func<Task> asyncMethod)
-		{
-			var previousContext = SynchronizationContext.Current;
-			try {
-				SynchronizationContext.SetSynchronizationContext(new LoopSynchronizationContext(loop));
-				var task = asyncMethod();
-				task.ContinueWith((t) => {
-					loop.Unref();
-					loop.Sync(() => { });
-				});
-				loop.Ref();
-				loop.Run();
-			} finally {
-				SynchronizationContext.SetSynchronizationContext(previousContext);
-			}
-		}
-
 		public static Task QueueUserWorkItemAsync(this Loop loop, Action work)
 		{
 			var tcs = new TaskCompletionSource<object>();
