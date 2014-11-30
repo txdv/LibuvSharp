@@ -88,6 +88,8 @@ namespace LibuvSharp
 			});
 
 			uv_close(NativeHandle, ca.Callback);
+
+			NativeHandle = IntPtr.Zero;
 		}
 
 		public void Close()
