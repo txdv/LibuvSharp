@@ -17,7 +17,7 @@ namespace LibuvSharp
 		static extern int uv_tty_init(LoopSafeHandle loop, IntPtr tty, int fd, int readable);
 
 		public TTY(int fd)
-			: this(Loop.Default, fd)
+			: this(Loop.Constructor, fd)
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace LibuvSharp
 		}
 
 		public TTY(int fd, bool readable)
-			: this(Loop.Default, fd, readable)
+			: this(Loop.Constructor, fd, readable)
 		{
 		}
 

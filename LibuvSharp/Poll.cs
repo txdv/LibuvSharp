@@ -23,7 +23,7 @@ namespace LibuvSharp
 		static extern int uv_poll_stop(IntPtr handle);
 
 		public Poll(int fd)
-			: this(Loop.Default, fd)
+			: this(Loop.Constructor, fd)
 		{
 		}
 

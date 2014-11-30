@@ -34,7 +34,7 @@ namespace LibuvSharp
 		}
 
 		public FileSystemWatcher(string path, FileSystemEventFlags flags)
-			: this(Loop.Default, path, flags)
+			: this(Loop.Constructor, path, flags)
 		{
 			Path = path;
 		}

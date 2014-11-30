@@ -11,7 +11,7 @@ namespace LibuvSharp
 		internal static extern int uv_tcp_init(LoopSafeHandle loop, IntPtr handle);
 
 		public TcpListener()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 
@@ -72,7 +72,7 @@ namespace LibuvSharp
 		internal static extern int uv_tcp_init(LoopSafeHandle loop, IntPtr handle);
 
 		public Tcp()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

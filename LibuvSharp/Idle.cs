@@ -15,7 +15,7 @@ namespace LibuvSharp
 		internal static extern int uv_idle_stop(IntPtr loop);
 
 		public Idle()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

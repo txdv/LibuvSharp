@@ -21,7 +21,7 @@ namespace LibuvSharp
 		private delegate void uv_fs_cb(IntPtr IntPtr);
 
 		public UVFile(int fd)
-			: this(Loop.Default, fd)
+			: this(Loop.Constructor, fd)
 		{
 		}
 
@@ -55,7 +55,7 @@ namespace LibuvSharp
 		}
 		public static void Open(string path, UVFileAccess access, Action<Exception, UVFile> callback)
 		{
-			Open(Loop.Default, path, access, callback);
+			Open(Loop.Constructor, path, access, callback);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -434,7 +434,7 @@ namespace LibuvSharp
 		}
 		public void Sync(Action<Exception> callback)
 		{
-			Sync(Loop.Default, callback);
+			Sync(Loop.Constructor, callback);
 		}
 		public void Sync()
 		{
@@ -457,7 +457,7 @@ namespace LibuvSharp
 		}
 		public void DataSync(Action<Exception> callback)
 		{
-			DataSync(Loop.Default, callback);
+			DataSync(Loop.Constructor, callback);
 		}
 		public void DataSync()
 		{
@@ -480,7 +480,7 @@ namespace LibuvSharp
 		}
 		public void Truncate(int offset, Action<Exception> callback)
 		{
-			Truncate(Loop.Default, offset, callback);
+			Truncate(Loop.Constructor, offset, callback);
 		}
 		public void Truncate(int offset)
 		{
@@ -503,7 +503,7 @@ namespace LibuvSharp
 		}
 		public void Chmod(int mode, Action<Exception> callback)
 		{
-			Chmod(Loop.Default, mode, callback);
+			Chmod(Loop.Constructor, mode, callback);
 		}
 		public void Chmod(int mode)
 		{
@@ -526,7 +526,7 @@ namespace LibuvSharp
 		}
 		public static void Chmod(string path, int mode, Action<Exception> callback)
 		{
-			Chmod(Loop.Default, path, mode, callback);
+			Chmod(Loop.Constructor, path, mode, callback);
 		}
 		public static void Chmod(string path, int mode)
 		{
@@ -549,7 +549,7 @@ namespace LibuvSharp
 		}
 		public static void Chown(string path, int uid, int gid, Action<Exception> callback)
 		{
-			Chown(Loop.Default, path, uid, gid, callback);
+			Chown(Loop.Constructor, path, uid, gid, callback);
 		}
 		public static void Chown(string path, int uid, int gid)
 		{
@@ -572,7 +572,7 @@ namespace LibuvSharp
 		}
 		public void Chown(int uid, int gid, Action<Exception> callback)
 		{
-			Chown(Loop.Default, uid, gid, callback);
+			Chown(Loop.Constructor, uid, gid, callback);
 		}
 		public void Chown(int uid, int gid)
 		{
@@ -595,7 +595,7 @@ namespace LibuvSharp
 		}
 		public static void Unlink(string path, Action<Exception> callback)
 		{
-			Unlink(Loop.Default, path, callback);
+			Unlink(Loop.Constructor, path, callback);
 		}
 		public static void Unlink(string path)
 		{
@@ -618,7 +618,7 @@ namespace LibuvSharp
 		}
 		public static void Link(string path, string newPath, Action<Exception> callback)
 		{
-			Link(Loop.Default, path, newPath, callback);
+			Link(Loop.Constructor, path, newPath, callback);
 		}
 		public static void Link(string path, string newPath)
 		{
@@ -642,7 +642,7 @@ namespace LibuvSharp
 
 		public static void Symlink(string path, string newPath, Action<Exception> callback)
 		{
-			Symlink(Loop.Default, path, newPath, callback);
+			Symlink(Loop.Constructor, path, newPath, callback);
 		}
 		public static void Symlink(string path, string newPath)
 		{
@@ -669,7 +669,7 @@ namespace LibuvSharp
 		}
 		public static void Readlink(string path, Action<Exception, string> callback)
 		{
-			Readlink(Loop.Default, path, callback);
+			Readlink(Loop.Constructor, path, callback);
 		}
 	}
 }

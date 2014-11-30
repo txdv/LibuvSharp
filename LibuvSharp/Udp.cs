@@ -37,7 +37,7 @@ namespace LibuvSharp
 		}
 
 		public Udp()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

@@ -27,7 +27,7 @@ namespace LibuvSharp
 		Action onehit;
 
 		public UVTimer()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 
@@ -135,7 +135,7 @@ namespace LibuvSharp
 
 		public static UVTimer Once(TimeSpan timeout, Action callback)
 		{
-			return Once(Loop.Default, timeout, callback);
+			return Once(Loop.Constructor, timeout, callback);
 		}
 
 		public static UVTimer Times(Loop loop, int times, TimeSpan repeat, Action<int> callback)
@@ -157,7 +157,7 @@ namespace LibuvSharp
 
 		public static UVTimer Times(int times, TimeSpan repeat, Action<int> callback)
 		{
-			return Times(Loop.Default, times, repeat, callback);
+			return Times(Loop.Constructor, times, repeat, callback);
 		}
 
 		public static UVTimer Every(Loop loop, TimeSpan repeat, Action callback)
@@ -170,7 +170,7 @@ namespace LibuvSharp
 
 		public static UVTimer Every(TimeSpan repeat, Action callback)
 		{
-			return Every(Loop.Default, repeat, callback);
+			return Every(Loop.Constructor, repeat, callback);
 		}
 	}
 }

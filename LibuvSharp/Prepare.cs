@@ -15,7 +15,7 @@ namespace LibuvSharp
 		internal static extern int uv_prepare_stop(IntPtr prepare);
 
 		public Prepare()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

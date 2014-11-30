@@ -33,11 +33,11 @@ namespace LibuvSharp
 		}
 		public static void Create(string path, int mode, Action<Exception> callback)
 		{
-			Create(Loop.Default, path, mode, callback);
+			Create(Loop.Constructor, path, mode, callback);
 		}
 		public static void Create(string path, Action<Exception> callback)
 		{
-			Create(Loop.Default, path, 511, callback);
+			Create(Loop.Constructor, path, 511, callback);
 		}
 		public static void Create(string path, int mode)
 		{
@@ -64,7 +64,7 @@ namespace LibuvSharp
 		}
 		public static void Delete(string path, Action<Exception> callback)
 		{
-			Delete(Loop.Default, path, callback);
+			Delete(Loop.Constructor, path, callback);
 		}
 		public static void Delete(string path)
 		{
@@ -87,7 +87,7 @@ namespace LibuvSharp
 		}
 		public static void Rename(string path, string newPath, Action<Exception> callback)
 		{
-			Rename(Loop.Default, path, newPath, callback);
+			Rename(Loop.Constructor, path, newPath, callback);
 		}
 		public static void Rename(string path, string newPath)
 		{
@@ -119,7 +119,7 @@ namespace LibuvSharp
 		}
 		public static void Read(string path, Action<Exception, string[]> callback)
 		{
-			Read(Loop.Default, path, callback);
+			Read(Loop.Constructor, path, callback);
 		}
 	}
 }

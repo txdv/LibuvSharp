@@ -139,7 +139,7 @@ namespace LibuvSharp
 
 		public static Process Spawn(ProcessOptions options, Action<Process> exitCallback)
 		{
-			return Spawn(Loop.Default, options, exitCallback);
+			return Spawn(Loop.Constructor, options, exitCallback);
 		}
 
 		public static Process Spawn(Loop loop, ProcessOptions options, Action<Process> exitCallback)

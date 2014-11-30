@@ -139,7 +139,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task Chmod(string path, int mode)
 		{
-			return Chmod(Loop.Default, path, mode);
+			return Chmod(Loop.Constructor, path, mode);
 		}
 		public static Task Chmod(Loop loop, string path, int mode)
 		{
@@ -148,7 +148,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task Chown(string path, int uid, int gid)
 		{
-			return Chown(Loop.Default, path, uid, gid);
+			return Chown(Loop.Constructor, path, uid, gid);
 		}
 		public static Task Chown(Loop loop, string path, int uid, int gid)
 		{
@@ -157,7 +157,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task Link(string path, string newPath)
 		{
-			return Link(Loop.Default, path, newPath);
+			return Link(Loop.Constructor, path, newPath);
 		}
 		public static Task Link(Loop loop, string path, string newPath)
 		{
@@ -166,7 +166,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task Unlink(string path)
 		{
-			return Unlink(Loop.Default, path);
+			return Unlink(Loop.Constructor, path);
 		}
 		public static Task Unlink(Loop loop, string path)
 		{
@@ -175,7 +175,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task<UVFile> Open(string path, UVFileAccess access)
 		{
-			return Open(Loop.Default, path, access);
+			return Open(Loop.Constructor, path, access);
 		}
 		public static Task<UVFile> Open(Loop loop, string path, UVFileAccess access)
 		{
@@ -188,7 +188,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Symlink(string path, string newPath)
 		{
-			return Symlink(Loop.Default, path, newPath);
+			return Symlink(Loop.Constructor, path, newPath);
 		}
 
 		public static Task<string> Readlink(Loop loop, string path)
@@ -197,7 +197,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task<string> Readlink(string path)
 		{
-			return Readlink(Loop.Default, path);
+			return Readlink(Loop.Constructor, path);
 		}
 
 		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index, int count, int offset)
@@ -386,7 +386,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task<UVFileStat> Stat(string path)
 		{
-			return Stat(Loop.Default, path);
+			return Stat(Loop.Constructor, path);
 		}
 
 		public static Task<UVFileStat> StatAsync(this UVFile file, Loop loop)

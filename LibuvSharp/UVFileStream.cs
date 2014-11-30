@@ -24,7 +24,7 @@ namespace LibuvSharp
 		public Loop Loop { get; private set; }
 
 		public UVFileStream()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

@@ -13,7 +13,7 @@ namespace LibuvSharp
 		internal static extern int uv_async_init(LoopSafeHandle loop, IntPtr handle, IntPtr callback);
 
 		public Async()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 
@@ -52,7 +52,7 @@ namespace LibuvSharp
 		Queue<T> queue = new Queue<T>();
 
 		public AsyncWatcher()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

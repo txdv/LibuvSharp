@@ -9,7 +9,7 @@ namespace LibuvSharp
 		static extern int uv_pipe_init(LoopSafeHandle loop, IntPtr handle, int ipc);
 
 		public PipeListener()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 
@@ -44,7 +44,7 @@ namespace LibuvSharp
 		static extern int uv_pipe_init(LoopSafeHandle loop, IntPtr handle, int ipc);
 
 		public Pipe()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 
@@ -101,7 +101,7 @@ namespace LibuvSharp
 	public class IPCPipe : Pipe
 	{
 		public IPCPipe()
-			: this(Loop.Default)
+			: this(Loop.Constructor)
 		{
 		}
 

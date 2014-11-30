@@ -42,6 +42,16 @@ namespace LibuvSharp
 		[ThreadStatic]
 		private static Loop currentLoop;
 
+		/// <summary>
+		/// Returns Default Loop value when creating LibuvSharp objects.
+		/// </summary>
+		/// <value>A loop.</value>
+		internal static Loop Constructor {
+			get {
+				return Loop.Current ?? Loop.Default;
+			}
+		}
+
 		public LoopSafeHandle NativeHandle { get; protected set; }
 
 		public ByteBufferAllocatorBase ByteBufferAllocator { get; protected set; }
