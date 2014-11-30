@@ -111,11 +111,14 @@ namespace LibuvSharp
 
 		public bool IsRunning { get; private set; }
 
-		private bool Run(Action action)
+		private bool RunGuard(Action action)
 		{
 			if (IsRunning) {
 				return false;
 			}
+
+			// save the value, restore it aftwards
+			var tmp = currentLoop;
 
 			IsRunning = true;
 			currentLoop = this;
@@ -125,24 +128,47 @@ namespace LibuvSharp
 			}
 
 			IsRunning = false;
-			currentLoop = null;
+			currentLoop = tmp;
 
 			return true;
 		}
 
+		private bool RunGuard(Action context, Func<bool> func)
+		{
+			if (!RunGuard(context)) {
+				return false;
+			}
+			return func();
+		}
+
 		public bool Run()
 		{
-			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_DEFAULT));
+			return RunGuard(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_DEFAULT));
+		}
+
+		public bool Run(Action context)
+		{
+			return RunGuard(context, Run);
 		}
 
 		public bool RunOnce()
 		{
-			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_ONCE));
+			return RunGuard(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_ONCE));
+		}
+
+		public bool RunOnce(Action context)
+		{
+			return RunGuard(context, RunOnce);
 		}
 
 		public bool RunAsync()
 		{
-			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_NOWAIT));
+			return RunGuard(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_NOWAIT));
+		}
+
+		public bool RunAsync(Action context)
+		{
+			return RunGuard(context, RunAsync);
 		}
 
 		public void UpdateTime()
