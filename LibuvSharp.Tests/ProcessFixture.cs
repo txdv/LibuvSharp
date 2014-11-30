@@ -59,7 +59,7 @@ namespace LibuvSharp.Tests
 			
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
 				command = "/usr/bin/which which";
-				resultString = "/bin/which\n";
+				resultString = "/usr/bin/which\n";
 			}
 
 			string result = null;
