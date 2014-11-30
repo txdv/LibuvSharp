@@ -119,6 +119,59 @@ namespace LibuvSharp
 		{
 			uv_timer_again(NativeHandle);
 		}
+
+		public static UVTimer Once(Loop loop, TimeSpan timeout, Action callback)
+		{
+			var timer = new UVTimer(loop);
+			timer.Tick += () => {
+				if (callback != null) {
+					callback();
+				}
+				timer.Close();
+			};
+			timer.Start(timeout, TimeSpan.Zero);
+			return timer;
+		}
+
+		public static UVTimer Once(TimeSpan timeout, Action callback)
+		{
+			return Once(Loop.Default, timeout, callback);
+		}
+
+		public static UVTimer Times(Loop loop, int times, TimeSpan repeat, Action<int> callback)
+		{
+			var timer = new UVTimer(loop);
+			int i = 0;
+			timer.Tick += () => {
+				i++;
+				if (callback != null) {
+					callback(i);
+				}
+				if (i >= times) {
+					timer.Close();
+				}
+			};
+			timer.Start(repeat, repeat);
+			return timer;
+		}
+
+		public static UVTimer Times(int times, TimeSpan repeat, Action<int> callback)
+		{
+			return Times(Loop.Default, times, repeat, callback);
+		}
+
+		public static UVTimer Every(Loop loop, TimeSpan repeat, Action callback)
+		{
+			var timer = new UVTimer(loop);
+			timer.Tick += callback;
+			timer.Start(repeat, repeat);
+			return timer;
+		}
+
+		public static UVTimer Every(TimeSpan repeat, Action callback)
+		{
+			return Every(Loop.Default, repeat, callback);
+		}
 	}
 }
 
