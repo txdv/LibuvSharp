@@ -8,6 +8,8 @@ namespace LibuvSharp.Threading.Tasks
 	{
 		public Loop Loop { get; private set; }
 
+		public int PendingOperations { get; private set; }
+
 		public LoopSynchronizationContext(Loop loop)
 		{
 			Loop = loop;
@@ -16,6 +18,18 @@ namespace LibuvSharp.Threading.Tasks
 		public override void Post(SendOrPostCallback d, object state)
 		{
 			d(state);
+		}
+
+		public override void OperationStarted()
+		{
+			PendingOperations++;
+			Loop.Ref();
+		}
+
+		public override void OperationCompleted()
+		{
+			Loop.Unref();
+			PendingOperations--;
 		}
 	}
 }
