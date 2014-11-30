@@ -59,7 +59,6 @@ namespace LibuvSharp.Threading.Tasks
 					loop.Unref();
 					loop.Sync(() => { });
 				});
-				task.Start(loop.Scheduler);
 				loop.Ref();
 				loop.Run();
 			} finally {
