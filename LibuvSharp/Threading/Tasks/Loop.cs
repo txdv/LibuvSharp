@@ -23,16 +23,19 @@ namespace LibuvSharp
 			}
 		}
 
-		public static Loop Current
-		{
+		public static Loop Current {
 			get {
+				if (currentLoop != null) {
+					return currentLoop;
+				}
+
 				var current = SynchronizationContext.Current;
 				if (current is LoopSynchronizationContext) {
 					return (current as LoopSynchronizationContext).Loop;
 				}
 
-				// TODO: find appropriate exception
-				throw new Exception();
+				// TODO: Think about returning exception
+				return null;
 			}
 		}
 	}

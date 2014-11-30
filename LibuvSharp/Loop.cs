@@ -39,6 +39,9 @@ namespace LibuvSharp
 			}
 		}
 
+		[ThreadStatic]
+		private static Loop currentLoop;
+
 		public LoopSafeHandle NativeHandle { get; protected set; }
 
 		public ByteBufferAllocatorBase ByteBufferAllocator { get; protected set; }
@@ -96,19 +99,40 @@ namespace LibuvSharp
 			}
 		}
 
-		public void Run()
+		public bool IsRunning { get; private set; }
+
+		private bool Run(Action action)
 		{
-			uv_run(NativeHandle, uv_run_mode.UV_RUN_DEFAULT);
+			if (IsRunning) {
+				return false;
+			}
+
+			IsRunning = true;
+			currentLoop = this;
+
+			if (action != null) {
+				action();
+			}
+
+			IsRunning = false;
+			currentLoop = null;
+
+			return true;
 		}
 
-		public void RunOnce()
+		public bool Run()
 		{
-			uv_run(NativeHandle, uv_run_mode.UV_RUN_ONCE);
+			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_DEFAULT));
 		}
 
-		public void RunAsync()
+		public bool RunOnce()
 		{
-			uv_run(NativeHandle, uv_run_mode.UV_RUN_NOWAIT);
+			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_ONCE));
+		}
+
+		public bool RunAsync()
+		{
+			return Run(() => uv_run(NativeHandle, uv_run_mode.UV_RUN_NOWAIT));
 		}
 
 		public void UpdateTime()
