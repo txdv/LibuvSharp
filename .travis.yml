@@ -1,19 +1,27 @@
-# Travis-CI Build for libgit2sharp
+# Travis-CI Build
 # see travis-ci.org for details
 
 language: c
 
-# Make sure CMake is installed
 install:
-- sudo apt-get install mono-gmcs mono-devel nunit-console
+ - sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+ - sudo sh -c "echo 'deb http://download.mono-project.com/repo/debian wheezy main' >> /etc/apt/sources.list.d/mono-xamarin.list"
+ - sudo sh -c "echo 'deb http://download.mono-project.com/repo/debian wheezy-libtiff-compat main' >> /etc/apt/sources.list.d/mono-xamarin.list"
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq mono-complete nuget mono-vbnc fsharp
+ - mozroots --import --sync --quiet
 
 # Run the Build script
 script:
  - make
+ - sudo cp libuv.so /usr/lib/
+ - mkdir packages
+ - nuget install LibuvSharp.Tests/packages.config -OutputDirectory packages/
  - xbuild LibuvSharp.sln
+ - cd bin/Debug/
+ - nuget install xunit.runners -Version 1.9.2
 
 # Run Tests
 after_script:
- - sudo cp libuv.so /usr/lib/
  - cd bin/Debug
- - nunit-console LibuvSharp.Tests.dll
+ - mono xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
