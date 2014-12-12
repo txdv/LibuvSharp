@@ -25,9 +25,8 @@ LibuvSharp/HandleType.cs: libuv/include/uv.h generate
 
 LibuvSharp/Internal/RequestType.cs: libuv/include/uv.h generate
 	./generate req > $@
+
 clean:
+	rm -rf libuv.so
 	make -C libuv clean
-	rm -rf libuv.so generate $(gensrc)
-
-
-
+	rm -rf $(gensrc)
