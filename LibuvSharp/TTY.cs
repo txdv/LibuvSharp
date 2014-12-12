@@ -50,12 +50,11 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_tty_reset_mode();
+		static extern void uv_tty_reset_mode();
 
 		static public void ResetMode()
 		{
-			int r = uv_tty_reset_mode();
-			Ensure.Success(r);
+			uv_tty_reset_mode();
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
