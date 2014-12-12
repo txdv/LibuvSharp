@@ -113,7 +113,7 @@ namespace LibuvSharp
 					res[i] = new string(ptr);
 					ptr += res[i].Length + 1;
 				}
-				callback(ex, res);
+				Ensure.Success(ex, callback, res);
 			};
 			uv_fs_readdir(loop.NativeHandle, fsr.Handle, path, 0, FileSystemRequest.StaticEnd);
 		}

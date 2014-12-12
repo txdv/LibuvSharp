@@ -46,9 +46,7 @@ namespace LibuvSharp
 				if (fsr.Result != IntPtr.Zero) {
 					file = new UVFile(loop, fsr.Result.ToInt32());
 				}
-				if (callback != null) {
-					callback(ex, file);
-				}
+				Ensure.Success(ex, callback, file);
 			};
 			int r = uv_fs_open(loop.NativeHandle, fsr.Handle, path, (int)access, 0, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
@@ -88,8 +86,8 @@ namespace LibuvSharp
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
-			fsr.Callback += (ex) => {
-				callback(ex, fsr.Result.ToInt32());
+			fsr.Callback = (ex) => {
+				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
@@ -182,10 +180,8 @@ namespace LibuvSharp
 		{
 			var datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
-			fsr.Callback += (ex) => {
-				if (callback != null) {
-					callback(ex, (int)fsr.Result);
-				}
+			fsr.Callback = (ex) => {
+				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
@@ -384,9 +380,7 @@ namespace LibuvSharp
 					if (UV.isUnix) {
 						stat = lin_stat.Convert(fsr.Pointer);
 					}
-					if (callback != null) {
-						callback(ex, stat);
-					}
+					Ensure.Success(ex, callback, stat);
 				}
 			};
 			int r = uv_fs_stat(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
@@ -405,9 +399,7 @@ namespace LibuvSharp
 					if (UV.isUnix) {
 						stat = lin_stat.Convert(fsr.Pointer);
 					}
-					if (callback != null) {
-						callback(ex, stat);
-					}
+					Ensure.Success(ex, callback, stat);
 				}
 			};
 			int r = uv_fs_fstat(loop.NativeHandle, fsr.Handle, FileDescriptor, FileSystemRequest.StaticEnd);
@@ -420,11 +412,7 @@ namespace LibuvSharp
 		public void Sync(Loop loop, Action<Exception> callback)
 		{
 			var fsr = new FileSystemRequest();
-			fsr.Callback = (ex) => {
-				if (callback != null) {
-					callback(ex);
-				}
-			};
+			fsr.Callback = callback;
 			int r = uv_fs_fsync(loop.NativeHandle, fsr.Handle, FileDescriptor, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);
 		}
@@ -660,9 +648,7 @@ namespace LibuvSharp
 				if (ex == null) {
 					res = Marshal.PtrToStringAuto(fsr.Pointer);
 				}
-				if (callback != null) {
-					callback(ex, res);
-				}
+				Ensure.Success(ex, callback, res);
 			};
 			int r = uv_fs_readlink(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
 			Ensure.Success(r, loop);

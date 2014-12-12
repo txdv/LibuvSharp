@@ -138,7 +138,7 @@ namespace LibuvSharp
 
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
-			cpr.Callback += (status, cpr2) => {
+			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
 				Ensure.Success(status, Loop, callback);
 			};
