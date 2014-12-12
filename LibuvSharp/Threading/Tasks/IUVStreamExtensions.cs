@@ -37,15 +37,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task WriteAsync(this IUVStream stream, byte[] data, int index, int count)
 		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				stream.Write(data, index, count, (_) => {
-					tcs.SetResult(null);
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap(data, index, count, stream.Write);
 		}
 
 		public static Task WriteAsync(this IUVStream stream, byte[] data, int index)
