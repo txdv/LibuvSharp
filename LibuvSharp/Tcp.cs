@@ -96,7 +96,7 @@ namespace LibuvSharp
 			} else {
 				r = uv_tcp_open_win(NativeHandle, socket);
 			}
-			Ensure.Success(r);
+			Ensure.Success(r, Loop);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

@@ -70,7 +70,7 @@ namespace LibuvSharp
 			} else {
 				r = uv_udp_open_win(NativeHandle, socket);
 			}
-			Ensure.Success(r);
+			Ensure.Success(r, Loop);
 		}
 
 		bool dualstack = false;
@@ -371,7 +371,7 @@ namespace LibuvSharp
 				return;
 			}
 			int r = uv_udp_recv_stop(NativeHandle);
-			Ensure.Success(r);
+			Ensure.Success(r, Loop);
 		}
 
 		public event Action<UdpMessage> Message;
@@ -383,7 +383,7 @@ namespace LibuvSharp
 		{
 			set {
 				int r = uv_udp_set_ttl(NativeHandle, (int)value);
-				Ensure.Success(r);
+				Ensure.Success(r, Loop);
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace LibuvSharp
 		public bool Broadcast {
 			set {
 				int r = uv_udp_set_broadcast(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r);
+				Ensure.Success(r, Loop);
 			}
 		}
 
@@ -403,7 +403,7 @@ namespace LibuvSharp
 		public byte MulticastTTL {
 			set {
 				int r = uv_udp_set_multicast_ttl(NativeHandle, (int)value);
-				Ensure.Success(r);
+				Ensure.Success(r, Loop);
 			}
 		}
 
@@ -413,7 +413,7 @@ namespace LibuvSharp
 		public bool MulticastLoop {
 			set {
 				int r = uv_udp_set_multicast_loop(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r);
+				Ensure.Success(r, Loop);
 			}
 		}
 	}

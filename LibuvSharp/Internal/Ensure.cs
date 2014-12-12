@@ -34,13 +34,6 @@ namespace LibuvSharp
 			}
 		}
 
-		internal static void Success(int errorCode)
-		{
-			if (errorCode < 0) {
-				throw new Exception(errorCode.ToString());
-			}
-		}
-
 		internal static void Success(uv_err_t error)
 		{
 			var e = Map(error);

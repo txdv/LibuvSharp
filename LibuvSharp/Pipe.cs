@@ -66,7 +66,7 @@ namespace LibuvSharp
 		public void Open(IntPtr fd)
 		{
 			int r = uv_pipe_open(NativeHandle, fd.ToInt32());
-			Ensure.Success(r);
+			Ensure.Success(r, Loop);
 		}
 
 		unsafe public bool InterProcessCommunication {

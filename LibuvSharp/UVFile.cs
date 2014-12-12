@@ -665,7 +665,7 @@ namespace LibuvSharp
 				}
 			};
 			int r = uv_fs_readlink(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
-			Ensure.Success(r);
+			Ensure.Success(r, loop);
 		}
 		public static void Readlink(string path, Action<Exception, string> callback)
 		{
