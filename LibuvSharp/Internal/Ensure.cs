@@ -52,10 +52,10 @@ namespace LibuvSharp
 			}
 		}
 
-		internal static void Success(int errorCode, Loop loop, Action<Exception> callback)
+		internal static void Success(int errorCode, Loop loop, Action<Exception> callback, string name = null)
 		{
 			if (callback != null) {
-				callback(errorCode < 0 ? Success(loop) : null);
+				callback(errorCode < 0 ? Success(loop, null) : null);
 			}
 		}
 

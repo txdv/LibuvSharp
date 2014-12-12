@@ -15,7 +15,7 @@ namespace LibuvSharp
 			stream.Write(data, index, count, null);
 		}
 
-		public static void Write(this IUVStream stream, byte[] data, int count, Action<bool> callback)
+		public static void Write(this IUVStream stream, byte[] data, int count, Action<Exception> callback)
 		{
 			stream.Write(data, 0, count, callback);
 		}
@@ -24,7 +24,7 @@ namespace LibuvSharp
 			stream.Write(data, count, null);
 		}
 
-		public static void Write(this IUVStream stream, byte[] data, Action<bool> callback)
+		public static void Write(this IUVStream stream, byte[] data, Action<Exception> callback)
 		{
 			stream.Write(data, data.Length, callback);
 		}
@@ -33,7 +33,7 @@ namespace LibuvSharp
 			stream.Write(data, null);
 		}
 
-		public static void Write(this IUVStream stream, ArraySegment<byte> data, Action<bool> callback)
+		public static void Write(this IUVStream stream, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			stream.Write(data.Array, data.Offset, data.Count, callback);
 		}
@@ -42,13 +42,13 @@ namespace LibuvSharp
 			stream.Write(data, null);
 		}
 
-		public static int Write(this IUVStream stream, Encoding enc, string text, Action<bool> callback)
+		public static int Write(this IUVStream stream, Encoding enc, string text, Action<Exception> callback)
 		{
 			var bytes = enc.GetBytes(text);
 			stream.Write(bytes, callback);
 			return bytes.Length;
 		}
-		public static int Write(this IUVStream stream, string text, Action<bool> callback)
+		public static int Write(this IUVStream stream, string text, Action<Exception> callback)
 		{
 			return stream.Write(Encoding.Default, text, callback);
 		}

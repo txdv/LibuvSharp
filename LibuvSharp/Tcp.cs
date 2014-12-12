@@ -113,13 +113,7 @@ namespace LibuvSharp
 			ConnectRequest cpr = new ConnectRequest();
 			Tcp socket = this;
 
-			cpr.Callback = (status, cpr2) => {
-				if (status == 0) {
-					callback(null);
-				} else {
-					callback(Ensure.Success(Loop));
-				}
-			};
+			cpr.Callback = (status, cpr2) => Ensure.Success(status, Loop, callback);
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {

@@ -152,7 +152,7 @@ namespace LibuvSharp
 
 		public event Action Drain;
 
-		public void Write(byte[] data, int index, int count, Action<bool> callback)
+		public void Write(byte[] data, int index, int count, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 
@@ -160,12 +160,12 @@ namespace LibuvSharp
 
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
-			cpr.Callback += (status, cpr2) => {
+			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
 				PendingWrites--;
-				if (callback != null) {
-					callback(status == 0);
-				}
+
+				Ensure.Success(status, Loop, callback);
+
 				if (PendingWrites == 0) {
 					OnDrain();
 				}

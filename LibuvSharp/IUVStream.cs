@@ -18,7 +18,7 @@ namespace LibuvSharp
 		bool Writeable { get; }
 		event Action Drain;
 		long WriteQueueSize { get; }
-		void Write(byte[] data, int index, int count, Action<bool> callback);
+		void Write(byte[] data, int index, int count, Action<Exception> callback);
 		void Shutdown(Action callback);
 	}
 }

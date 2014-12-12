@@ -86,13 +86,7 @@ namespace LibuvSharp
 			ConnectRequest cpr = new ConnectRequest();
 			Pipe pipe = this;
 
-			cpr.Callback = (status, cpr2) => {
-				if (status == 0) {
-					callback(null);
-				} else {
-					callback(Ensure.Success(Loop, name));
-				}
-			};
+			cpr.Callback = (status, cpr2) => Ensure.Success(status, Loop, callback, name);
 
 			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.StaticEnd);
 		}
@@ -116,15 +110,13 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_write2_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
 
-		public void Write(UVStream stream, byte[] data, int index, int count, Action<bool> callback)
+		public void Write(UVStream stream, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
-				if (callback != null) {
-					callback(status == 0);
-				}
+				Ensure.Success(status, Loop, callback);
 			};
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
@@ -142,11 +134,11 @@ namespace LibuvSharp
 
 			Ensure.Success(r, Loop);
 		}
-		public void Write(UVStream stream, byte[] data, int index, Action<bool> callback)
+		public void Write(UVStream stream, byte[] data, int index, Action<Exception> callback)
 		{
 			Write(stream, data, index, data.Length - index, callback);
 		}
-		public void Write(UVStream stream, byte[] data, Action<bool> callback)
+		public void Write(UVStream stream, byte[] data, Action<Exception> callback)
 		{
 			Write(stream, data, 0, data.Length, callback);
 		}

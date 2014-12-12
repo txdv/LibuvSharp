@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	struct QueueElement
 	{
-		public QueueElement(byte[] data, int index, int count, Action<bool> callback)
+		public QueueElement(byte[] data, int index, int count, Action<Exception> callback)
 		{
 			this.data = data;
 			this.index = index;
@@ -16,7 +16,7 @@ namespace LibuvSharp
 		public byte[] data;
 		public int index;
 		public int count;
-		public Action<bool> callback;
+		public Action<Exception> callback;
 	}
 
 	public class UVFileStream : IUVStream
@@ -153,7 +153,7 @@ namespace LibuvSharp
 
 			var cb = tuple.callback;
 			if (cb != null) {
-				cb(ex == null);
+				cb(ex);
 			}
 
 			writeoffset += size;
@@ -195,7 +195,7 @@ namespace LibuvSharp
 
 		public bool Writeable { private set; get; }
 
-		public void Write(byte[] data, int index, int count, Action<bool> callback)
+		public void Write(byte[] data, int index, int count, Action<Exception> callback)
 		{
 			queue.Enqueue(new QueueElement(data, index, count, callback));
 			WriteQueueSize += count;
