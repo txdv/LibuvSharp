@@ -177,7 +177,7 @@ namespace LibuvSharp
 		{
 			uvfile.Close((ex2) => {
 				if (shutdownCallback != null) {
-					shutdownCallback();
+					shutdownCallback(ex ?? ex2);
 				}
 			});
 		}
@@ -205,8 +205,8 @@ namespace LibuvSharp
 		}
 
 		bool shutdown = false;
-		Action shutdownCallback = null;
-		public void Shutdown(Action callback)
+		Action<Exception> shutdownCallback = null;
+		public void Shutdown(Action<Exception> callback)
 		{
 			shutdown = true;
 			shutdownCallback = callback;

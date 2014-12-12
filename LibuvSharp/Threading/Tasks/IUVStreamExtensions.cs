@@ -60,15 +60,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task ShutdownAsync(this IUVStream stream)
 		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				stream.Shutdown(() => {
-					tcs.SetResult(null);
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap(stream.Shutdown);
 		}
 	}
 }

@@ -19,6 +19,6 @@ namespace LibuvSharp
 		event Action Drain;
 		long WriteQueueSize { get; }
 		void Write(byte[] data, int index, int count, Action<Exception> callback);
-		void Shutdown(Action callback);
+		void Shutdown(Action<Exception> callback);
 	}
 }

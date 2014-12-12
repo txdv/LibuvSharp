@@ -66,7 +66,12 @@ namespace LibuvSharp
 			stream.Shutdown(null);
 		}
 
-		public static void End(this IUVStream stream, byte[] data, int index, int count, Action callback)
+		public static void Shutdown(this IUVStream stream, Action callback)
+		{
+			stream.Shutdown((_) => callback());
+		}
+
+		public static void End(this IUVStream stream, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			stream.Write(data, index, count);
 			stream.Shutdown(callback);
@@ -76,7 +81,7 @@ namespace LibuvSharp
 			stream.End(data, index, count, null);
 		}
 
-		public static void End(this IUVStream stream, byte[] data, int count, Action callback)
+		public static void End(this IUVStream stream, byte[] data, int count, Action<Exception> callback)
 		{
 			stream.Write(data, count);
 			stream.Shutdown(callback);
@@ -86,7 +91,7 @@ namespace LibuvSharp
 			stream.Write(data, count, null);
 		}
 
-		public static void End(this IUVStream stream, byte[] data, Action callback)
+		public static void End(this IUVStream stream, byte[] data, Action<Exception> callback)
 		{
 			stream.Write(data);
 			stream.Shutdown(callback);
@@ -96,7 +101,7 @@ namespace LibuvSharp
 			stream.Write(data, null);
 		}
 
-		public static void End(this IUVStream stream, ArraySegment<byte> data, Action callback)
+		public static void End(this IUVStream stream, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			stream.Write(data);
 			stream.Shutdown(callback);
@@ -106,13 +111,13 @@ namespace LibuvSharp
 			stream.End(data, null);
 		}
 
-		public static int End(this IUVStream stream, Encoding encoding, string text, Action callback)
+		public static int End(this IUVStream stream, Encoding encoding, string text, Action<Exception> callback)
 		{
 			int size = stream.Write(encoding, text);
 			stream.Shutdown(callback);
 			return size;
 		}
-		public static int End(this IUVStream stream, string text, Action callback)
+		public static int End(this IUVStream stream, string text, Action<Exception> callback)
 		{
 			return stream.End(Encoding.Default, text, callback);
 		}

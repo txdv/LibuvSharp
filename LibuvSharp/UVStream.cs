@@ -187,11 +187,15 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		public void Shutdown(Action callback)
+		public void Shutdown(Action<Exception> callback)
 		{
 			var cbr = new CallbackPermaRequest(RequestType.UV_SHUTDOWN);
 			cbr.Callback = (status, _) => {
-				Close(callback);
+				Ensure.Success(status, Loop, (ex) => Close(() => {
+					if (callback != null) {
+						callback(ex);
+					}
+				}));
 			};
 			uv_shutdown(cbr.Handle, NativeHandle, CallbackPermaRequest.StaticEnd);
 		}

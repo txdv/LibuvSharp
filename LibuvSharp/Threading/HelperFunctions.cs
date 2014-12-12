@@ -28,6 +28,23 @@ namespace LibuvSharp
 			};
 		}
 
+		public static Task Wrap(Action<Action<Exception>> action)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				action((ex) => {
+					if (ex != null) {
+						tcs.SetException(ex);
+					} else {
+						tcs.SetResult(null);
+					}
+				});
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
+
 		public static Task Wrap<T>(T arg1, Action<T, Action<Exception>> action)
 		{
 			var tcs = new TaskCompletionSource<object>();
