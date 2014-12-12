@@ -63,5 +63,11 @@ namespace LibuvSharp
 		UV_ENODEV = 57,
 		UV_ESPIPE = 58,
 		UV_ECANCELED = 59,
+		UV_EFBIG = 60,
+		UV_ENOPROTOOPT = 61,
+		UV_ETXTBSY = 62,
+		UV_ERANGE = 63,
+		UV_ENXIO = 64,
+		UV_EMLINK = 65,
 	}
 }
