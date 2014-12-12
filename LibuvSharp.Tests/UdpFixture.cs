@@ -81,7 +81,7 @@ namespace LibuvSharp.Tests
 		public void NotNullUdpTest(IPEndPoint ep)
 		{
 			var u = new Udp();
-			Action<bool> cb = (_) => { };
+			Action<Exception> cb = (_) => { };
 
 			string ipstr = ep.Address.ToString();
 			var ip = ep.Address;

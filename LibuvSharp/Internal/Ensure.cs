@@ -52,6 +52,13 @@ namespace LibuvSharp
 			}
 		}
 
+		internal static void Success(int errorCode, Loop loop, Action<Exception> callback)
+		{
+			if (callback != null) {
+				callback(errorCode < 0 ? Success(loop) : null);
+			}
+		}
+
 		internal static Exception Success(Loop loop, string name = null)
 		{
 			return Map(uv_last_error(loop.NativeHandle), name);

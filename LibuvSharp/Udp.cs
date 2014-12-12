@@ -130,7 +130,7 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
 
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count, Action<bool> callback)
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Ensure.AddressFamily(ipAddress);
@@ -140,9 +140,7 @@ namespace LibuvSharp
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
 			cpr.Callback += (status, cpr2) => {
 				datagchandle.Free();
-				if (callback != null) {
-					callback(status == 0);
-				}
+				Ensure.Success(status, Loop, callback);
 			};
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
@@ -169,12 +167,12 @@ namespace LibuvSharp
 			}
 			Ensure.Success(r, Loop);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index, Action<bool> callback)
+		public void Send(IPAddress ipAddress, int port, byte[] data, int index, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, Action<bool> callback)
+		public void Send(IPAddress ipAddress, int port, byte[] data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, 0, data.Length, callback);
@@ -194,17 +192,17 @@ namespace LibuvSharp
 			Send(ipAddress, port, data, 0, data.Length);
 		}
 
-		public void Send(string ipAddress, int port, byte[] data, int index, int count, Action<bool> callback)
+		public void Send(string ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			Send(IPAddress.Parse(ipAddress), port, data, index, count, callback);
 		}
-		public void Send(string ipAddress, int port, byte[] data, int index, Action<bool> callback)
+		public void Send(string ipAddress, int port, byte[] data, int index, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
-		public void Send(string ipAddress, int port, byte[] data, Action<bool> callback)
+		public void Send(string ipAddress, int port, byte[] data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(ipAddress, port, data, 0, data.Length, callback);
@@ -224,17 +222,17 @@ namespace LibuvSharp
 			Send(ipAddress, port, data, 0, data.Length);
 		}
 
-		public void Send(IPEndPoint endPoint, byte[] data, int index, int count, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(endPoint, "endPoint");
 			Send(endPoint.Address, endPoint.Port, data, index, count, callback);
 		}
-		public void Send(IPEndPoint endPoint, byte[] data, int index, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, int index, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(endPoint, data, index, data.Length - index, callback);
 		}
-		public void Send(IPEndPoint endPoint, byte[] data, Action<bool> callback)
+		public void Send(IPEndPoint endPoint, byte[] data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Send(endPoint, data, 0, data.Length, callback);
@@ -254,7 +252,7 @@ namespace LibuvSharp
 			Send(endPoint, data, 0, data.Length);
 		}
 
-		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data, Action<bool> callback)
+		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
 		}
@@ -262,7 +260,7 @@ namespace LibuvSharp
 		{
 			Send(ipAddress, port, data, null);
 		}
-		public void Send(string ipAddress, int port, ArraySegment<byte> data, Action<bool> callback)
+		public void Send(string ipAddress, int port, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
 		}
@@ -270,7 +268,7 @@ namespace LibuvSharp
 		{
 			Send(ipAddress, port, data, null);
 		}
-		public void Send(IPEndPoint ep, ArraySegment<byte> data, Action<bool> callback)
+		public void Send(IPEndPoint ep, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			Send(ep.Address, ep.Port, data, callback);
 		}
