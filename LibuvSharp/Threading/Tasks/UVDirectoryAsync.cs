@@ -20,19 +20,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Create(Loop loop, string name, int mode)
 		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				UVDirectory.Create(loop, name, mode, (e) => {
-					if (e == null) {
-						tcs.SetResult(null);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap(loop, name, mode, UVDirectory.Create);
 		}
 
 		public static Task Delete(string path)
@@ -41,19 +29,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Delete(Loop loop, string path)
 		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				UVDirectory.Delete(loop, path, (e) => {
-					if (e == null) {
-						tcs.SetResult(null);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap(loop, path, UVDirectory.Delete);
 		}
 
 		public static Task Rename(string path, string newPath)
@@ -62,19 +38,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Rename(Loop loop, string path, string newPath)
 		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				UVDirectory.Rename(loop, path, newPath, (e) => {
-					if (e == null) {
-						tcs.SetResult(null);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap(loop, path, newPath, UVDirectory.Rename);
 		}
 
 		public static Task<string[]> Read(string path)
@@ -83,19 +47,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task<string[]> Read(this Loop loop, string path)
 		{
-			var tcs = new TaskCompletionSource<string[]>();
-			try {
-				UVDirectory.Read(loop, path, (e, dirs) => {
-					if (e == null) {
-						tcs.SetResult(dirs);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap<Loop, string, string[]>(loop, path, UVDirectory.Read);
 		}
 	}
 }
