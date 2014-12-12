@@ -7,71 +7,6 @@ namespace LibuvSharp.Threading.Tasks
 {
 	public static class UVFileAsync
 	{
-		static Task<R> FWrap<R>(Loop loop, Action<Loop, Action<Exception, R>> action)
-		{
-			var tcs = new TaskCompletionSource<R>();
-			try {
-				action(loop, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-		static Task<R> FWrap<R, T1>(Loop loop, T1 obj1, Action<Loop, T1, Action<Exception, R>> action)
-		{
-			var tcs = new TaskCompletionSource<R>();
-			try {
-				action(loop, obj1, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-		static Task<R> FWrap<R, T1, T2>(Loop loop, T1 obj1, T2 obj2, Action<Loop, T1, T2, Action<Exception, R>> action)
-		{
-			var tcs = new TaskCompletionSource<R>();
-			try {
-				action(loop, obj1, obj2, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-		static Task<R> FWrap<R, T1, T2, T3>(Loop loop, T1 obj1, T2 obj2, T3 obj3, Action<Loop, T1, T2, T3, Action<Exception, R>> action)
-		{
-			var tcs = new TaskCompletionSource<R>();
-			try {
-				action(loop, obj1, obj2, obj3, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				});
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-
 		public static Task Chmod(string path, int mode)
 		{
 			return Chmod(Loop.Constructor, path, mode);
@@ -114,7 +49,7 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task<UVFile> Open(Loop loop, string path, UVFileAccess access)
 		{
-			return FWrap<UVFile, string, UVFileAccess>(loop, path, access, UVFile.Open);
+			return HelperFunctions.Wrap<Loop, string, UVFileAccess, UVFile>(loop, path, access, UVFile.Open);
 		}
 
 		public static Task Symlink(Loop loop, string path, string newPath)
@@ -128,7 +63,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task<string> Readlink(Loop loop, string path)
 		{
-			return FWrap<string, string>(loop, path, UVFile.Readlink);
+			return HelperFunctions.Wrap<Loop, string, string>(loop, path, UVFile.Readlink);
 		}
 		public static Task<string> Readlink(string path)
 		{
@@ -317,7 +252,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task<UVFileStat> Stat(Loop loop, string path)
 		{
-			return FWrap<UVFileStat, string>(loop, path, UVFile.Stat);
+			return HelperFunctions.Wrap<Loop, string, UVFileStat>(loop, path, UVFile.Stat);
 		}
 		public static Task<UVFileStat> Stat(string path)
 		{
@@ -326,7 +261,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task<UVFileStat> StatAsync(this UVFile file, Loop loop)
 		{
-			return FWrap<UVFileStat>(loop, file.Stat);
+			return HelperFunctions.Wrap<Loop, UVFileStat>(loop, file.Stat);
 		}
 		public static Task<UVFileStat> StatAsync(this UVFile file)
 		{
