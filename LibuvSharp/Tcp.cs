@@ -138,13 +138,10 @@ namespace LibuvSharp
 			Connect(endPoint, (ex) => {
 				timer.Stop();
 				timer.Close();
-				if (ex is UVException) {
-					if ((ex as UVException).Code == 59) { // ECANCELED
-						uv_tcp_init(Loop.NativeHandle, NativeHandle);
-						ex = new TimeoutException();
-					} else {
-						throw ex;
-					}
+				if (ex is UVException && (ex as UVException).Code == 59) {
+					uv_close(NativeHandle, null);
+					uv_tcp_init(Loop.NativeHandle, NativeHandle);
+					ex = new TimeoutException();
 				}
 				if (callback != null) {
 					callback(ex);
