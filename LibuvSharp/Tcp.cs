@@ -111,15 +111,13 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(callback, "callback");
 
 			ConnectRequest cpr = new ConnectRequest();
-			Tcp socket = this;
-
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, Loop, callback);
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_tcp_connect(cpr.Handle, socket.NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect(cpr.Handle, NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			} else {
-				r = uv_tcp_connect6(cpr.Handle, socket.NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect6(cpr.Handle, NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
 			}
 			Ensure.Success(r, Loop);
 		}
