@@ -7,9 +7,9 @@ namespace LibuvSharp
 	unsafe public abstract class UVStream : Handle, IUVStream
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void read_callback_unix(IntPtr a, IntPtr blet, UnixBufferStruct buf);
+		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void read_callback_win(IntPtr a, IntPtr blet, WindowsBufferStruct buf);
+		internal delegate void read_callback_win(IntPtr stream, IntPtr size, WindowsBufferStruct buf);
 
 		[DllImport("uv", EntryPoint = "uv_read_start", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_start_unix(IntPtr stream, alloc_callback_unix alloc_callback, read_callback_unix read_callback);
