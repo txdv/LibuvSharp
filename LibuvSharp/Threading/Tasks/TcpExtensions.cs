@@ -20,21 +20,6 @@ namespace LibuvSharp.Threading.Tasks
 		{
 			return HelperFunctions.Wrap(ipAddress, port, tcp.Connect);
 		}
-
-		public static Task ConnectAsync(this Tcp tcp, IPEndPoint ep, TimeSpan timeout)
-		{
-			return HelperFunctions.Wrap(ep, timeout, tcp.Connect);
-		}
-
-		public static Task ConnectAsync(this Tcp tcp, IPAddress ipAddress, int port, TimeSpan timeout)
-		{
-			return HelperFunctions.Wrap(ipAddress, port, timeout, tcp.Connect);
-		}
-
-		public static Task ConnectAsync(this Tcp tcp, string ipAddress, int port, TimeSpan timeout)
-		{
-			return HelperFunctions.Wrap(ipAddress, port, timeout, tcp.Connect);
-		}
 	}
 }
 

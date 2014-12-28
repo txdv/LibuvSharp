@@ -131,47 +131,6 @@ namespace LibuvSharp
 			Connect(endPoint.Address, endPoint.Port, callback);
 		}
 
-		public void Connect(IPEndPoint endPoint, ulong timeout, Action<Exception> callback)
-		{
-			UVTimer timer = new UVTimer(Loop);
-
-			Connect(endPoint, (ex) => {
-				timer.Stop();
-				timer.Close();
-				if (ex is UVException && (ex as UVException).Code == 59) {
-					uv_close(NativeHandle, null);
-					uv_tcp_init(Loop.NativeHandle, NativeHandle);
-					ex = new TimeoutException();
-				}
-				if (callback != null) {
-					callback(ex);
-				}
-			});
-
-			timer.Start(timeout, () => uv_close(NativeHandle, null));
-		}
-		public void Connect(IPEndPoint endPoint, TimeSpan timeout, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Connect(endPoint, (ulong)timeout.TotalMilliseconds, callback);
-		}
-		public void Connect(IPAddress ipAddress, int port, TimeSpan timeout, Action<Exception> callback)
-		{
-			Connect(new IPEndPoint(ipAddress, port), timeout, callback);
-		}
-		public void Connect(IPAddress ipAddress, int port, ulong timeout, Action<Exception> callback)
-		{
-			Connect(ipAddress, port, TimeSpan.FromMilliseconds(timeout), callback);
-		}
-		public void Connect(string ipAddress, int port, TimeSpan timeout, Action<Exception> callback)
-		{
-			Connect(IPAddress.Parse(ipAddress), port, timeout, callback);
-		}
-		public void Connect(string ipAddress, int port, ulong timeout, Action<Exception> callback)
-		{
-			Connect(ipAddress, port, TimeSpan.FromMilliseconds(timeout), callback);
-		}
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_nodelay(IntPtr handle, int enable);
 
