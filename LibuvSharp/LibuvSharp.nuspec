@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>LibuvSharp</id>
+    <version>1.0.0</version>
+    <authors>Andrius Bentkus</authors>
+    <owners>Andrius Bentkus</owners>
+    <licenseUrl>http://en.wikipedia.org/wiki/MIT_License</licenseUrl>
+    <projectUrl>https://github.com/txdv/LibuvSharp</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/txdv/LibuvSharp/master/img/banner.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial Release.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>libuv, async I/O</tags>
+  </metadata>
+</package>
