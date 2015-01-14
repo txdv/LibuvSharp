@@ -80,7 +80,6 @@
     <Compile Include="Threading\Tasks\LoopTaskScheduler.cs" />
     <Compile Include="Threading\Tasks\Loop.cs" />
     <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
-    <Compile Include="Threading\Tasks\TcpExtensions.cs" />
     <Compile Include="Threading\Tasks\PipeExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopExtensions.cs" />
     <Compile Include="Threading\Tasks\UVDirectoryAsync.cs" />
@@ -117,6 +116,7 @@
     <Compile Include="IBindableExtensions.cs" />
     <Compile Include="IHandle.cs" />
     <Compile Include="IHandleExtensions.cs" />
+    <Compile Include="Threading\Tasks\IConnectableExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
