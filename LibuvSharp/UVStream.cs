@@ -116,7 +116,7 @@ namespace LibuvSharp
 			}
 		}
 
-		protected void OnComplete()
+		protected virtual void OnComplete()
 		{
 			if (Complete != null) {
 				Complete();
@@ -125,7 +125,7 @@ namespace LibuvSharp
 
 		public event Action Complete;
 
-		protected void OnError(Exception exception)
+		protected virtual void OnError(Exception exception)
 		{
 			if (Error != null) {
 				Error(exception);

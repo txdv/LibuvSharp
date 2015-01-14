@@ -12,6 +12,9 @@ namespace LibuvSharp
 
 		[DllImport(libuv, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_accept(IntPtr server, IntPtr client);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_tcp_getsockname(IntPtr handle, IntPtr addr, ref int length);
 	}
 }
 

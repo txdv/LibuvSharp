@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class PipeListener : Listener<Pipe>
+	public class PipeListener : Listener<Pipe>, IBindable<PipeListener, string>, ILocalAddress<string>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_pipe_init(LoopSafeHandle loop, IntPtr handle, int ipc);
@@ -33,10 +33,13 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(name, null);
 			int r = uv_pipe_bind(NativeHandle, name);
 			Ensure.Success(r, Loop);
+			LocalAddress = name;
 		}
+
+		public string LocalAddress { get; private set; }
 	}
 
-	public class Pipe : UVStream, IOpenFileDescriptor
+	public class Pipe : UVStream, IConnectable<Pipe, string>, IRemoteAddress<string>, IOpenFileDescriptor
 	{
 		unsafe uv_pipe_t *pipe_t;
 
@@ -89,6 +92,21 @@ namespace LibuvSharp
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, Loop, callback, name);
 
 			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.StaticEnd);
+			RemoteAddress = name;
+		}
+
+		public string RemoteAddress { get; private set; }
+
+		protected override void OnComplete()
+		{
+			RemoteAddress = null;
+			base.OnComplete();
+		}
+
+		protected override void OnError(Exception exception)
+		{
+			RemoteAddress = null;
+			base.OnError(exception);
 		}
 	}
 

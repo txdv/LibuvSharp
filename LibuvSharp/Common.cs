@@ -188,6 +188,16 @@ namespace LibuvSharp
 				return VersionString.EndsWith("-pre");
 			}
 		}
+
+		unsafe public static IPEndPoint GetSockname(Handle handle)
+		{
+			sockaddr_in6 addr;
+			IntPtr ptr = new IntPtr(&addr);
+			int length = sizeof(sockaddr_in6);
+			int r = NativeMethods.uv_tcp_getsockname(handle.NativeHandle, ptr, ref length);
+			Ensure.Success(r, handle.Loop);
+			return UV.GetIPEndPoint(ptr);
+		}
 	}
 }
 

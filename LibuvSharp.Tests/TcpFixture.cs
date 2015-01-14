@@ -275,9 +275,9 @@ namespace LibuvSharp.Tests
 					return;
 				}
 
-				Assert.Equal(client.Sockname, server.Peername);
-				Assert.Equal(client.Peername, server.Sockname);
-				Assert.Equal(server.Sockname.Port, 8000);
+				Assert.Equal(client.LocalAddress, server.RemoteAddress);
+				Assert.Equal(client.RemoteAddress, server.LocalAddress);
+				Assert.Equal(server.LocalAddress.Port, 8000);
 
 				client.Shutdown();
 				server.Shutdown();

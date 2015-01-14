@@ -109,6 +109,12 @@
     <Compile Include="Threading\Tasks\UVFileStreamExtensions.cs" />
     <Compile Include="Internal\Handles\BaseSafeHandle.cs" />
     <Compile Include="Internal\Handles\LoopSafeHandle.cs" />
+    <Compile Include="IConnectable.cs" />
+    <Compile Include="IConnectableExtensions.cs" />
+    <Compile Include="ILocalAddress.cs" />
+    <Compile Include="IRemoteAddress.cs" />
+    <Compile Include="IBindable.cs" />
+    <Compile Include="IBindableExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
