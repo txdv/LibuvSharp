@@ -115,6 +115,8 @@
     <Compile Include="IRemoteAddress.cs" />
     <Compile Include="IBindable.cs" />
     <Compile Include="IBindableExtensions.cs" />
+    <Compile Include="IHandle.cs" />
+    <Compile Include="IHandleExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

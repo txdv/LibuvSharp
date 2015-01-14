@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe public abstract class Handle : IDisposable
+	unsafe public abstract class Handle : IHandle, IDisposable
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void callback(IntPtr req, int status);
