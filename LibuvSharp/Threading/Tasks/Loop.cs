@@ -35,7 +35,14 @@ namespace LibuvSharp
 					loop.Sync(() => { });
 				});
 				loop.Ref();
-				return loop.Run();
+
+				var returnValue = loop.Run();
+
+				if (task.Exception != null) {
+					throw task.Exception;
+				}
+
+				return returnValue;
 			} finally {
 				SynchronizationContext.SetSynchronizationContext(previousContext);
 			}
