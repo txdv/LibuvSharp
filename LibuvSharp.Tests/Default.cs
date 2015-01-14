@@ -85,8 +85,8 @@ namespace LibuvSharp.Tests
 						for (int i = 0; i < times; i++) {
 							socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 						}
-						socket.Close(() => { close_cb_called++; });
-						server.Close(() => { close_cb_called++; });
+						socket.Close(() => close_cb_called++);
+						server.Close(() => close_cb_called++);
 					});
 				};
 				server.Listen();
@@ -100,7 +100,7 @@ namespace LibuvSharp.Tests
 					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
 						Assert.Equal(Times("PONG", times), str);
-						client.Close(() => { close_cb_called++; });
+						client.Close(() => close_cb_called++);
 					});
 				});
 
@@ -144,8 +144,8 @@ namespace LibuvSharp.Tests
 					Assert.Equal("PING", str);
 					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
 
-					pipe.Close(() => { close_cb_called++; });
-					server.Close(() => { close_cb_called++; });
+					pipe.Close(() => close_cb_called++);
+					server.Close(() => close_cb_called++);
 				});
 			};
 			server.Listen();
@@ -153,11 +153,11 @@ namespace LibuvSharp.Tests
 			var client = new TClient();
 			client.Connect(endPoint, (_) => {
 				client.Resume();
-				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
 				client.Read(Encoding.ASCII, (str) => {
 					cl_recv_cb_called++;
 					Assert.Equal("PONG", str);
-					client.Close(() => { close_cb_called++; });
+					client.Close(() => close_cb_called++);
 				});
 			});
 
@@ -200,8 +200,8 @@ namespace LibuvSharp.Tests
 					sv_recv_cb_called++;
 					Assert.Equal("PING", str);
 					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
-					socket.Close(() => { close_cb_called++; });
-					server.Close(() => { close_cb_called++; });
+					socket.Close(() => close_cb_called++);
+					server.Close(() => close_cb_called++);
 				});
 			};
 
@@ -212,9 +212,7 @@ namespace LibuvSharp.Tests
 					Assert.Equal("PONG", str);
 				});
 
-				client.Complete += () => {
-					close_cb_called++;
-				};
+				client.Complete += () => close_cb_called++;
 				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
