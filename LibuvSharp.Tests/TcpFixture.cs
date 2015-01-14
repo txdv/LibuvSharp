@@ -96,7 +96,7 @@ namespace LibuvSharp.Tests
 		}
 
 		[Fact]
-		public void PeerAndSockname()
+		public void RemoteAndLocalAddress()
 		{
 			Tcp client = null;
 			Tcp server = null;
