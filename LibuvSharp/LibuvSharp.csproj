@@ -121,6 +121,7 @@
     <Compile Include="Threading\Tasks\IConnectableTimeoutExtensions.cs" />
     <Compile Include="AsyncWatcher.cs" />
     <Compile Include="AsyncCallback.cs" />
+    <Compile Include="Threading\Tasks\IHandleExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
