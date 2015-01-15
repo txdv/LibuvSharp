@@ -13,13 +13,9 @@ namespace LibuvSharp.Tests
 			Assert.Throws<ArgumentNullException>(() => new Async(null as Loop));
 			Assert.Throws<ArgumentNullException>(() => new AsyncWatcher<int>(null as Loop));
 
-			var async = new Async();
-			var asyncWatcher = new AsyncWatcher<int>();
-
-			Assert.Throws<ArgumentNullException>(() => asyncWatcher.Send(null as IEnumerable<int>));
-
-			async.Close();
-			asyncWatcher.Close ();
+			using (var asyncWatcher = new AsyncWatcher<int>()) {
+				Assert.Throws<ArgumentNullException>(() => asyncWatcher.Send(null as IEnumerable<int>));
+			}
 		}
 
 		[Fact]

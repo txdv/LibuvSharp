@@ -46,7 +46,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class AsyncWatcher<T>
+	public class AsyncWatcher<T> : IHandle, IDisposable
 	{
 		Async async;
 		Queue<T> queue = new Queue<T>();
@@ -73,14 +73,30 @@ namespace LibuvSharp
 			};
 		}
 
+		public void Ref()
+		{
+			async.Ref();
+		}
+
 		public void Unref()
 		{
 			async.Unref();
 		}
 
-		public void Ref()
+		public bool IsClosed {
+			get {
+				return async.IsClosed;
+			}
+		}
+
+		public void Close(Action callback)
 		{
-			async.Ref();
+			async.Close(callback);
+		}
+
+		public void Dispose()
+		{
+			this.Close();
 		}
 
 		public void Send(T item)
@@ -110,16 +126,6 @@ namespace LibuvSharp
 		}
 
 		public event Action<T> Callback;
-
-		public void Close()
-		{
-			async.Close();
-		}
-
-		public void Close(Action callback)
-		{
-			async.Close(callback);
-		}
 	}
 
 	public class AsyncCallback : AsyncWatcher<Action>
