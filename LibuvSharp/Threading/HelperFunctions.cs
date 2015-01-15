@@ -28,6 +28,28 @@ namespace LibuvSharp
 			};
 		}
 
+		public static Action<Exception> Exception(TaskCompletionSource<object> tcs)
+		{
+			return (Exception exception) => {
+				if (exception != null) {
+					tcs.SetException(exception);
+				} else {
+					tcs.SetResult(null);
+				}
+			};
+		}
+
+		public static Action<Exception, TResult> Exception<TResult>(TaskCompletionSource<TResult> tcs)
+		{
+			return (Exception exception, TResult result) => {
+				if (exception != null) {
+					tcs.SetException(exception);
+				} else {
+					tcs.SetResult(result);
+				}
+			};
+		}
+
 		public static Task WrapSingle(Action<Action> action)
 		{
 			var tcs = new TaskCompletionSource<object>();
@@ -43,13 +65,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				action((ex) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(null);
-					}
-				});
+				action(Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -60,13 +76,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				action(arg1, (ex) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(null);
-					}
-				});
+				action(arg1, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -77,13 +87,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				action(arg1, arg2, (ex) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(null);
-					}
-				});
+				action(arg1, arg2, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -94,13 +98,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				action(arg1, arg2, arg3, (ex) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(null);
-					}
-				});
+				action(arg1, arg2, arg3, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -111,13 +109,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
-				action(arg1, arg2, arg3, arg4, (ex) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(null);
-					}
-				});
+				action(arg1, arg2, arg3, arg4, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -128,13 +120,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
-				action(arg1, (ex, result) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(result);
-					}
-				});
+				action(arg1, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -145,13 +131,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
-				action(arg1, arg2, (ex, result) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(result);
-					}
-				});
+				action(arg1, arg2, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -162,13 +142,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
-				action(arg1, arg2, arg3, (ex, result) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(result);
-					}
-				});
+				action(arg1, arg2, arg3, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -179,13 +153,7 @@ namespace LibuvSharp
 		{
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
-				action(arg1, arg2, arg3, arg4, (ex, result) => {
-					if (ex != null) {
-						tcs.SetException(ex);
-					} else {
-						tcs.SetResult(result);
-					}
-				});
+				action(arg1, arg2, arg3, arg4, Exception(tcs));
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
