@@ -21,13 +21,12 @@ namespace LibuvSharp.Tests
 			foreach (var cpu in Computer.CpuInfo) {
 				Assert.NotNull(cpu);
 				Assert.NotNull(cpu.Name);
-/*
-				Assert.Greater(cpu.Speed);
-				Assert.Greater(cpu.Times.Idle,   0);
-				Assert.Greater(cpu.Times.Nice,   0);
-				Assert.Greater(cpu.Times.System, 0);
-				Assert.Greater(cpu.Times.User,   0);
-*/
+
+				Assert.True(cpu.Speed > 0);
+				Assert.True(cpu.Times.Idle > 0);
+				Assert.True(cpu.Times.Nice > 0);
+				Assert.True(cpu.Times.System > 0);
+				Assert.True(cpu.Times.User > 0);
 			}
 		}
 
