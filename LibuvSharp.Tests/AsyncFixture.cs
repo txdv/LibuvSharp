@@ -24,14 +24,14 @@ namespace LibuvSharp.Tests
 			int async_cb_called = 0;
 			object o = new object();
 			var async = new Async();
-			async.Callback += (a) => {
+			async.Callback += () => {
 				int n;
 				lock (o) {
 					n = ++async_cb_called;
 				}
 
 				if (n == 3) {
-					a.Close();
+					async.Close();
 				}
 			};
 

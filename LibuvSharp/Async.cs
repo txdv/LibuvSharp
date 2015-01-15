@@ -36,12 +36,12 @@ namespace LibuvSharp
 			uv_async_send(NativeHandle);
 		}
 
-		public event Action<Async> Callback;
+		public event Action Callback;
 
 		public void OnCallback()
 		{
 			if (Callback != null) {
-				Callback(this);
+				Callback();
 			}
 		}
 	}
@@ -59,7 +59,7 @@ namespace LibuvSharp
 		public AsyncWatcher(Loop loop)
 		{
 			async = new Async(loop);
-			async.Callback += (_) => {
+			async.Callback += () => {
 				Queue<T> tmp;
 				lock (queue) {
 					tmp = new Queue<T>();
