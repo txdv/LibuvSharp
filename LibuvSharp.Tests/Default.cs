@@ -119,7 +119,7 @@ namespace LibuvSharp.Tests
 				Assert.Equal(1, sv_recv_cb_called);
 
 				#if DEBUG
-				Assert.AreEqual(1, UV.PointerCount);
+				Assert.Equal(1, UV.PointerCount);
 				#endif
 			}
 		}
@@ -176,7 +176,7 @@ namespace LibuvSharp.Tests
 			Assert.Equal(1, sv_recv_cb_called);
 
 			#if DEBUG
-			Assert.AreEqual(1, UV.PointerCount);
+			Assert.Equal(1, UV.PointerCount);
 			#endif
 		}
 
@@ -232,7 +232,7 @@ namespace LibuvSharp.Tests
 			Assert.Equal(1, sv_recv_cb_called);
 
 			#if DEBUG
-			Assert.AreEqual(1, UV.PointerCount);
+			Assert.Equal(1, UV.PointerCount);
 			#endif
 		}
 	}

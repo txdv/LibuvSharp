@@ -67,7 +67,7 @@ namespace LibuvSharp.Tests
 
 
 #if DEBUG
-			Assert.AreEqual(1, UV.PointerCount);
+			Assert.Equal(1, UV.PointerCount);
 #endif
 		}
 
