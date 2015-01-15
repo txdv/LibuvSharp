@@ -117,6 +117,8 @@
     <Compile Include="IHandle.cs" />
     <Compile Include="IHandleExtensions.cs" />
     <Compile Include="Threading\Tasks\IConnectableExtensions.cs" />
+    <Compile Include="AsyncWatcher.cs" />
+    <Compile Include="AsyncCallback.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
