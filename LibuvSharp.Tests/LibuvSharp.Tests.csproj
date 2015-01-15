@@ -53,6 +53,7 @@
     <Compile Include="ComputerFixture.cs" />
     <Compile Include="ProcessFixture.cs" />
     <Compile Include="ThreadingFixture.cs" />
+    <Compile Include="TimeoutFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

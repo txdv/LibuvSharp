@@ -114,9 +114,11 @@
     <Compile Include="IRemoteAddress.cs" />
     <Compile Include="IBindable.cs" />
     <Compile Include="IBindableExtensions.cs" />
+    <Compile Include="Timeout.cs" />
     <Compile Include="IHandle.cs" />
     <Compile Include="IHandleExtensions.cs" />
     <Compile Include="Threading\Tasks\IConnectableExtensions.cs" />
+    <Compile Include="Threading\Tasks\IConnectableTimeoutExtensions.cs" />
     <Compile Include="AsyncWatcher.cs" />
     <Compile Include="AsyncCallback.cs" />
   </ItemGroup>
