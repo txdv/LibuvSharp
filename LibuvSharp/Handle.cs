@@ -68,28 +68,32 @@ namespace LibuvSharp
 
 		public void Close(Action callback)
 		{
-			if (NativeHandle == IntPtr.Zero) {
-				return;
+			if (NativeHandle != IntPtr.Zero) {
+
+				var nativeHandle = NativeHandle;
+
+				CAction ca = new CAction(() => {
+					// Remove handle
+					Loop.handles.Remove(nativeHandle);
+
+					UV.Free(nativeHandle);
+
+					if (Closed != null) {
+						Closed();
+					}
+
+					if (callback != null) {
+						callback();
+					}
+
+					if (GCHandle.IsAllocated) {
+						GCHandle.Free();
+					}
+				});
+
+				uv_close(NativeHandle, ca.Callback);
+				NativeHandle = IntPtr.Zero;
 			}
-
-			CAction ca = new CAction(() => {
-				// Remove handle
-				Loop.handles.Remove(NativeHandle);
-
-				if (Closed != null) {
-					Closed();
-				}
-
-				if (callback != null) {
-					callback();
-				}
-
-				Dispose();
-			});
-
-			uv_close(NativeHandle, ca.Callback);
-
-			NativeHandle = IntPtr.Zero;
 		}
 
 		public void Close()
@@ -111,14 +115,7 @@ namespace LibuvSharp
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (NativeHandle != IntPtr.Zero) {
-				UV.Free(NativeHandle);
-				NativeHandle = IntPtr.Zero;
-			}
-
-			if (GCHandle.IsAllocated) {
-				GCHandle.Free();
-			}
+			Close();
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
