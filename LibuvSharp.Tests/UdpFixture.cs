@@ -33,7 +33,7 @@ namespace LibuvSharp.Tests
 				sv_recv_cb_called++;
 				server.Send(msg.IPEndPoint, Encoding.ASCII.GetBytes("PONG"), (s) => {
 					sv_send_cb_called++;
-					server.Close(() => { close_cb_called++; });
+					server.Close(() => close_cb_called++);
 				});
 			};
 			server.Resume();
@@ -45,7 +45,7 @@ namespace LibuvSharp.Tests
 					var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 					Assert.Equal(str, "PONG");
 					cl_recv_cb_called++;
-					client.Close(() => { close_cb_called++; });
+					client.Close(() => close_cb_called++);
 				};
 				client.Resume();
 			});
