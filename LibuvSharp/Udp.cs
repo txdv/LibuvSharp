@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : Handle, IOpenFileDescriptor
+	public class Udp : Handle, IMessageSender<IPEndPoint, ArraySegment<byte>>, IOpenFileDescriptor
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -130,151 +130,42 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
 
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
+		public void Send(IPEndPoint ipEndPoint, ArraySegment<byte> data, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			Ensure.AddressFamily(ipAddress);
+			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
+			Ensure.AddressFamily(ipEndPoint.Address);
 			Ensure.ArgumentNotNull(data, "data");
 
-			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
 				Ensure.Success(status, Loop, callback);
 			};
 
-			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
+			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + data.Offset);
 
 			int r;
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
-				buf[0] = new UnixBufferStruct(ptr, count);
+				buf[0] = new UnixBufferStruct(ptr, data.Count);
 
-				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+					r = uv_udp_send_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send6_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
 				}
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-				buf[0] = new WindowsBufferStruct(ptr, count);
+				buf[0] = new WindowsBufferStruct(ptr, data.Count);
 
-				if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+					r = uv_udp_send_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipAddress.ToString(), port), CallbackPermaRequest.StaticEnd);
+					r = uv_udp_send6_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
 				}
 			}
 			Ensure.Success(r, Loop);
-		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, index, data.Length - index, callback);
-		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, 0, data.Length, callback);
-		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index, int count)
-		{
-			Send(ipAddress, port, data, index, count, null);
-		}
-		public void Send(IPAddress ipAddress, int port, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, index, data.Length - index);
-		}
-		public void Send(IPAddress ipAddress, int port, byte[] data)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, 0, data.Length);
-		}
-
-		public void Send(string ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			Send(IPAddress.Parse(ipAddress), port, data, index, count, callback);
-		}
-		public void Send(string ipAddress, int port, byte[] data, int index, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, index, data.Length - index, callback);
-		}
-		public void Send(string ipAddress, int port, byte[] data, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, 0, data.Length, callback);
-		}
-		public void Send(string ipAddress, int port, byte[] data, int index, int count)
-		{
-			Send(ipAddress, port, data, index, count, null);
-		}
-		public void Send(string ipAddress, int port, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, index, data.Length - index);
-		}
-		public void Send(string ipAddress, int port, byte[] data)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(ipAddress, port, data, 0, data.Length);
-		}
-
-		public void Send(IPEndPoint endPoint, byte[] data, int index, int count, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Send(endPoint.Address, endPoint.Port, data, index, count, callback);
-		}
-		public void Send(IPEndPoint endPoint, byte[] data, int index, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, index, data.Length - index, callback);
-		}
-		public void Send(IPEndPoint endPoint, byte[] data, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, 0, data.Length, callback);
-		}
-		public void Send(IPEndPoint endPoint, byte[] data, int index, int count)
-		{
-			Send(endPoint, data, index, count, null);
-		}
-		public void Send(IPEndPoint endPoint, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, index, data.Length - index);
-		}
-		public void Send(IPEndPoint endPoint, byte[] data)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Send(endPoint, data, 0, data.Length);
-		}
-
-		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data, Action<Exception> callback)
-		{
-			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
-		}
-		public void Send(IPAddress ipAddress, int port, ArraySegment<byte> data)
-		{
-			Send(ipAddress, port, data, null);
-		}
-		public void Send(string ipAddress, int port, ArraySegment<byte> data, Action<Exception> callback)
-		{
-			Send(ipAddress, port, data.Array, data.Offset, data.Count, callback);
-		}
-		public void Send(string ipAddress, int port, ArraySegment<byte> data)
-		{
-			Send(ipAddress, port, data, null);
-		}
-		public void Send(IPEndPoint ep, ArraySegment<byte> data, Action<Exception> callback)
-		{
-			Send(ep.Address, ep.Port, data, callback);
-		}
-		public void Send(IPEndPoint ep, ArraySegment<byte> data)
-		{
-			Send(ep, data, null);
 		}
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]

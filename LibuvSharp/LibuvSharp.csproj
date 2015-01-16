@@ -122,6 +122,8 @@
     <Compile Include="AsyncWatcher.cs" />
     <Compile Include="AsyncCallback.cs" />
     <Compile Include="Threading\Tasks\IHandleExtensions.cs" />
+    <Compile Include="IMessageSender.cs" />
+    <Compile Include="IMessageSenderExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
