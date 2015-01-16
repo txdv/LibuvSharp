@@ -7,33 +7,39 @@ namespace LibuvSharp
 	{
 		#region IPAddress string
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, 0, callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, null);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data, int index, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, int index, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data, int index)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, int index)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, null);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			sender.Send(IPAddress.Parse(ipAddress), port, new ArraySegment<byte>(data, index, count), callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, string ipAddress, int port, byte[] data, int index, int count)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, int index, int count)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, count, null);
 		}
@@ -42,34 +48,40 @@ namespace LibuvSharp
 
 		#region IPAddress
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, 0, callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, null);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data, int index, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, int index, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data, int index)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, int index)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, null);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, int index, int count, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 			sender.Send(new IPEndPoint(ipAddress, port), new ArraySegment<byte>(data, index, count), callback);
 		}
 
-		public static void Send(this IMessageSender<IPEndPoint, ArraySegment<byte>> sender, IPAddress ipAddress, int port, byte[] data, int index, int count)
+		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, int index, int count)
+			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(ipAddress, port, data, index, count, null);
 		}
@@ -78,33 +90,39 @@ namespace LibuvSharp
 
 		#region TEndPoint
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data, Action<Exception> callback)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, Action<Exception> callback)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(endPoint, data, 0, callback);
 		}
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(endPoint, data, null);
 		}
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data, int index, Action<Exception> callback)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index, Action<Exception> callback)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(endPoint, data, index, data.Length - index, callback);
 		}
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data, int index)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(endPoint, data, index, null);
 		}
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data, int index, int count, Action<Exception> callback)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index, int count, Action<Exception> callback)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			Ensure.ArgumentNotNull(data, "data");
 			sender.Send(endPoint, new ArraySegment<byte>(data, index, count), callback);
 		}
 
-		public static void Send<TEndPoint>(this IMessageSender<TEndPoint, ArraySegment<byte>> sender, TEndPoint endPoint, byte[] data, int index, int count)
+		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index, int count)
+			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
 			sender.Send(endPoint, data, index, count, null);
 		}
@@ -113,39 +131,46 @@ namespace LibuvSharp
 
 		#region TMEssage
 
-		public static void Send<TMessage>(this IMessageSender<IPEndPoint, TMessage> sender, string ipAddress, int port, TMessage message, Action<Exception> callback)
+		public static void Send<TMessage, TPayload>(this IMessageSender<TMessage> sender, string ipAddress, int port, TPayload payload, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			sender.Send(IPAddress.Parse(ipAddress), port, message, callback);
+			sender.Send(IPAddress.Parse(ipAddress), port, payload, callback);
 		}
 
-		public static void Send<TMessage>(this IMessageSender<IPEndPoint, TMessage> sender, string ipAddress, int port, TMessage message)
+		public static void Send<TMessage, TPayload>(this IMessageSender<TMessage> sender, string ipAddress, int port, TPayload payload)
+			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			sender.Send(ipAddress, port, message, null);
+			sender.Send(ipAddress, port, payload, null);
 		}
 
-		public static void Send<TMessage>(this IMessageSender<IPEndPoint, TMessage> sender, IPAddress ipAddress, int port, TMessage message, Action<Exception> callback)
+		public static void Send<TMessage, TPayload>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, TPayload payload, Action<Exception> callback)
+			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
 			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			sender.Send(new IPEndPoint(ipAddress, port), message, callback);
+			sender.Send(new IPEndPoint(ipAddress, port), payload, callback);
 		}
 
-		public static void Send<TMessage>(this IMessageSender<IPEndPoint, TMessage> sender, IPAddress ipAddress, int port, TMessage message)
+		public static void Send<TMessage, TPayload>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, TPayload payload)
+			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
-			sender.Send(ipAddress, port, message, null);
+			sender.Send(ipAddress, port, payload, null);
 		}
 
 		#endregion
 
-		#region TEndPoint, TMessage
-
-		public static void Send<TEndPoint, TMessage>(this IMessageSender<TEndPoint, TMessage> sender, TEndPoint endPoint, TMessage message)
+		public static void Send<TMessage, TEndPoint, TPayload>(this IMessageSender<TMessage> sender, TEndPoint endPoint, TPayload payload, Action<Exception> callback)
+			where TMessage : IMessage<TEndPoint, TPayload>, new()
 		{
-			sender.Send(endPoint, message, null);
+			sender.Send(new TMessage() { EndPoint = endPoint, Payload = payload }, callback);
 		}
 
-		#endregion
+		public static void Send<TMessage, TEndPoint, TPayload>(this IMessageSender<TMessage> sender, TEndPoint endPoint, TPayload payload)
+			where TMessage : IMessage<TEndPoint, TPayload>, new()
+		{
+			sender.Send<TMessage, TEndPoint, TPayload>(endPoint, payload, null);
+		}
 	}
 }
 

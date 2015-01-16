@@ -3,36 +3,20 @@ using System.Net;
 
 namespace LibuvSharp
 {
-	public struct UdpMessage
+	public class UdpMessage : IMessage<IPEndPoint, ArraySegment<byte>>
 	{
-		readonly IPEndPoint endPoint;
-		readonly ArraySegment<byte> data;
-		readonly bool @partial;
-
-		public UdpMessage(IPEndPoint endPoint, ArraySegment<byte> data, bool @partial)
+		public UdpMessage()
 		{
-			this.endPoint = endPoint;
-			this.data = data;
-			this.@partial = @partial;
 		}
 
-		public IPEndPoint IPEndPoint {
-			get {
-				return endPoint;
-			}
+		public UdpMessage(IPEndPoint endPoint, ArraySegment<byte> payload)
+		{
+			EndPoint = endPoint;
+			Payload = payload;
 		}
 
-		public ArraySegment<byte> Data {
-			get {
-				return data;
-			}
-		}
-
-		public bool Partial {
-			get {
-				return @partial;
-			}
-		}
+		public IPEndPoint EndPoint { get; set; }
+		public ArraySegment<byte> Payload { get; set; }
 	}
 }
 

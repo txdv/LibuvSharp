@@ -124,6 +124,9 @@
     <Compile Include="Threading\Tasks\IHandleExtensions.cs" />
     <Compile Include="IMessageSender.cs" />
     <Compile Include="IMessageSenderExtensions.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="UdpReceiveMessage.cs" />
+    <Compile Include="IMessageReceiver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

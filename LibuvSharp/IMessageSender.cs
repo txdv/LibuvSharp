@@ -2,9 +2,9 @@
 
 namespace LibuvSharp
 {
-	public interface IMessageSender<TEndPoint, TMessage>
+	public interface IMessageSender<TMessage>
 	{
-		void Send(TEndPoint endPoint, TMessage message, Action<Exception> callback);
+		void Send(TMessage message, Action<Exception> callback);
 	}
 }
 

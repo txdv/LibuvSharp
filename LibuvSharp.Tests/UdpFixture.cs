@@ -27,11 +27,11 @@ namespace LibuvSharp.Tests
 
 			server.Bind(ep);
 			server.Message += (msg) => {
-				var data = msg.Data;
+				var data = msg.Payload;
 				var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 				Assert.Equal(str, "PING");
 				sv_recv_cb_called++;
-				server.Send(msg.IPEndPoint, Encoding.ASCII.GetBytes("PONG"), (s) => {
+				server.Send(msg.EndPoint, Encoding.ASCII.GetBytes("PONG"), (s) => {
 					sv_send_cb_called++;
 					server.Close(() => close_cb_called++);
 				});
@@ -41,7 +41,7 @@ namespace LibuvSharp.Tests
 			client.Send(ep, Encoding.ASCII.GetBytes("PING"), (s) => {
 				cl_send_cb_called++;
 				client.Message += (msg) => {
-					var data = msg.Data;
+					var data = msg.Payload;
 					var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 					Assert.Equal(str, "PONG");
 					cl_recv_cb_called++;

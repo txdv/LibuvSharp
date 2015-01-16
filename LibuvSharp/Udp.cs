@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : Handle, IMessageSender<IPEndPoint, ArraySegment<byte>>, IOpenFileDescriptor
+	public class Udp : Handle, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, IOpenFileDescriptor
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -130,11 +130,12 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
 
-		public void Send(IPEndPoint ipEndPoint, ArraySegment<byte> data, Action<Exception> callback)
+		public void Send(UdpMessage message, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
-			Ensure.AddressFamily(ipEndPoint.Address);
-			Ensure.ArgumentNotNull(data, "data");
+			Ensure.ArgumentNotNull(message.EndPoint, "message EndPoint");
+
+			var ipEndPoint = message.EndPoint;
+			var data = message.Payload;
 
 			GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
@@ -200,7 +201,7 @@ namespace LibuvSharp
 					}
 				}
 
-				var msg = new UdpMessage(
+				var msg = new UdpReceiveMessage(
 					ep,
 					ByteBufferAllocator.Retrieve(n),
 					(flags & (short)uv_udp_flags.UV_UDP_PARTIAL) > 0
@@ -263,7 +264,7 @@ namespace LibuvSharp
 			Ensure.Success(r, Loop);
 		}
 
-		public event Action<UdpMessage> Message;
+		public event Action<UdpReceiveMessage> Message;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_ttl(IntPtr handle, int ttl);
