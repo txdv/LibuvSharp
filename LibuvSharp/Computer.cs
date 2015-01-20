@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
@@ -77,11 +78,14 @@ namespace LibuvSharp
 		}
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
 	unsafe internal struct uv_interface_address_t
 	{
 		public IntPtr name;
+		public fixed byte phys_addr[6];
 		public int is_internal;
 		public sockaddr_in6 sockaddr;
+		public sockaddr_in6 netmask;
 	}
 
 	unsafe public class NetworkInterface
@@ -90,12 +94,20 @@ namespace LibuvSharp
 		{
 			Name = Marshal.PtrToStringAnsi(iface->name);
 			Internal = iface->is_internal != 0;
-			Address = UV.GetIPEndPoint((IntPtr)(((IntPtr)iface).ToInt64() + sizeof(IntPtr) + sizeof(int))).Address;
+			byte[] phys_addr = new byte[6];
+			for (int i = 0; i < phys_addr.Length; i++) {
+				phys_addr[i] = iface->phys_addr[i];
+			}
+			PhysicalAddress = new PhysicalAddress(phys_addr);
+			Address = UV.GetIPEndPoint(new IntPtr(&iface->sockaddr)).Address;
+			Netmask = UV.GetIPEndPoint(new IntPtr(&iface->netmask)).Address;
 		}
 
 		public string Name { get; protected set; }
 		public bool Internal { get; protected set; }
+		public PhysicalAddress PhysicalAddress { get; protected set; }
 		public IPAddress Address { get; protected set; }
+		public IPAddress Netmask { get; protected set; }
 
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
