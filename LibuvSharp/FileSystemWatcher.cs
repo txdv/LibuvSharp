@@ -49,7 +49,7 @@ namespace LibuvSharp
 		{
 			uv_fs_event = fs_event;
 			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle, path, uv_fs_event, (int)flags);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 		}
 
 		void fs_event(IntPtr handle, string filename, int events, int status)

@@ -36,7 +36,7 @@ namespace LibuvSharp
 		{
 			FileDescriptor = fd;
 			int r = uv_tty_init(loop.NativeHandle, NativeHandle, fd, (readable ? 1 : 0));
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -45,7 +45,7 @@ namespace LibuvSharp
 		public TTYMode Mode {
 			set {
 				int r = uv_tty_set_mode(NativeHandle, (int)value);
-				Ensure.Success(r, Loop);
+				Ensure.Success(r);
 			}
 		}
 

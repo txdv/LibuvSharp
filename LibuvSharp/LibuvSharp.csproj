@@ -55,7 +55,6 @@
     <Compile Include="IListener.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Internal\Ensure.cs" />
-    <Compile Include="Internal\uv_err_t.cs" />
     <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
     <Compile Include="Internal\FileSystemRequest.cs" />
@@ -127,6 +126,8 @@
     <Compile Include="IMessage.cs" />
     <Compile Include="UdpReceiveMessage.cs" />
     <Compile Include="IMessageReceiver.cs" />
+    <Compile Include="Internal\uv_dirent_t.cs" />
+    <Compile Include="UVDirectoryEntityType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

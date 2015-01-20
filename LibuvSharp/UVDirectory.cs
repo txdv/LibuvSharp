@@ -17,7 +17,7 @@ namespace LibuvSharp
 			var fsr = new FileSystemRequest();
 			fsr.Callback = callback;
 			int r = uv_fs_mkdir(loop.NativeHandle, fsr.Handle, path, mode, FileSystemRequest.StaticEnd);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 		}
 		public static void Create(Loop loop, string path, int mode)
 		{
@@ -56,7 +56,7 @@ namespace LibuvSharp
 			var fsr = new FileSystemRequest();
 			fsr.Callback = callback;
 			int r = uv_fs_rmdir(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 		}
 		public static void Delete(Loop loop, string path)
 		{
@@ -79,7 +79,7 @@ namespace LibuvSharp
 			var fsr = new FileSystemRequest();
 			fsr.Callback = callback;
 			int r = uv_fs_rename(loop.NativeHandle, fsr.Handle, path, newPath, fsr.End);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 		}
 		public static void Rename(Loop loop, string path, string newPath)
 		{
@@ -95,7 +95,10 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_readdir(LoopSafeHandle loop, IntPtr req, string path, int flags, uv_fs_cb callback);
+		private static extern int uv_fs_scandir_next(IntPtr req, out uv_dirent_t ent);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_scandir(LoopSafeHandle loop, IntPtr req, string path, int flags, uv_fs_cb callback);
 
 		unsafe public static void Read(Loop loop, string path, Action<Exception, string[]> callback)
 		{
@@ -105,17 +108,16 @@ namespace LibuvSharp
 					callback(ex, null);
 					return;
 				}
-
-				int length = (int)fsr.Result;
-				string[] res = new string[length];
-				sbyte *ptr = (sbyte *)fsr.Pointer;
-				for (int i = 0; i < length; i++) {
-					res[i] = new string(ptr);
-					ptr += res[i].Length + 1;
+				List<string> list = new List<string>();
+				uv_dirent_t entity;
+				while (uv_fs_scandir_next(fsr.Handle, out entity) != (int)uv_err_code.UV_EOF) {
+					list.Add(new string(entity.name));
 				}
-				Ensure.Success(ex, callback, res);
+
+				Ensure.Success(ex, callback, list.ToArray());
 			};
-			uv_fs_readdir(loop.NativeHandle, fsr.Handle, path, 0, FileSystemRequest.StaticEnd);
+			int r = uv_fs_scandir(loop.NativeHandle, fsr.Handle, path, 0, FileSystemRequest.StaticEnd);
+			Ensure.Success(r);
 		}
 		public static void Read(string path, Action<Exception, string[]> callback)
 		{

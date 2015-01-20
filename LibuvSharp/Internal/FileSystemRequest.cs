@@ -40,12 +40,6 @@ namespace LibuvSharp
 			}
 		}
 
-		public int Error {
-			get {
-				return fsrequest->error;
-			}
-		}
-
 		public IntPtr Pointer {
 			get {
 				return fsrequest->ptr;

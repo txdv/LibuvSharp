@@ -62,10 +62,10 @@ namespace LibuvSharp
 		public int TermSignal { get; private set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_get_process_title(IntPtr buffer, IntPtr size);
+		internal static extern int uv_get_process_title(IntPtr buffer, IntPtr size);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_set_process_title(string title);
+		internal static extern int uv_set_process_title(string title);
 
 		public static string Title {
 			get {
@@ -146,7 +146,7 @@ namespace LibuvSharp
 		{
 			var process = new Process(loop, options, exitCallback);
 			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, process.process_options);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 			return process;
 		}
 
@@ -155,7 +155,8 @@ namespace LibuvSharp
 
 		public void Kill(int signum)
 		{
-			Ensure.Success(uv_process_kill(NativeHandle, signum), Loop);
+			int r = uv_process_kill(NativeHandle, signum);
+			Ensure.Success(r);
 		}
 
 		public void Kill(Signum signum)

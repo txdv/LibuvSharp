@@ -9,9 +9,9 @@ namespace LibuvSharp
 		internal delegate void callback(IntPtr req, int status);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate UnixBufferStruct alloc_callback_unix(IntPtr data, int size);
+		internal delegate void alloc_callback_unix(IntPtr data, int size, out UnixBufferStruct buf);
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate WindowsBufferStruct alloc_callback_win(IntPtr data, int size);
+		internal delegate void alloc_callback_win(IntPtr data, int size, out WindowsBufferStruct buf);
 
 		public Loop Loop { get; protected set; }
 

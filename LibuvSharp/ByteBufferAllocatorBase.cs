@@ -25,18 +25,18 @@ namespace LibuvSharp
 			GC.SuppressFinalize(this);
 		}
 
-		UnixBufferStruct AllocUnix(IntPtr data, int size)
+		void AllocUnix(IntPtr data, int size, out UnixBufferStruct buf)
 		{
 			IntPtr ptr;
 			size = Alloc(size, out ptr);
-			return new UnixBufferStruct(ptr, size);
+			buf = new UnixBufferStruct(ptr, size);
 		}
 
-		WindowsBufferStruct AllocWin(IntPtr data, int size)
+		void AllocWin(IntPtr data, int size, out WindowsBufferStruct buf)
 		{
 			IntPtr ptr;
 			size = Alloc(size, out ptr);
-			return new WindowsBufferStruct(ptr, size);
+			buf = new WindowsBufferStruct(ptr, size);
 		}
 
 		public abstract int Alloc(int size, out IntPtr pointer);

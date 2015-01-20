@@ -9,19 +9,19 @@ namespace LibuvSharp
 	public class Udp : Handle, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, IOpenFileDescriptor
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
+		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void recv_start_callback_unix(IntPtr handle, IntPtr nread, UnixBufferStruct buf, IntPtr sockaddr, ushort flags);
+		internal delegate void recv_start_callback_unix(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_init(LoopSafeHandle loop, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_bind(IntPtr handle, sockaddr_in sockaddr, short flags);
+		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, short flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_bind6(IntPtr handle, sockaddr_in6 sockaddr, short flags);
+		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, short flags);
 
 		recv_start_callback_win recv_start_cb_win;
 		recv_start_callback_unix recv_start_cb_unix;
@@ -45,7 +45,7 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_UDP)
 		{
 			int r = uv_udp_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r, loop);
+			Ensure.Success(r);
 			// we can't supply just recv_start_callback in Receive
 			// because it will create a temporary delegate which could(and will) be garbage collected at any time
 			// happens in my case after 10 or 20 calls
@@ -70,7 +70,7 @@ namespace LibuvSharp
 			} else {
 				r = uv_udp_open_win(NativeHandle, socket);
 			}
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		bool dualstack = false;
@@ -83,11 +83,17 @@ namespace LibuvSharp
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				r = uv_udp_bind(NativeHandle, UV.uv_ip4_addr(ipAddress.ToString(), port), 0);
+				sockaddr_in address;
+				r = UV.uv_ip4_addr(ipAddress.ToString(), port, out address);
+				Ensure.Success(r);
+				r = uv_udp_bind(NativeHandle, ref address, 0);
 			} else {
-				r = uv_udp_bind6(NativeHandle, UV.uv_ip6_addr(ipAddress.ToString(), port), 0);
+				sockaddr_in6 address;
+				r = UV.uv_ip6_addr(ipAddress.ToString(), port, out address);
+				Ensure.Success(r);
+				r = uv_udp_bind(NativeHandle, ref address , 0);
 			}
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 		public void Bind(int port)
 		{
@@ -120,15 +126,15 @@ namespace LibuvSharp
 			Bind(endPoint.Address, endPoint.Port);
 		}
 
-		[DllImport("uv", EntryPoint = "uv_udp_send", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, sockaddr_in addr, callback callback);
-		[DllImport("uv", EntryPoint = "uv_udp_send", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in addr, callback callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int nbufs, ref sockaddr_in addr, callback callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in addr, callback callback);
 
-		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send6_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
-		[DllImport("uv", EntryPoint = "uv_udp_send6", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send6_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, sockaddr_in6 addr, callback callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr, callback callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr, callback callback);
 
 		public void Send(UdpMessage message, Action<Exception> callback)
 		{
@@ -141,7 +147,7 @@ namespace LibuvSharp
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
-				Ensure.Success(status, Loop, callback);
+				Ensure.Success(status, callback);
 			};
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + data.Offset);
@@ -152,21 +158,29 @@ namespace LibuvSharp
 				buf[0] = new UnixBufferStruct(ptr, data.Count);
 
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
+					sockaddr_in address;
+					UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_unix(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
+					sockaddr_in6 address;
+					UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				}
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
 				buf[0] = new WindowsBufferStruct(ptr, data.Count);
 
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					r = uv_udp_send_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
+					sockaddr_in address;
+					UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				} else {
-					r = uv_udp_send6_win(cpr.Handle, NativeHandle, buf, 1, UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port), CallbackPermaRequest.StaticEnd);
+					sockaddr_in6 address;
+					UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				}
 			}
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
@@ -175,11 +189,11 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_recv_start_unix(IntPtr handle, alloc_callback_unix alloc_callback, recv_start_callback_unix callback);
 
-		internal void recv_start_callback_w(IntPtr handle, IntPtr nread, WindowsBufferStruct buf, IntPtr sockaddr, ushort flags)
+		internal void recv_start_callback_w(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
 			recv_start_callback(handle, nread, sockaddr, flags);
 		}
-		internal void recv_start_callback_u(IntPtr handle, IntPtr nread, UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
+		internal void recv_start_callback_u(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
 			recv_start_callback(handle, nread, sockaddr, flags);
 		}
@@ -248,7 +262,7 @@ namespace LibuvSharp
 			} else {
 				r = uv_udp_recv_start_win(NativeHandle, ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
 			}
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 			receiving = true;
 		}
 
@@ -261,7 +275,7 @@ namespace LibuvSharp
 				return;
 			}
 			int r = uv_udp_recv_stop(NativeHandle);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		public event Action<UdpReceiveMessage> Message;
@@ -273,7 +287,7 @@ namespace LibuvSharp
 		{
 			set {
 				int r = uv_udp_set_ttl(NativeHandle, (int)value);
-				Ensure.Success(r, Loop);
+				Ensure.Success(r);
 			}
 		}
 
@@ -283,7 +297,7 @@ namespace LibuvSharp
 		public bool Broadcast {
 			set {
 				int r = uv_udp_set_broadcast(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r, Loop);
+				Ensure.Success(r);
 			}
 		}
 
@@ -293,7 +307,7 @@ namespace LibuvSharp
 		public byte MulticastTTL {
 			set {
 				int r = uv_udp_set_multicast_ttl(NativeHandle, (int)value);
-				Ensure.Success(r, Loop);
+				Ensure.Success(r);
 			}
 		}
 
@@ -303,7 +317,7 @@ namespace LibuvSharp
 		public bool MulticastLoop {
 			set {
 				int r = uv_udp_set_multicast_loop(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r, Loop);
+				Ensure.Success(r);
 			}
 		}
 	}

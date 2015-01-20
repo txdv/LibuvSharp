@@ -8,18 +8,20 @@ namespace LibuvSharp
 {
 	internal class Ensure
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_last_error(LoopSafeHandle loop);
-
-		internal static Exception Map(uv_err_t error, string name = null)
+		internal static Exception Map(int errorCode, string name = null)
 		{
-			if (error.code == uv_err_code.UV_OK) {
+			return Map((uv_err_code)errorCode, name);
+		}
+
+		internal static Exception Map(uv_err_code error, string name = null)
+		{
+			if (error == uv_err_code.UV_OK) {
 				return null;
 			}
 
-			switch (error.code) {
+			switch (error) {
 			case uv_err_code.UV_EINVAL:
-				return new ArgumentException(error.Description);
+				return new ArgumentException(UVException.StringError(error));
 			case uv_err_code.UV_ENOENT:
 				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
@@ -34,28 +36,18 @@ namespace LibuvSharp
 			}
 		}
 
-		internal static void Success(uv_err_t error)
+		public static void Success(int errorCode)
 		{
-			var e = Map(error);
+			var e = Map((uv_err_code)errorCode);
 			if (e != null) {
 				throw e;
 			}
 		}
 
-		internal static void Success(int errorCode, Loop loop)
-		{
-			if (errorCode < 0) {
-				var ex = Success(loop);
-				if (ex != null) {
-					throw ex;
-				}
-			}
-		}
-
-		internal static void Success(int errorCode, Loop loop, Action<Exception> callback, string name = null)
+		internal static void Success(int errorCode, Action<Exception> callback, string name = null)
 		{
 			if (callback != null) {
-				callback(errorCode < 0 ? Success(loop, null) : null);
+				callback(Map(errorCode));
 			}
 		}
 
@@ -64,11 +56,6 @@ namespace LibuvSharp
 			if (callback != null) {
 				callback(ex, arg);
 			}
-		}
-
-		internal static Exception Success(Loop loop, string name = null)
-		{
-			return Map(uv_last_error(loop.NativeHandle), name);
 		}
 
 		public static void ArgumentNotNull(object argumentValue, string argumentName)

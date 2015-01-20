@@ -32,10 +32,10 @@ namespace LibuvSharp
 		internal static bool IsUnix { get { return isUnix; } }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static sockaddr_in uv_ip4_addr(string ip, int port);
+		internal extern static int uv_ip4_addr(string ip, int port, out sockaddr_in address);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static sockaddr_in6 uv_ip6_addr(string ip, int port);
+		internal extern static int uv_ip6_addr(string ip, int port, out sockaddr_in6 address);
 
 		[DllImport("__Internal", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static ushort ntohs_unix(ushort bytes);
@@ -62,11 +62,13 @@ namespace LibuvSharp
 		{
 			sockaddr *sa = (sockaddr *)sockaddr;
 			byte[] addr = new byte[64];
+			int r;
 			if (sa->sin_family == 2) {
-				uv_ip4_name(sockaddr, addr, (IntPtr)addr.Length);
+				r = uv_ip4_name(sockaddr, addr, (IntPtr)addr.Length);
 			} else {
-				uv_ip6_name(sockaddr, addr, (IntPtr)addr.Length);
+				r = uv_ip6_name(sockaddr, addr, (IntPtr)addr.Length);
 			}
+			Ensure.Success(r);
 
 			int i = 0;
 			while (i < addr.Length && addr[i] != 0) {
@@ -195,7 +197,7 @@ namespace LibuvSharp
 			IntPtr ptr = new IntPtr(&addr);
 			int length = sizeof(sockaddr_in6);
 			int r = NativeMethods.uv_tcp_getsockname(handle.NativeHandle, ptr, ref length);
-			Ensure.Success(r, handle.Loop);
+			Ensure.Success(r);
 			return UV.GetIPEndPoint(ptr);
 		}
 	}

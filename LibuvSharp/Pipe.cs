@@ -17,7 +17,8 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			// the ipc setting in the listener is irrelevant
-			uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
+			int r = uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
+			Ensure.Success(r);
 		}
 
 		protected override UVStream Create()
@@ -32,7 +33,7 @@ namespace LibuvSharp
 		{
 			Ensure.ArgumentNotNull(name, null);
 			int r = uv_pipe_bind(NativeHandle, name);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 			LocalAddress = name;
 		}
 
@@ -69,7 +70,7 @@ namespace LibuvSharp
 		public void Open(IntPtr fd)
 		{
 			int r = uv_pipe_open(NativeHandle, fd.ToInt32());
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -89,7 +90,7 @@ namespace LibuvSharp
 			ConnectRequest cpr = new ConnectRequest();
 			Pipe pipe = this;
 
-			cpr.Callback = (status, cpr2) => Ensure.Success(status, Loop, callback, name);
+			cpr.Callback = (status, cpr2) => Ensure.Success(status, callback, name);
 
 			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.StaticEnd);
 			RemoteAddress = name;
@@ -134,7 +135,7 @@ namespace LibuvSharp
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
-				Ensure.Success(status, Loop, callback);
+				Ensure.Success(status, callback);
 			};
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
@@ -150,7 +151,7 @@ namespace LibuvSharp
 				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.StaticEnd);
 			}
 
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 		public void Write(UVStream stream, byte[] data, int index, Action<Exception> callback)
 		{

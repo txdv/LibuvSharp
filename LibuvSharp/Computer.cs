@@ -52,7 +52,7 @@ namespace LibuvSharp
 		public CpuTimes Times { get; protected set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_cpu_info(out IntPtr info, out int count);
+		internal static extern int uv_cpu_info(out IntPtr info, out int count);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_free_cpu_info(IntPtr info, int count);
@@ -61,7 +61,8 @@ namespace LibuvSharp
 		{
 			IntPtr info;
 			int count;
-			var error = uv_cpu_info(out info, out count);
+			int r = uv_cpu_info(out info, out count);
+			Ensure.Success(r);
 
 			CpuInformation[] ret = new CpuInformation[count];
 
@@ -71,7 +72,7 @@ namespace LibuvSharp
 			}
 
 			uv_free_cpu_info(info, count);
-			Ensure.Success(error);
+
 			return ret;
 		}
 	}
@@ -98,7 +99,7 @@ namespace LibuvSharp
 
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_interface_addresses(out IntPtr address, out int count);
+		internal static extern int uv_interface_addresses(out IntPtr address, out int count);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_free_interface_addresses(IntPtr address, int count);
@@ -107,7 +108,8 @@ namespace LibuvSharp
 		{
 			IntPtr interfaces;
 			int count;
-			var error = uv_interface_addresses(out interfaces, out count);
+			int r = uv_interface_addresses(out interfaces, out count);
+			Ensure.Success(r);
 
 			NetworkInterface[] ret = new NetworkInterface[count];
 
@@ -117,7 +119,6 @@ namespace LibuvSharp
 			}
 
 			uv_free_interface_addresses(interfaces, count);
-			Ensure.Success(error);
 			return ret;
 		}
 	}
@@ -200,7 +201,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern uv_err_t uv_uptime(out double uptime);
+		internal static extern int uv_uptime(out double uptime);
 
 		public static double Uptime {
 			get {

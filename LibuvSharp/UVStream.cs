@@ -11,11 +11,11 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_win(IntPtr stream, IntPtr size, WindowsBufferStruct buf);
 
-		[DllImport("uv", EntryPoint = "uv_read_start", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_read_start_unix(IntPtr stream, alloc_callback_unix alloc_callback, read_callback_unix read_callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_read_start(IntPtr stream, alloc_callback_unix alloc_callback, read_callback_unix read_callback);
 
-		[DllImport("uv", EntryPoint = "uv_read_start", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_read_start_win(IntPtr stream, alloc_callback_win alloc_callback, read_callback_win read_callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_read_start(IntPtr stream, alloc_callback_win alloc_callback, read_callback_win read_callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_watcher_start(IntPtr stream, Action<IntPtr> read_watcher_callback);
@@ -74,17 +74,17 @@ namespace LibuvSharp
 		{
 			int r;
 			if (UV.isUnix) {
-				r = uv_read_start_unix(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
+				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
 			} else {
-				r = uv_read_start_win(NativeHandle, ByteBufferAllocator.AllocCallbackWin, read_cb_win);
+				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackWin, read_cb_win);
 			}
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		public void Pause()
 		{
 			int r = uv_read_stop(NativeHandle);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		read_callback_unix read_cb_unix;
@@ -105,10 +105,10 @@ namespace LibuvSharp
 			if (nread == 0) {
 				return;
 			} else if (nread < 0) {
-				if (nread == -1) {
+				if (nread == (long)uv_err_code.UV_EOF) {
 					Close(Complete);
 				} else {
-					OnError(Ensure.Success(Loop));
+					OnError(Ensure.Map((int)nread));
 					Close();
 				}
 			} else {
@@ -164,7 +164,7 @@ namespace LibuvSharp
 				datagchandle.Free();
 				PendingWrites--;
 
-				Ensure.Success(status, Loop, callback);
+				Ensure.Success(status, callback);
 
 				if (PendingWrites == 0) {
 					OnDrain();
@@ -184,14 +184,14 @@ namespace LibuvSharp
 				r = uv_write_win(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.StaticEnd);
 			}
 
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		public void Shutdown(Action<Exception> callback)
 		{
 			var cbr = new CallbackPermaRequest(RequestType.UV_SHUTDOWN);
 			cbr.Callback = (status, _) => {
-				Ensure.Success(status, Loop, (ex) => Close(() => {
+				Ensure.Success(status, (ex) => Close(() => {
 					if (callback != null) {
 						callback(ex);
 					}

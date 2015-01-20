@@ -31,7 +31,7 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_POLL)
 		{
 			int r = uv_poll_init(loop.NativeHandle, NativeHandle, fd);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 
 			poll_cb += pollcallback;
 		}
@@ -39,13 +39,13 @@ namespace LibuvSharp
 		public void Start(PollEvent events)
 		{
 			int r = uv_poll_start(NativeHandle, (int)events, poll_cb);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 		}
 
 		public void Stop()
 		{
 			int r = uv_poll_stop(NativeHandle);
-			Ensure.Success(r, Loop);
+			Ensure.Success(r);
 
 			Event = null;
 		}

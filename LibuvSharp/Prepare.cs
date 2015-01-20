@@ -22,8 +22,8 @@ namespace LibuvSharp
 		public Prepare(Loop loop)
 			: base(loop, HandleType.UV_PREPARE)
 		{
-			int err = uv_prepare_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(err, Loop);
+			int r = uv_prepare_init(loop.NativeHandle, NativeHandle);
+			Ensure.Success(r);
 		}
 
 		Action<IntPtr, int> cb;
@@ -40,14 +40,14 @@ namespace LibuvSharp
 
 		internal void Start(IntPtr callback)
 		{
-			int err = uv_prepare_start(NativeHandle, callback);
-			Ensure.Success(err, Loop);
+			int r = uv_prepare_start(NativeHandle, callback);
+			Ensure.Success(r);
 		}
 
 		public void Stop()
 		{
-			int err = uv_prepare_stop(NativeHandle);
-			Ensure.Success(err, Loop);
+			int r = uv_prepare_stop(NativeHandle);
+			Ensure.Success(r);
 		}
 	}
 }

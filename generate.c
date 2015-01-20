@@ -1,18 +1,17 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <uv.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define UV_ERRNO_GEN(val, name, s) \
-if (val != UV_UNKNOWN) { \
-  printf("\t\tUV_%s = %u,\n", #name, val); \
-} else { \
-  printf("\t\tUV_UNKNOWN = -1,\n"); \
-}
-
 void print_err()
 {
   printf("using System;\n\nnamespace LibuvSharp\n{\n\tenum uv_err_code\n\t{\n");
-  UV_ERRNO_MAP(UV_ERRNO_GEN)
+  printf("\t\tUV_OK = 0,\n");
+#define XX(value, description) printf("\t\tUV_%s = %i,\n", #value, UV_ ## ##value);
+  UV_ERRNO_MAP(XX)
+#undef XX
   printf("\t}\n}\n");
 }
 

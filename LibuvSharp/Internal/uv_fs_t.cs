@@ -12,7 +12,6 @@ namespace LibuvSharp
 		public IntPtr result;
 		public IntPtr ptr;
 		public IntPtr path;
-		public int error;
 	}
 }
 
