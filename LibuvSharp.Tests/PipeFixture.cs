@@ -31,7 +31,7 @@ namespace LibuvSharp.Tests
 			Pipe pipe = new Pipe();
 			pipe.Connect("NOT_EXISTING", (e) => {
 				Assert.NotNull(e);
-				Assert.Equal(e.GetType(), typeof(System.IO.FileNotFoundException));
+				Assert.IsType<System.IO.FileNotFoundException>(e);
 			});
 			Loop.Default.Run();
 		}
