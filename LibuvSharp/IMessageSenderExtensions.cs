@@ -10,7 +10,8 @@ namespace LibuvSharp
 		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, Action<Exception> callback)
 			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
-			sender.Send(ipAddress, port, data, 0, callback);
+			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
+			sender.Send(IPAddress.Parse(ipAddress), port, data, 0, callback);
 		}
 
 		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data)
@@ -22,6 +23,7 @@ namespace LibuvSharp
 		public static void Send<TMessage>(this IMessageSender<TMessage> sender, string ipAddress, int port, byte[] data, int index, Action<Exception> callback)
 			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			sender.Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
 
@@ -63,6 +65,7 @@ namespace LibuvSharp
 		public static void Send<TMessage>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, byte[] data, int index, Action<Exception> callback)
 			where TMessage : IMessage<IPEndPoint, ArraySegment<byte>>, new()
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			sender.Send(ipAddress, port, data, index, data.Length - index, callback);
 		}
 
@@ -105,6 +108,7 @@ namespace LibuvSharp
 		public static void Send<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index, Action<Exception> callback)
 			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			sender.Send(endPoint, data, index, data.Length - index, callback);
 		}
 
