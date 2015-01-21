@@ -100,18 +100,19 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_scandir(LoopSafeHandle loop, IntPtr req, string path, int flags, uv_fs_cb callback);
 
-		unsafe public static void Read(Loop loop, string path, Action<Exception, string[]> callback)
+		public static void Read(Loop loop, string path, Action<Exception, UVDirectoryEntity[]> callback)
 		{
-			var fsr = new FileSystemRequest();
+			var fsr = new FileSystemRequest() { KeepAlive = true };
 			fsr.Callback = (ex) => {
 				if (ex != null) {
 					callback(ex, null);
 					return;
 				}
-				List<string> list = new List<string>();
+
+				var list = new List<UVDirectoryEntity>();
 				uv_dirent_t entity;
 				while (uv_fs_scandir_next(fsr.Handle, out entity) != (int)uv_err_code.UV_EOF) {
-					list.Add(new string(entity.name));
+					list.Add(new UVDirectoryEntity(entity));
 				}
 
 				Ensure.Success(ex, callback, list.ToArray());
@@ -119,7 +120,8 @@ namespace LibuvSharp
 			int r = uv_fs_scandir(loop.NativeHandle, fsr.Handle, path, 0, FileSystemRequest.StaticEnd);
 			Ensure.Success(r);
 		}
-		public static void Read(string path, Action<Exception, string[]> callback)
+
+		public static void Read(string path, Action<Exception, UVDirectoryEntity[]> callback)
 		{
 			Read(Loop.Constructor, path, callback);
 		}

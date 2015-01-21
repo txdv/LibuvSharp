@@ -81,8 +81,9 @@ namespace LibuvSharp.Tests
 				Assert.Null(e);
 				Assert.NotNull(list);
 				Assert.Equal(list.Length, 2);
-				Assert.True(list.Contains("dir"));
-				Assert.True(list.Contains("file"));
+
+				Assert.True(list.Select(entity => entity.Name).Contains("dir"));
+				Assert.True(list.Select(entity => entity.Name).Contains("file"));
 
 				Directory.Delete(Default.Directory, true);
 			});

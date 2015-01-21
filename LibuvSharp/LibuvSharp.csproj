@@ -126,6 +126,7 @@
     <Compile Include="IMessage.cs" />
     <Compile Include="UdpReceiveMessage.cs" />
     <Compile Include="IMessageReceiver.cs" />
+    <Compile Include="UVDirectoryEntity.cs" />
     <Compile Include="Internal\uv_dirent_t.cs" />
     <Compile Include="UVDirectoryEntityType.cs" />
   </ItemGroup>
