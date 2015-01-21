@@ -49,14 +49,15 @@ namespace LibuvSharp
 		public void End(IntPtr ptr)
 		{
 			Exception e = null;
-			if (Result.ToInt32() == -1) {
-				uv_err_t err = new uv_err_t(Error);
-				e = Ensure.Map(err, (string.IsNullOrEmpty(Path) ? null : Path));
+			var r = Result.ToInt32();
+			if (r < 0) {
+				e = Ensure.Map(r, (string.IsNullOrEmpty(Path) ? null : Path));
 			}
 
 			if (Callback != null) {
 				Callback(e);
 			}
+
 			Dispose();
 		}
 
