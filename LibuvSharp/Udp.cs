@@ -83,14 +83,10 @@ namespace LibuvSharp
 
 			int r;
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				sockaddr_in address;
-				r = UV.uv_ip4_addr(ipAddress.ToString(), port, out address);
-				Ensure.Success(r);
+				sockaddr_in address = UV.ToStruct(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address, 0);
 			} else {
-				sockaddr_in6 address;
-				r = UV.uv_ip6_addr(ipAddress.ToString(), port, out address);
-				Ensure.Success(r);
+				sockaddr_in6 address = UV.ToStruct6(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address , 0);
 			}
 			Ensure.Success(r);
@@ -158,12 +154,10 @@ namespace LibuvSharp
 				buf[0] = new UnixBufferStruct(ptr, data.Count);
 
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					sockaddr_in address;
-					UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				} else {
-					sockaddr_in6 address;
-					UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				}
 			} else {
@@ -171,12 +165,10 @@ namespace LibuvSharp
 				buf[0] = new WindowsBufferStruct(ptr, data.Count);
 
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-					sockaddr_in address;
-					UV.uv_ip4_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				} else {
-					sockaddr_in6 address;
-					UV.uv_ip6_addr(ipEndPoint.Address.ToString(), ipEndPoint.Port, out address);
+					sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
 				}
 			}

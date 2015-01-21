@@ -37,6 +37,22 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_ip6_addr(string ip, int port, out sockaddr_in6 address);
 
+		internal static sockaddr_in ToStruct(string ip, int port)
+		{
+			sockaddr_in address;
+			int r = uv_ip4_addr(ip, port, out address);
+			Ensure.Success(r);
+			return address;
+		}
+
+		internal static sockaddr_in6 ToStruct6(string ip, int port)
+		{
+			sockaddr_in6 address;
+			int r = uv_ip6_addr(ip, port, out address);
+			Ensure.Success(r);
+			return address;
+		}
+
 		[DllImport("__Internal", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static ushort ntohs_unix(ushort bytes);
 

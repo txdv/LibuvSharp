@@ -28,20 +28,16 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, uint flags);
 
-		public void Bind(IPEndPoint endPoint)
+		public void Bind(IPEndPoint ipEndPoint)
 		{
-			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Ensure.ArgumentNotNull(ipEndPoint, "endPoint");
 			int r;
 
-			if (endPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				sockaddr_in address;
-				r = UV.uv_ip4_addr(endPoint.Address.ToString(), endPoint.Port, out address);
-				Ensure.Success(r);
+			if (ipEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
 			} else {
-				sockaddr_in6 address;
-				r = UV.uv_ip6_addr(endPoint.Address.ToString(), endPoint.Port, out address);
-				Ensure.Success(r);
+				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
 			}
 			Ensure.Success(r);
@@ -117,14 +113,10 @@ namespace LibuvSharp
 
 			int r;
 			if (endPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				sockaddr_in address;
-				r = UV.uv_ip4_addr(endPoint.Address.ToString(), endPoint.Port, out address);
-				Ensure.Success(r);
+				sockaddr_in address = UV.ToStruct(endPoint.Address.ToString(), endPoint.Port);
 				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
 			} else {
-				sockaddr_in6 address;
-				r = UV.uv_ip6_addr(endPoint.Address.ToString(), endPoint.Port, out address);
-				Ensure.Success(r);
+				sockaddr_in6 address = UV.ToStruct6(endPoint.Address.ToString(), endPoint.Port);
 				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
 			}
 			Ensure.Success(r);
