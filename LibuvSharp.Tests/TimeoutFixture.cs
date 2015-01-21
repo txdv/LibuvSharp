@@ -33,7 +33,7 @@ namespace LibuvSharp.Tests
 			int callbacks = 0;
 
 			var failClient = new TClient();
-			Timeout.In<TEndPoint>(TimeSpan.FromMilliseconds(1), failClient.Connect)(endPoint, (exception) => {
+			Timeout.In<TEndPoint>(TimeSpan.FromTicks(1), failClient.Connect)(endPoint, (exception) => {
 				Assert.IsType<TimeoutException>(exception);
 				failClient.Dispose();
 				callbacks++;
@@ -68,7 +68,7 @@ namespace LibuvSharp.Tests
 
 					using (var failClient = new TClient()) {
 						try {
-							await failClient.ConnectAsync(endPoint, TimeSpan.FromMilliseconds(1));
+							await failClient.ConnectAsync(endPoint, TimeSpan.FromTicks(1));
 						} catch (TimeoutException) {
 							callbacks++;
 						}
