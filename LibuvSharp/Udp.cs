@@ -85,9 +85,11 @@ namespace LibuvSharp
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address, 0);
-			} else {
+			} else if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in6 address = UV.ToStruct6(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address , 0);
+			} else {
+				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
@@ -156,9 +158,11 @@ namespace LibuvSharp
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 					sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
-				} else {
+				} else if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
 					sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
+				} else {
+					throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 				}
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
@@ -167,9 +171,11 @@ namespace LibuvSharp
 				if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 					sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
-				} else {
+				} else if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
 					sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 					r = uv_udp_send(cpr.Handle, NativeHandle, buf, 1, ref address, CallbackPermaRequest.StaticEnd);
+				} else {
+					throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 				}
 			}
 			Ensure.Success(r);

@@ -30,15 +30,16 @@ namespace LibuvSharp
 
 		public void Bind(IPEndPoint ipEndPoint)
 		{
-			Ensure.ArgumentNotNull(ipEndPoint, "endPoint");
+			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
 			int r;
-
 			if (ipEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
-			} else {
+			} else if (ipEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
 				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
+			} else {
+				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
@@ -103,21 +104,23 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_connect(IntPtr req, IntPtr handle, ref sockaddr_in6 addr, callback callback);
 
-		public void Connect(IPEndPoint endPoint, Action<Exception> callback)
+		public void Connect(IPEndPoint ipEndPoint, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(endPoint, "endPoint");
+			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
 			Ensure.ArgumentNotNull(callback, "callback");
 
 			ConnectRequest cpr = new ConnectRequest();
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, callback);
 
 			int r;
-			if (endPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				sockaddr_in address = UV.ToStruct(endPoint.Address.ToString(), endPoint.Port);
+			if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
+				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
+			} else if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
+				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
 			} else {
-				sockaddr_in6 address = UV.ToStruct6(endPoint.Address.ToString(), endPoint.Port);
-				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
+				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
