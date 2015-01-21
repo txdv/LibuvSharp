@@ -382,6 +382,11 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
+		public static void Stat(string path, Action<Exception, UVFileStat> callback)
+		{
+			Stat(Loop.Constructor, path, callback);
+		}
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fstat(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
