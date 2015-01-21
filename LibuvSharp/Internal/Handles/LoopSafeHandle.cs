@@ -10,7 +10,9 @@ namespace LibuvSharp
 
 		protected override bool ReleaseHandleImpl()
 		{
-			uv_loop_delete(handle);
+			if (handle != Loop.Default.NativeHandle.Handle) {
+				uv_loop_delete(handle);
+			}
 			return true;
 		}
 	}
