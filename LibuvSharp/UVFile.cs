@@ -376,11 +376,7 @@ namespace LibuvSharp
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex) => {
 				if (callback != null) {
-					UVFileStat stat = null;
-					if (UV.isUnix) {
-						stat = lin_stat.Convert(fsr.Pointer);
-					}
-					Ensure.Success(ex, callback, stat);
+					Ensure.Success(ex, callback, new UVFileStat(fsr.stat));
 				}
 			};
 			int r = uv_fs_stat(loop.NativeHandle, fsr.Handle, path, FileSystemRequest.StaticEnd);
@@ -390,16 +386,12 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fstat(LoopSafeHandle loop, IntPtr req, int fd, uv_fs_cb callback);
 
-		unsafe public void Stat(Loop loop, Action<Exception, UVFileStat> callback)
+		public void Stat(Loop loop, Action<Exception, UVFileStat> callback)
 		{
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex) => {
 				if (callback != null) {
-					UVFileStat stat = null;
-					if (UV.isUnix) {
-						stat = lin_stat.Convert(fsr.Pointer);
-					}
-					Ensure.Success(ex, callback, stat);
+					Ensure.Success(ex, callback, new UVFileStat(fsr.stat));
 				}
 			};
 			int r = uv_fs_fstat(loop.NativeHandle, fsr.Handle, FileDescriptor, FileSystemRequest.StaticEnd);

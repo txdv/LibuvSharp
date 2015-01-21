@@ -83,7 +83,6 @@
     <Compile Include="Threading\Tasks\LoopExtensions.cs" />
     <Compile Include="Threading\Tasks\UVDirectoryAsync.cs" />
     <Compile Include="Threading\Tasks\UVFileAsync.cs" />
-    <Compile Include="Internal\stat.cs" />
     <Compile Include="UVFileStat.cs" />
     <Compile Include="IUVStreamExtensions.cs" />
     <Compile Include="UVFileStream.cs" />
@@ -129,6 +128,8 @@
     <Compile Include="UVDirectoryEntity.cs" />
     <Compile Include="Internal\uv_dirent_t.cs" />
     <Compile Include="UVDirectoryEntityType.cs" />
+    <Compile Include="Internal\uv_stat_t.cs" />
+    <Compile Include="Internal\uv_timespec_t.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

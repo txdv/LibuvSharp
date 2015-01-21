@@ -4,14 +4,15 @@ using System.Runtime.InteropServices;
 namespace LibuvSharp
 {
 	[StructLayout(LayoutKind.Sequential)]
-	struct uv_fs_t
+	unsafe struct uv_fs_t
 	{
 		public int fs_type;
 		public IntPtr loop;
 		public IntPtr cb;
 		public IntPtr result;
 		public IntPtr ptr;
-		public IntPtr path;
+		public sbyte* path;
+		public uv_stat_t buf;
 	}
 }
 
