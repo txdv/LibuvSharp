@@ -97,7 +97,6 @@ namespace LibuvSharp
 		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
 			Read(loop, data, index, count, callback, -1);
-
 		}
 		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback, int offset)
 		{
