@@ -177,11 +177,11 @@ namespace LibuvSharp
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
 				buf[0] = new UnixBufferStruct(ptr, count);
-				r = uv_write_unix(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.StaticEnd);
+				r = uv_write_unix(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.CallbackDelegate);
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
 				buf[0] = new WindowsBufferStruct(ptr, count);
-				r = uv_write_win(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.StaticEnd);
+				r = uv_write_win(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.CallbackDelegate);
 			}
 
 			Ensure.Success(r);
@@ -197,7 +197,7 @@ namespace LibuvSharp
 					}
 				}));
 			};
-			uv_shutdown(cbr.Handle, NativeHandle, CallbackPermaRequest.StaticEnd);
+			uv_shutdown(cbr.Handle, NativeHandle, CallbackPermaRequest.CallbackDelegate);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

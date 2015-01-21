@@ -115,10 +115,10 @@ namespace LibuvSharp
 			int r;
 			if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
-				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.CallbackDelegate);
 			} else if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
 				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
-				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.StaticEnd);
+				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.CallbackDelegate);
 			} else {
 				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}

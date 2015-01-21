@@ -15,6 +15,10 @@ namespace LibuvSharp
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_getsockname(IntPtr handle, IntPtr addr, ref int length);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		public delegate void uv_fs_cb(IntPtr IntPtr);
+
 	}
 }
 

@@ -22,6 +22,8 @@ namespace LibuvSharp
 			Dispose();
 		}
 
+		public static Handle.callback CallbackDelegate = StaticEnd;
+
 		static public void StaticEnd(IntPtr ptr, int status)
 		{
 			var obj = PermaRequest.GetObject<CallbackPermaRequest>(ptr);

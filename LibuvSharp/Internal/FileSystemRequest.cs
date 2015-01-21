@@ -67,6 +67,8 @@ namespace LibuvSharp
 			Dispose();
 		}
 
+		public static NativeMethods.uv_fs_cb CallbackDelegate = StaticEnd;
+
 		public static void StaticEnd(IntPtr ptr)
 		{
 			PermaRequest.GetObject<FileSystemRequest>(ptr).End(ptr);

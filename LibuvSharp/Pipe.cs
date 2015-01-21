@@ -93,7 +93,7 @@ namespace LibuvSharp
 
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, callback, name);
 
-			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.StaticEnd);
+			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.CallbackDelegate);
 			RemoteAddress = name;
 		}
 
@@ -145,11 +145,11 @@ namespace LibuvSharp
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
 				buf[0] = new UnixBufferStruct(ptr, count);
-				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.StaticEnd);
+				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.CallbackDelegate);
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
 				buf[0] = new WindowsBufferStruct(ptr, count);
-				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.StaticEnd);
+				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.CallbackDelegate);
 			}
 
 			Ensure.Success(r);
