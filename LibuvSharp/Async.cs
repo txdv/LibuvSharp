@@ -24,7 +24,8 @@ namespace LibuvSharp
 				OnCallback();
 			};
 
-			uv_async_init(loop.NativeHandle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
+			int r = uv_async_init(loop.NativeHandle, NativeHandle, Marshal.GetFunctionPointerForDelegate(cb));
+			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

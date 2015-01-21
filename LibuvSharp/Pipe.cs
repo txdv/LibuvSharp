@@ -60,7 +60,8 @@ namespace LibuvSharp
 		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
-			uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
+			int r = uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
+			Ensure.Success(r);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}
 
