@@ -46,6 +46,12 @@ namespace LibuvSharp
 			}
 		}
 
+		public uv_stat_t stat {
+			get {
+				return fsrequest->buf;
+			}
+		}
+
 		public void End(IntPtr ptr)
 		{
 			Exception e = null;
