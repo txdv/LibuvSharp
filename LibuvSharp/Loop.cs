@@ -110,7 +110,7 @@ namespace LibuvSharp
 
 		unsafe public uint ActiveHandlesCount {
 			get {
-				return loop_t->active_handlers;
+				return loop_t->active_handles;
 			}
 		}
 

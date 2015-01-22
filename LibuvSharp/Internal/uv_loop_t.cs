@@ -7,7 +7,7 @@ namespace LibuvSharp
 	struct uv_loop_t
 	{
 		public IntPtr data;
-		public uint active_handlers;
+		public uint active_handles;
 	}
 }
 
