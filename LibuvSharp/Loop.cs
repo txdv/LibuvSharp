@@ -328,6 +328,15 @@ namespace LibuvSharp
 		{
 			uv_stop(NativeHandle);
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_loop_alive(IntPtr loop);
+
+		public bool IsAlive {
+			get {
+				return uv_loop_alive(NativeHandle) != 0;
+			}
+		}
 	}
 }
 
