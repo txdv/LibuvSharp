@@ -40,6 +40,12 @@ namespace LibuvSharp
 			async.Unref();
 		}
 
+		public bool HasRef {
+			get {
+				return async.HasRef;
+			}
+		}
+
 		public bool IsClosed {
 			get {
 				return async.IsClosed;
