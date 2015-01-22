@@ -31,6 +31,8 @@ namespace LibuvSharp
 				return new SocketException(10049);
 			case uv_err_code.UV_ECONNREFUSED:
 				return new SocketException(10061);
+			case uv_err_code.UV_ENOTSUP:
+				return new NotSupportedException();
 			default:
 				return new UVException(error);
 			}
