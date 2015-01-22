@@ -128,6 +128,9 @@
     <Compile Include="UVDirectoryEntityType.cs" />
     <Compile Include="Internal\uv_stat_t.cs" />
     <Compile Include="Internal\uv_timespec_t.cs" />
+    <Compile Include="ISendBufferSize.cs" />
+    <Compile Include="IReceiveBufferSize.cs" />
+    <Compile Include="HandleBufferSize.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

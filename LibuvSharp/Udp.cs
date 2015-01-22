@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : Handle, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, IOpenFileDescriptor
+	public class Udp : HandleBufferSize, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, IOpenFileDescriptor
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
