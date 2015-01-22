@@ -5,9 +5,6 @@ namespace LibuvSharp
 {
 	public class PipeListener : Listener<Pipe>, IBindable<PipeListener, string>, ILocalAddress<string>
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
-
 		public PipeListener()
 			: this(Loop.Constructor)
 		{
@@ -17,7 +14,7 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
 			// the ipc setting in the listener is irrelevant
-			int r = uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
+			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
 			Ensure.Success(r);
 		}
 
@@ -44,9 +41,6 @@ namespace LibuvSharp
 	{
 		unsafe uv_pipe_t *pipe_t;
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
-
 		public Pipe()
 			: this(Loop.Constructor)
 		{
@@ -60,7 +54,7 @@ namespace LibuvSharp
 		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
 			: base(loop, HandleType.UV_NAMED_PIPE)
 		{
-			int r = uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
+			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
 			Ensure.Success(r);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
 		}

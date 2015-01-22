@@ -19,6 +19,8 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		public delegate void uv_fs_cb(IntPtr IntPtr);
 
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 	}
 }
 
