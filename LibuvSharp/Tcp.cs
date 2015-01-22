@@ -65,7 +65,7 @@ namespace LibuvSharp
 		}
 	}
 
-	public class Tcp : UVStream, IConnectable<Tcp, IPEndPoint>, ILocalAddress<IPEndPoint>, IRemoteAddress<IPEndPoint>, IOpenFileDescriptor
+	public class Tcp : UVStream, IConnectable<Tcp, IPEndPoint>, ILocalAddress<IPEndPoint>, IRemoteAddress<IPEndPoint>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_tcp_init(IntPtr loop, IntPtr handle);
@@ -79,23 +79,6 @@ namespace LibuvSharp
 			: base(loop, HandleType.UV_TCP)
 		{
 			uv_tcp_init(loop.NativeHandle, NativeHandle);
-		}
-
-		[DllImport("uv", EntryPoint = "uv_tcp_open", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_open_win(IntPtr handle, IntPtr sock);
-
-		[DllImport("uv", EntryPoint = "uv_tcp_open", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_tcp_open_lin(IntPtr handle, int sock);
-
-		public void Open(IntPtr socket)
-		{
-			int r;
-			if (UV.IsUnix) {
-				r = uv_tcp_open_lin(NativeHandle, socket.ToInt32());
-			} else {
-				r = uv_tcp_open_win(NativeHandle, socket);
-			}
-			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

@@ -37,7 +37,7 @@ namespace LibuvSharp
 		public string LocalAddress { get; private set; }
 	}
 
-	public class Pipe : UVStream, IConnectable<Pipe, string>, IRemoteAddress<string>, IOpenFileDescriptor
+	public class Pipe : UVStream, IConnectable<Pipe, string>, IRemoteAddress<string>
 	{
 		unsafe uv_pipe_t *pipe_t;
 
@@ -57,15 +57,6 @@ namespace LibuvSharp
 			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
 			Ensure.Success(r);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
-		}
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_open(IntPtr handle, int fd);
-
-		public void Open(IntPtr fd)
-		{
-			int r = uv_pipe_open(NativeHandle, fd.ToInt32());
-			Ensure.Success(r);
 		}
 
 		unsafe public bool InterProcessCommunication {

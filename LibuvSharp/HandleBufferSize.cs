@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class HandleBufferSize : Handle, ISendBufferSize, IReceiveBufferSize
+	public class HandleBufferSize : HandleFileDescriptor, ISendBufferSize, IReceiveBufferSize
 	{
 		internal HandleBufferSize(Loop loop, IntPtr handle)
 			: base(loop, handle)

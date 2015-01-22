@@ -93,8 +93,6 @@
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\uv_stream_t.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="IOpenFileDescriptor.cs" />
-    <Compile Include="IOpenFileDescriptorExtensions.cs" />
     <Compile Include="UdpMessage.cs" />
     <Compile Include="Internal\uv_udp_flags.cs" />
     <Compile Include="CopyingByteBufferAllocator.cs" />
@@ -131,6 +129,9 @@
     <Compile Include="ISendBufferSize.cs" />
     <Compile Include="IReceiveBufferSize.cs" />
     <Compile Include="HandleBufferSize.cs" />
+    <Compile Include="IFileDescriptor.cs" />
+    <Compile Include="HandleFileDescriptor.cs" />
+    <Compile Include="IFileDescriptorExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : HandleBufferSize, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, IOpenFileDescriptor
+	public class Udp : HandleBufferSize, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -54,23 +54,6 @@ namespace LibuvSharp
 			recv_start_cb_win = recv_start_callback_w;
 			recv_start_cb_unix = recv_start_callback_u;
 
-		}
-
-		[DllImport("uv", EntryPoint = "uv_udp_open", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_open_win(IntPtr handle, IntPtr sock);
-
-		[DllImport("uv", EntryPoint = "uv_udp_open", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_open_lin(IntPtr handle, int sock);
-
-		public void Open(IntPtr socket)
-		{
-			int r;
-			if (UV.IsUnix) {
-				r = uv_udp_open_lin(NativeHandle, socket.ToInt32());
-			} else {
-				r = uv_udp_open_win(NativeHandle, socket);
-			}
-			Ensure.Success(r);
 		}
 
 		bool dualstack = false;
