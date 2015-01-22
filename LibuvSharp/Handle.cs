@@ -155,6 +155,9 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_unref(IntPtr handle);
 
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_has_ref(IntPtr handle);
+
 		public void Ref()
 		{
 			uv_ref(NativeHandle);
@@ -163,6 +166,12 @@ namespace LibuvSharp
 		public void Unref()
 		{
 			uv_unref(NativeHandle);
+		}
+
+		public bool HasRef {
+			get {
+				return uv_has_ref(NativeHandle) != 0;
+			}
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
