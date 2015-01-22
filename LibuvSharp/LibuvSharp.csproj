@@ -104,8 +104,6 @@
     <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
     <Compile Include="Threading\HelperFunctions.cs" />
     <Compile Include="Threading\Tasks\UVFileStreamExtensions.cs" />
-    <Compile Include="Internal\Handles\BaseSafeHandle.cs" />
-    <Compile Include="Internal\Handles\LoopSafeHandle.cs" />
     <Compile Include="IConnectable.cs" />
     <Compile Include="IConnectableExtensions.cs" />
     <Compile Include="ILocalAddress.cs" />
@@ -136,6 +134,5 @@
     <Folder Include="Internal\" />
     <Folder Include="Threading\" />
     <Folder Include="Threading\Tasks\" />
-    <Folder Include="Internal\Handles\" />
   </ItemGroup>
 </Project>

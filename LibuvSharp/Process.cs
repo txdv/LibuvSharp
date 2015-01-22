@@ -98,7 +98,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_spawn(LoopSafeHandle loop, IntPtr handle, uv_process_options_t options);
+		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
 
 		uv_process_options_t process_options;
 		Action<Process> exitCallback;

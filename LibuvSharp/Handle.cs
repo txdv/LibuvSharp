@@ -49,6 +49,8 @@ namespace LibuvSharp
 			Loop = loop;
 
 			Loop.handles[NativeHandle] = this;
+
+			close_cb = CloseCallback;
 		}
 
 		internal Handle(Loop loop, int size)
@@ -64,35 +66,46 @@ namespace LibuvSharp
 		public event Action Closed;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern void uv_close(IntPtr handle, Action callback);
+		static extern void uv_close(IntPtr handle, close_callback cb);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		delegate void close_callback(IntPtr handle);
+
+		close_callback close_cb;
+		Action closeCallback;
+
+		void CloseCallback(IntPtr handle)
+		{
+			Cleanup(handle, closeCallback);
+		}
+
+		public void Cleanup(IntPtr nativeHandle, Action callback)
+		{
+			// Remove handle
+			if (NativeHandle != IntPtr.Zero) {
+				Loop.handles.Remove(nativeHandle);
+
+				UV.Free(nativeHandle);
+
+				if (Closed != null) {
+					Closed();
+				}
+
+				if (callback != null) {
+					callback();
+				}
+
+				if (GCHandle.IsAllocated) {
+					GCHandle.Free();
+				}
+			}
+		}
 
 		public void Close(Action callback)
 		{
 			if (NativeHandle != IntPtr.Zero) {
-
-				var nativeHandle = NativeHandle;
-
-				CAction ca = new CAction(() => {
-					// Remove handle
-					Loop.handles.Remove(nativeHandle);
-
-					UV.Free(nativeHandle);
-
-					if (Closed != null) {
-						Closed();
-					}
-
-					if (callback != null) {
-						callback();
-					}
-
-					if (GCHandle.IsAllocated) {
-						GCHandle.Free();
-					}
-				});
-
-				uv_close(NativeHandle, ca.Callback);
-				NativeHandle = IntPtr.Zero;
+				closeCallback = callback;
+				uv_close(NativeHandle, close_cb);
 			}
 		}
 

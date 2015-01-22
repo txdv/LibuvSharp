@@ -22,7 +22,7 @@ namespace LibuvSharp
 		delegate void uv_fs_event_cb(IntPtr handle, string filename, int events, int status);
 
 		[DllImport("uv")]
-		private static extern int uv_fs_event_init(LoopSafeHandle loop, IntPtr handle, string filename, uv_fs_event_cb callback, int flags);
+		private static extern int uv_fs_event_init(IntPtr loop, IntPtr handle, string filename, uv_fs_event_cb callback, int flags);
 
 		uv_fs_event_cb uv_fs_event;
 

@@ -15,7 +15,7 @@ namespace LibuvSharp
 		internal delegate void recv_start_callback_unix(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_init(LoopSafeHandle loop, IntPtr handle);
+		internal static extern int uv_udp_init(IntPtr loop, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, short flags);

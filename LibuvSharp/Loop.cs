@@ -14,19 +14,25 @@ namespace LibuvSharp
 	public partial class Loop : IDisposable
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern LoopSafeHandle uv_default_loop();
+		static extern IntPtr uv_default_loop();
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern LoopSafeHandle uv_loop_new();
+		static extern int uv_loop_init(IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_run(LoopSafeHandle loop, uv_run_mode mode);
+		static extern int uv_loop_close(IntPtr ptr);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_update_time(LoopSafeHandle loop);
+		static extern IntPtr uv_loop_size();
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern ulong uv_now(LoopSafeHandle loop);
+		static extern void uv_run(IntPtr loop, uv_run_mode mode);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern void uv_update_time(IntPtr loop);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern ulong uv_now(IntPtr loop);
 
 		static Loop @default;
 
@@ -52,14 +58,14 @@ namespace LibuvSharp
 			}
 		}
 
-		public LoopSafeHandle NativeHandle { get; protected set; }
+		public IntPtr NativeHandle { get; protected set; }
 
 		public ByteBufferAllocatorBase ByteBufferAllocator { get; protected set; }
 
 		Async async;
 		AsyncCallback callback;
 
-		internal Loop(LoopSafeHandle handle, ByteBufferAllocatorBase allocator)
+		internal Loop(IntPtr handle, ByteBufferAllocatorBase allocator)
 		{
 			NativeHandle = handle;
 			ByteBufferAllocator = allocator;
@@ -84,13 +90,21 @@ namespace LibuvSharp
 		}
 
 		public Loop(ByteBufferAllocatorBase allocator)
-			: this(uv_loop_new(), allocator)
+			: this(CreateLoop(), allocator)
 		{
+		}
+
+		static IntPtr CreateLoop()
+		{
+			IntPtr ptr = UV.Alloc(uv_loop_size().ToInt32());
+			int r = uv_loop_init(ptr);
+			Ensure.Success(r);
+			return ptr;
 		}
 
 		unsafe uv_loop_t* loop_t {
 			get {
-				return (uv_loop_t *)NativeHandle.Handle;
+				return (uv_loop_t*)NativeHandle;
 			}
 		}
 
@@ -205,6 +219,17 @@ namespace LibuvSharp
 
 		protected virtual void Dispose(bool disposing)
 		{
+			// close all active handles
+			foreach (var kvp in handles) {
+				var handle = kvp.Value;
+				if (!handle.Closing) {
+					handle.Dispose();
+				}
+			}
+
+			// make sure the callbacks of close are called
+			RunOnce();
+
 			if (disposing) {
 				if (ByteBufferAllocator != null) {
 					ByteBufferAllocator.Dispose();
@@ -212,16 +237,15 @@ namespace LibuvSharp
 				}
 			}
 
-			if (NativeHandle != Default.NativeHandle) {
-				NativeHandle.Dispose();
-			}
+			int r = uv_loop_close(NativeHandle);
+			Ensure.Success(r);
 		}
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void walk_cb(IntPtr handle, IntPtr arg);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern void uv_walk(LoopSafeHandle loop, walk_cb cb, IntPtr arg);
+		static extern void uv_walk(IntPtr loop, walk_cb cb, IntPtr arg);
 
 		static walk_cb walk_callback = WalkCallback;
 		static void WalkCallback(IntPtr handle, IntPtr arg)
@@ -298,7 +322,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern IntPtr uv_stop(LoopSafeHandle loop);
+		static extern IntPtr uv_stop(IntPtr loop);
 
 		public void Stop()
 		{

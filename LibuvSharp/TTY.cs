@@ -14,7 +14,7 @@ namespace LibuvSharp
 		public int FileDescriptor { get; private set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_tty_init(LoopSafeHandle loop, IntPtr tty, int fd, int readable);
+		static extern int uv_tty_init(IntPtr loop, IntPtr tty, int fd, int readable);
 
 		public TTY(int fd)
 			: this(Loop.Constructor, fd)

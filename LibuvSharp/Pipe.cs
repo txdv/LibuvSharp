@@ -6,7 +6,7 @@ namespace LibuvSharp
 	public class PipeListener : Listener<Pipe>, IBindable<PipeListener, string>, ILocalAddress<string>
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_init(LoopSafeHandle loop, IntPtr handle, int ipc);
+		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		public PipeListener()
 			: this(Loop.Constructor)
@@ -45,7 +45,7 @@ namespace LibuvSharp
 		unsafe uv_pipe_t *pipe_t;
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_pipe_init(LoopSafeHandle loop, IntPtr handle, int ipc);
+		static extern int uv_pipe_init(IntPtr loop, IntPtr handle, int ipc);
 
 		public Pipe()
 			: this(Loop.Constructor)
