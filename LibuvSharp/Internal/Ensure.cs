@@ -40,9 +40,11 @@ namespace LibuvSharp
 
 		public static void Success(int errorCode)
 		{
-			var e = Map((uv_err_code)errorCode);
-			if (e != null) {
-				throw e;
+			if (errorCode < 0) {
+				var e = Map((uv_err_code)errorCode);
+				if (e != null) {
+					throw e;
+				}
 			}
 		}
 
