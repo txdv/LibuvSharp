@@ -207,7 +207,7 @@ namespace LibuvSharp
 			}
 		}
 
-		unsafe public static IPEndPoint GetSockname(Handle handle)
+		unsafe internal static IPEndPoint GetSockname(Handle handle)
 		{
 			sockaddr_in6 addr;
 			IntPtr ptr = new IntPtr(&addr);
