@@ -216,6 +216,39 @@ namespace LibuvSharp
 			Ensure.Success(r);
 			return UV.GetIPEndPoint(ptr);
 		}
+
+		internal delegate int callback(IntPtr handle, ref IntPtr size);
+
+		internal static string ToString(int size, callback func)
+		{
+			IntPtr ptr = IntPtr.Zero;
+			try {
+				ptr = Marshal.AllocHGlobal(size);
+				IntPtr sizePointer = (IntPtr)size;
+				int r = func(ptr, ref sizePointer);
+				Ensure.Success(r);
+				return Marshal.PtrToStringAuto(ptr, sizePointer.ToInt32());
+			} finally {
+				if (ptr != IntPtr.Zero) {
+					Marshal.FreeHGlobal(ptr);
+				}
+			}
+		}
+
+		internal static string ToString(int size, Func<IntPtr, IntPtr, int> func)
+		{
+			IntPtr ptr = IntPtr.Zero;
+			try {
+				ptr = Marshal.AllocHGlobal(size);
+				int r = func(ptr, (IntPtr)size);
+				Ensure.Success(r);
+				return Marshal.PtrToStringAuto(ptr);
+			} finally {
+				if (ptr != IntPtr.Zero) {
+					Marshal.FreeHGlobal(ptr);
+				}
+			}
+		}
 	}
 }
 

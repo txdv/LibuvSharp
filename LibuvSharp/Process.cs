@@ -69,12 +69,7 @@ namespace LibuvSharp
 
 		public static string Title {
 			get {
-				int size = 512;
-				var ptr = Marshal.AllocHGlobal(size);
-				uv_get_process_title(ptr, (IntPtr)size);
-				string ret = Marshal.PtrToStringAnsi(ptr);
-				Marshal.FreeHGlobal(ptr);
-				return ret;
+				return UV.ToString(4096, uv_get_process_title);
 			}
 			set {
 				uv_set_process_title(value);
@@ -86,14 +81,7 @@ namespace LibuvSharp
 
 		public static string ExecutablePath {
 			get {
-				int size = 512;
-				var buffer = Marshal.AllocHGlobal(size);
-				var sizePtr = new IntPtr(size);
-				uv_exepath(buffer, ref sizePtr);
-
-				string ret = Marshal.PtrToStringAnsi(buffer);
-				Marshal.FreeHGlobal(buffer);
-				return ret;
+				return UV.ToString(4096, uv_exepath);
 			}
 		}
 
