@@ -10,6 +10,8 @@ namespace LibuvSharp
 			stream.Data += (data) => callback(enc.GetString(data.Array, data.Offset, data.Count));
 		}
 
+		#region Write
+
 		public static void Write(this IUVStream stream, byte[] data, int index, int count)
 		{
 			stream.Write(data, index, count, null);
@@ -26,6 +28,7 @@ namespace LibuvSharp
 
 		public static void Write(this IUVStream stream, byte[] data, Action<Exception> callback)
 		{
+			Ensure.ArgumentNotNull(data);
 			stream.Write(data, data.Length, callback);
 		}
 		public static void Write(this IUVStream stream, byte[] data)
@@ -41,6 +44,10 @@ namespace LibuvSharp
 		{
 			stream.Write(data, null);
 		}
+
+		#endregion
+
+		#region Write string
 
 		public static int Write(this IUVStream stream, Encoding enc, string text, Action<Exception> callback)
 		{
@@ -61,6 +68,10 @@ namespace LibuvSharp
 			return stream.Write(Encoding.Default, text);
 		}
 
+		#endregion
+
+		#region Shutdown
+
 		public static void Shutdown(this IUVStream stream)
 		{
 			stream.Shutdown(null);
@@ -70,6 +81,10 @@ namespace LibuvSharp
 		{
 			stream.Shutdown((_) => callback());
 		}
+
+		#endregion
+
+		#region End
 
 		public static void End(this IUVStream stream, byte[] data, int index, int count, Action<Exception> callback)
 		{
@@ -129,6 +144,8 @@ namespace LibuvSharp
 		{
 			return stream.End(Encoding.Default, text);
 		}
+
+		#endregion
 	}
 }
 
