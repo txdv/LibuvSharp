@@ -4,12 +4,12 @@ namespace LibuvSharp.Utilities
 {
 	public static class UtilitiesExtensions
 	{
-		public static void Pump(this IUVStream readStream, IUVStream writeStream)
+		public static void Pump(this IUVStream<ArraySegment<byte>> readStream, IUVStream<ArraySegment<byte>> writeStream)
 		{
 			Pump(readStream, writeStream, null);
 		}
 
-		public static void Pump(this IUVStream readStream, IUVStream writeStream, Action<Exception, Exception> callback)
+		public static void Pump(this IUVStream<ArraySegment<byte>> readStream, IUVStream<ArraySegment<byte>> writeStream, Action<Exception, Exception> callback)
 		{
 			bool pending = false;
 			bool done = false;

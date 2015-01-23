@@ -19,7 +19,7 @@ namespace LibuvSharp
 		public Action<Exception> callback;
 	}
 
-	public class UVFileStream : IUVStream
+	public class UVFileStream : IUVStream<ArraySegment<byte>>
 	{
 		public Loop Loop { get; private set; }
 
@@ -195,10 +195,10 @@ namespace LibuvSharp
 
 		public bool Writeable { private set; get; }
 
-		public void Write(byte[] data, int index, int count, Action<Exception> callback)
+		public void Write(ArraySegment<byte> data, Action<Exception> callback)
 		{
-			queue.Enqueue(new QueueElement(data, index, count, callback));
-			WriteQueueSize += count;
+			queue.Enqueue(new QueueElement(data.Array, data.Offset, data.Count, callback));
+			WriteQueueSize += data.Count;
 			if (queue.Count == 1) {
 				WorkWrite();
 			}

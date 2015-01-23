@@ -63,7 +63,7 @@ namespace LibuvSharp.Tests
 
 		public static void StressTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -126,7 +126,7 @@ namespace LibuvSharp.Tests
 
 		public static void SimpleTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -182,7 +182,7 @@ namespace LibuvSharp.Tests
 
 		public static void OneSideCloseTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;

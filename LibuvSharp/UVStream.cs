@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe public abstract class UVStream : HandleBufferSize, IUVStream, ITryWrite
+	unsafe public abstract class UVStream : HandleBufferSize, IUVStream<ArraySegment<byte>>, ITryWrite
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);
@@ -152,13 +152,16 @@ namespace LibuvSharp
 
 		public event Action Drain;
 
-		public void Write(byte[] data, int index, int count, Action<Exception> callback)
+		public void Write(ArraySegment<byte> data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
 
+			int index = data.Offset;
+			int count = data.Count;
+
 			PendingWrites++;
 
-			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();

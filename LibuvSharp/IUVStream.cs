@@ -4,21 +4,21 @@ using System.Text;
 
 namespace LibuvSharp
 {
-	public interface IUVStream
+	public interface IUVStream<TMessage>
 	{
 		Loop Loop { get; }
 		event Action<Exception> Error;
 
 		bool Readable { get; }
 		event Action Complete;
-		event Action<ArraySegment<byte>> Data;
+		event Action<TMessage> Data;
 		void Resume();
 		void Pause();
 
 		bool Writeable { get; }
 		event Action Drain;
 		long WriteQueueSize { get; }
-		void Write(byte[] data, int index, int count, Action<Exception> callback);
+		void Write(TMessage data, Action<Exception> callback);
 		void Shutdown(Action<Exception> callback);
 	}
 }

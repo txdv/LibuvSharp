@@ -5,9 +5,9 @@ namespace LibuvSharp.Threading.Tasks
 {
 	public static class ListenerExtensions
 	{
-		public static Task<T> AcceptAsync<T>(this Listener<T> listener) where T : class, IUVStream
+		public static Task<TClient> AcceptAsync<TClient>(this IListener<TClient> listener)
 		{
-			var tcs = new TaskCompletionSource<T>();
+			var tcs = new TaskCompletionSource<TClient>();
 
 			try {
 				tcs.SetResult(listener.Accept());
@@ -21,13 +21,13 @@ namespace LibuvSharp.Threading.Tasks
 				return tcs.Task;
 			}
 
-			Action<Exception, T> finish = null;
+			Action<Exception, TClient> finish = null;
 
 			Action connectioncb = () => {
 				try {
 					finish(null, listener.Accept());
 				} catch (Exception ex) {
-					finish(ex, null);
+					finish(ex, default(TClient));
 				}
 			};
 

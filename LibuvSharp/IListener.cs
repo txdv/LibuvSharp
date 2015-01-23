@@ -2,7 +2,7 @@ using System;
 
 namespace LibuvSharp
 {
-	public interface IListener<TStream> where TStream : IUVStream
+	public interface IListener<TStream>
 	{
 		void Listen();
 		event Action Connection;

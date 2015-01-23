@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public abstract class Listener<TStream> : Handle, IListener<TStream> where TStream : class, IUVStream
+	public abstract class Listener<TStream> : Handle, IListener<TStream> where TStream : class
 	{
 		internal Listener(Loop loop, HandleType type)
 			: base(loop, type)

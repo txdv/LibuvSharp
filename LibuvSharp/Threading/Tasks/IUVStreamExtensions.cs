@@ -6,14 +6,14 @@ namespace LibuvSharp.Threading.Tasks
 {
 	public static class IUVStreamExtensions
 	{
-		public static Task<ArraySegment<byte>?> ReadAsync(this IUVStream stream)
+		public static Task<TMessage?> ReadAsync<TMessage>(this IUVStream<TMessage> stream) where TMessage : struct
 		{
-			var tcs = new TaskCompletionSource<ArraySegment<byte>?>();
+			var tcs = new TaskCompletionSource<TMessage?>();
 
-			Action<Exception, ArraySegment<byte>?> finish = null;
+			Action<Exception, TMessage?> finish = null;
 
 			Action<Exception> error = (e) => finish(e, null);
-			Action<ArraySegment<byte>> data = (val) => finish(null, val);
+			Action<TMessage> data = (val) => finish(null, val);
 			Action end = () => finish(null, null);
 
 			finish = HelperFunctions.Finish(tcs, () => {
@@ -35,22 +35,22 @@ namespace LibuvSharp.Threading.Tasks
 			return tcs.Task;
 		}
 
-		public static Task WriteAsync(this IUVStream stream, byte[] data, int index, int count)
+		public static Task WriteAsync(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index, int count)
 		{
 			return HelperFunctions.Wrap(data, index, count, stream.Write);
 		}
 
-		public static Task WriteAsync(this IUVStream stream, byte[] data, int index)
+		public static Task WriteAsync(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index)
 		{
 			return WriteAsync(stream, data, index, data.Length - index);
 		}
 
-		public static Task WriteAsync(this IUVStream stream, byte[] data)
+		public static Task WriteAsync(this IUVStream<ArraySegment<byte>> stream, byte[] data)
 		{
 			return WriteAsync(stream, data, 0, data.Length);
 		}
 
-		public static Task ShutdownAsync(this IUVStream stream)
+		public static Task ShutdownAsync(this IUVStream<ArraySegment<byte>> stream)
 		{
 			return HelperFunctions.Wrap(stream.Shutdown);
 		}
