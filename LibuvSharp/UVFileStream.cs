@@ -3,22 +3,6 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	struct QueueElement
-	{
-		public QueueElement(byte[] data, int index, int count, Action<Exception> callback)
-		{
-			this.data = data;
-			this.index = index;
-			this.count = count;
-			this.callback = callback;
-		}
-
-		public byte[] data;
-		public int index;
-		public int count;
-		public Action<Exception> callback;
-	}
-
 	public class UVFileStream : IUVStream<ArraySegment<byte>>
 	{
 		public Loop Loop { get; private set; }
@@ -143,15 +127,15 @@ namespace LibuvSharp
 		public event Action<ArraySegment<byte>> Data;
 
 		int writeoffset = 0;
-		Queue<QueueElement> queue = new Queue<QueueElement>();
+		Queue<Tuple<ArraySegment<byte>, Action<Exception>>> queue = new Queue<Tuple<ArraySegment<byte>, Action<Exception>>>();
 
 		void HandleWrite(Exception ex, int size)
 		{
 			var tuple = queue.Dequeue();
 
-			WriteQueueSize -= tuple.count;
+			WriteQueueSize -= tuple.Item1.Count;
 
-			var cb = tuple.callback;
+			var cb = tuple.Item2;
 			if (cb != null) {
 				cb(ex);
 			}
@@ -170,7 +154,7 @@ namespace LibuvSharp
 				return;
 			}
 			var item = queue.Peek();
-			uvfile.Write(item.data, item.index, item.count, HandleWrite, writeoffset);
+			uvfile.Write(item.Item1, HandleWrite, writeoffset);
 		}
 
 		void Finish(Exception ex)
@@ -197,7 +181,7 @@ namespace LibuvSharp
 
 		public void Write(ArraySegment<byte> data, Action<Exception> callback)
 		{
-			queue.Enqueue(new QueueElement(data.Array, data.Offset, data.Count, callback));
+			queue.Enqueue(Tuple.Create(data, callback));
 			WriteQueueSize += data.Count;
 			if (queue.Count == 1) {
 				WorkWrite();
