@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe public abstract class UVStream : HandleBufferSize, IUVStream
+	unsafe public abstract class UVStream : HandleBufferSize, IUVStream, ITryWrite
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);
@@ -223,6 +223,33 @@ namespace LibuvSharp
 			}
 			set {
 				writeable = value;
+			}
+		}
+
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_try_write(IntPtr handle, WindowsBufferStruct[] bufs, int nbufs);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_try_write(IntPtr handle, UnixBufferStruct[] bufs, int nbufs);
+
+		unsafe public int TryWrite(ArraySegment<byte> data)
+		{
+			Ensure.ArgumentNotNull(data.Array, "data");
+
+			fixed (byte* bytePtr = data.Array) {
+				IntPtr ptr = (IntPtr)bytePtr + data.Offset;
+				int r;
+				if (UV.isUnix) {
+					UnixBufferStruct[] buf = new UnixBufferStruct[1];
+					buf[0] = new UnixBufferStruct(ptr, data.Count);
+					r = uv_try_write(NativeHandle, buf, 1);
+				} else {
+					WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
+					buf[0] = new WindowsBufferStruct(ptr, data.Count);
+					r = uv_try_write(NativeHandle, buf, 1);
+				}
+				Ensure.Success(r);
+				return r;
 			}
 		}
 	}
