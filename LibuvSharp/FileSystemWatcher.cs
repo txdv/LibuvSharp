@@ -19,36 +19,39 @@ namespace LibuvSharp
 
 	public class FileSystemWatcher : Handle
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void uv_fs_event_cb(IntPtr handle, string filename, int events, int status);
-
-		[DllImport("uv")]
-		private static extern int uv_fs_event_init(IntPtr loop, IntPtr handle, string filename, uv_fs_event_cb callback, int flags);
 
 		uv_fs_event_cb uv_fs_event;
 
-		public string Path { get; protected set; }
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_event_init(IntPtr loop, IntPtr handle);
 
-		public FileSystemWatcher(string path)
-			: this(path, FileSystemEventFlags.Default)
+		public FileSystemWatcher()
+			: this(Loop.Constructor)
 		{
 		}
 
-		public FileSystemWatcher(string path, FileSystemEventFlags flags)
-			: this(Loop.Constructor, path, flags)
-		{
-			Path = path;
-		}
-
-		public FileSystemWatcher(Loop loop, string path)
-			: this(loop, path, FileSystemEventFlags.Default)
-		{
-		}
-
-		public FileSystemWatcher(Loop loop, string path, FileSystemEventFlags flags)
+		public FileSystemWatcher(Loop loop)
 			: base(loop, HandleType.UV_FS_EVENT)
 		{
 			uv_fs_event = fs_event;
-			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle, path, uv_fs_event, (int)flags);
+			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle);
+			Ensure.Success(r);
+		}
+
+		public void Start(string path)
+		{
+			Start(path, FileSystemEventFlags.Default);
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_event_start(IntPtr handle, uv_fs_event_cb callback, string filename, int flags);
+
+		public void Start(string path, FileSystemEventFlags flags)
+		{
+			uv_fs_event = fs_event;
+			int r = uv_fs_event_start(NativeHandle, uv_fs_event, path, (int)flags);
 			Ensure.Success(r);
 		}
 
@@ -69,6 +72,25 @@ namespace LibuvSharp
 				Change(filename, @event);
 			}
 		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_fs_event_getpath(IntPtr handle, IntPtr buf, ref IntPtr len);
+
+		public string Path {
+			get {
+				return UV.ToString(4096, (buffer, length) => uv_fs_event_getpath(NativeHandle, buffer, ref length)).TrimEnd('\0');
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_fs_event_stop(IntPtr handle);
+
+		public void Stop()
+		{
+			int r = uv_fs_event_stop(NativeHandle);
+			Ensure.Success(r);
+		}
+
 	}
 }
 
