@@ -17,18 +17,19 @@ namespace LibuvSharp
 			stream.Write(data, index, count, null);
 		}
 
-		public static void Write(this IUVStream stream, byte[] data, int count, Action<Exception> callback)
+		public static void Write(this IUVStream stream, byte[] data, int index, Action<Exception> callback)
 		{
-			stream.Write(data, 0, count, callback);
+			Ensure.ArgumentNotNull(data, "data");
+			stream.Write(data, index, data.Length - index, callback);
 		}
-		public static void Write(this IUVStream stream, byte[] data, int count)
+		public static void Write(this IUVStream stream, byte[] data, int index)
 		{
-			stream.Write(data, count, null);
+			stream.Write(data, index, null);
 		}
 
 		public static void Write(this IUVStream stream, byte[] data, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(data);
+			Ensure.ArgumentNotNull(data, "data");
 			stream.Write(data, data.Length, callback);
 		}
 		public static void Write(this IUVStream stream, byte[] data)
@@ -96,14 +97,14 @@ namespace LibuvSharp
 			stream.End(data, index, count, null);
 		}
 
-		public static void End(this IUVStream stream, byte[] data, int count, Action<Exception> callback)
+		public static void End(this IUVStream stream, byte[] data, int index, Action<Exception> callback)
 		{
-			stream.Write(data, count);
+			stream.Write(data, index);
 			stream.Shutdown(callback);
 		}
-		public static void End(this IUVStream stream, byte[] data, int count)
+		public static void End(this IUVStream stream, byte[] data, int index)
 		{
-			stream.Write(data, count, null);
+			stream.Write(data, index, null);
 		}
 
 		public static void End(this IUVStream stream, byte[] data, Action<Exception> callback)
