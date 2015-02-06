@@ -99,7 +99,7 @@ namespace LibuvSharp
 
 		public static void Read(Loop loop, string path, Action<Exception, UVDirectoryEntity[]> callback)
 		{
-			var fsr = new FileSystemRequest() { KeepAlive = true };
+			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex) => {
 				if (ex != null) {
 					callback(ex, null);
