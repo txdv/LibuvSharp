@@ -68,11 +68,9 @@ namespace LibuvSharp
 			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address, 0);
-			} else if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+			} else {
 				sockaddr_in6 address = UV.ToStruct6(ipAddress.ToString(), port);
 				r = uv_udp_bind(NativeHandle, ref address , 0);
-			} else {
-				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
