@@ -6,13 +6,14 @@ all: libuv.so $(gensrc)
 libuv/Makefile:
 	git submodule sync
 	git submodule update
+	(cd libuv && ./autogen.sh && ./configure)
 
 $(uv): libuv/Makefile
-	make -C libuv libuv.a
+	make -C libuv
 
 libuv.so: libuv/Makefile
-	make -C libuv libuv.so
-	cp libuv/libuv.so ./libuv.so
+	make -C libuv
+	cp libuv/.libs/libuv.so ./libuv.so
 
 generate: generate.c libuv.so
 	$(CC) -Ilibuv/include/ -lpthread -ldl -lrt libuv.so -lm generate.c -o generate

@@ -24,4 +24,4 @@ script:
 # Run Tests
 after_script:
  - cd bin/Debug
- - mono xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
+ - sudo mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
