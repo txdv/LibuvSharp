@@ -87,6 +87,8 @@ namespace LibuvSharp
 
 				UV.Free(nativeHandle);
 
+				NativeHandle = IntPtr.Zero;
+
 				if (Closed != null) {
 					Closed();
 				}
