@@ -58,7 +58,7 @@ namespace LibuvSharp
 
 	unsafe public class Process : Handle
 	{
-		public int ExitCode { get; private set; }
+		public long ExitCode { get; private set; }
 		public int TermSignal { get; private set; }
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -98,7 +98,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, uv_process_options_t options);
+		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, ref uv_process_options_t options);
 
 		uv_process_options_t process_options;
 		Action<Process> exitCallback;
@@ -110,7 +110,7 @@ namespace LibuvSharp
 			process_options = new uv_process_options_t(this, options);
 		}
 
-		internal void OnExit(int exit_status, int term_status)
+		internal void OnExit(long exit_status, int term_status)
 		{
 			process_options.Dispose();
 			ExitCode = exit_status;
@@ -121,9 +121,9 @@ namespace LibuvSharp
 			Close();
 		}
 
-		uv_process_t *process {
+		uv_process_t* process {
 			get {
-				return (uv_process_t *)(NativeHandle.ToInt32() + Handle.Size(HandleType.UV_STREAM));
+				return (uv_process_t*)(NativeHandle.ToInt32() + Handle.Size(HandleType.UV_HANDLE));
 			}
 		}
 
@@ -137,15 +137,25 @@ namespace LibuvSharp
 			}
 		}
 
+		public static Process Spawn(ProcessOptions options)
+		{
+			return Spawn(options, null);
+		}
+
 		public static Process Spawn(ProcessOptions options, Action<Process> exitCallback)
 		{
 			return Spawn(Loop.Constructor, options, exitCallback);
 		}
 
+		public static Process Spawn(Loop loop, ProcessOptions options)
+		{
+			return Spawn(loop, options, null);
+		}
+
 		public static Process Spawn(Loop loop, ProcessOptions options, Action<Process> exitCallback)
 		{
 			var process = new Process(loop, options, exitCallback);
-			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, process.process_options);
+			int r = uv_spawn(loop.NativeHandle, process.NativeHandle, ref process.process_options);
 			Ensure.Success(r);
 			return process;
 		}

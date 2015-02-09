@@ -46,7 +46,7 @@ namespace LibuvSharp
 
 		// functions
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		delegate void uv_exit_cb(IntPtr Handle, int exit_status, int term_signal);
+		delegate void uv_exit_cb(ref uv_handle_t handle, long exit_status, int term_signal);
 
 		public uv_process_options_t(Process process, ProcessOptions options)
 		{
@@ -59,6 +59,7 @@ namespace LibuvSharp
 			args = alloc(options.Arguments);
 			env = alloc(options.Environment);
 			cwd = Marshal.StringToHGlobalAnsi(options.CurrentWorkingDirectory);
+
 
 			// all fields have to be set
 			flags = 0;
@@ -117,10 +118,9 @@ namespace LibuvSharp
 
 		static uv_exit_cb cb = exit;
 
-		static void exit(IntPtr handle, int exit_status, int term_signal)
+		static void exit(ref uv_handle_t handle, long exit_status, int term_signal)
 		{
-			uv_handle_t *h = (uv_handle_t *)handle;
-			var gchandle = GCHandle.FromIntPtr(h->data);
+			var gchandle = GCHandle.FromIntPtr(handle.data);
 			var process = (gchandle.Target as Process);
 			gchandle.Free();
 			process.OnExit(exit_status, term_signal);

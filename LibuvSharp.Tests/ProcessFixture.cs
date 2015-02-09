@@ -15,7 +15,7 @@ namespace LibuvSharp.Tests
 			Assert.NotEqual(path, string.Empty);
 		}
 
-		Process ProcessSpawnTest(string command, Action<int> callback)
+		Process ProcessSpawnTest(string command, Action<long> callback)
 		{
 			var args = command.Split(new char[] { ' ' });
 			return Process.Spawn(new ProcessOptions() {
@@ -35,18 +35,14 @@ namespace LibuvSharp.Tests
 				stdout,
 			};
 
-			string text = null;
-
 			var args = command.Split(new char[] { ' ' });
 			var p = Process.Spawn(new ProcessOptions() {
 				File = args[0],
 				Arguments = args,
 				Streams = streams
-			}, (process) => {
-				callback(text);
 			});
 
-			stdout.Read(Encoding.ASCII, (t) => text = t);
+			stdout.Read(Encoding.ASCII, callback);
 			stdout.Resume();
 			return p;
 		}
@@ -67,7 +63,7 @@ namespace LibuvSharp.Tests
 			Loop.Default.Run();
 			Assert.Equal(result, resultString);
 
-			int? exitCode = null;
+			long? exitCode = null;
 			ProcessSpawnTest(command, (res) => exitCode = res);
 			Loop.Default.Run();
 			Assert.Equal(exitCode.Value, 0);
