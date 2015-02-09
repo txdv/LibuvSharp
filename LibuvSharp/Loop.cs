@@ -222,7 +222,7 @@ namespace LibuvSharp
 			// close all active handles
 			foreach (var kvp in handles) {
 				var handle = kvp.Value;
-				if (!handle.Closing) {
+				if (!handle.IsClosing) {
 					handle.Dispose();
 				}
 			}

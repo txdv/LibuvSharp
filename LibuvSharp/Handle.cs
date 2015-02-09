@@ -105,7 +105,7 @@ namespace LibuvSharp
 
 		public void Close(Action callback)
 		{
-			if (NativeHandle != IntPtr.Zero) {
+			if (!IsClosing && !IsClosed ) {
 				closeCallback = callback;
 				uv_close(NativeHandle, close_cb);
 			}
@@ -145,7 +145,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_closing(IntPtr handle);
 
-		public bool Closing {
+		public bool IsClosing {
 			get {
 				return uv_is_closing(NativeHandle) != 0;
 			}
