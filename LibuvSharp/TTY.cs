@@ -11,8 +11,6 @@ namespace LibuvSharp
 
 	public class TTY : UVStream
 	{
-		public int FileDescriptor { get; private set; }
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_tty_init(IntPtr loop, IntPtr tty, int fd, int readable);
 
@@ -34,7 +32,6 @@ namespace LibuvSharp
 		public TTY(Loop loop, int fd, bool readable)
 			: base(loop, HandleType.UV_TTY)
 		{
-			FileDescriptor = fd;
 			int r = uv_tty_init(loop.NativeHandle, NativeHandle, fd, (readable ? 1 : 0));
 			Ensure.Success(r);
 		}
