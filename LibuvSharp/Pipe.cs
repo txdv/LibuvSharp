@@ -1,40 +1,65 @@
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class PipeListener : Listener<Pipe>, IBindable<PipeListener, string>, ILocalAddress<string>
+	public abstract class BasePipeListener<TListener, TStream> : Listener<TStream>, ILocalAddress<string>, IBindable<TListener, string>
+		where TStream : class, IUVStream
+		where TListener : IListener<TStream>
+	{
+		internal BasePipeListener(Loop loop, bool ipc)
+			: base(loop, HandleType.UV_NAMED_PIPE)
+		{
+			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, ipc == true ? 1 : 0);
+			Ensure.Success(r);
+		}
+
+		public void Bind(string name)
+		{
+			Ensure.ArgumentNotNull(name, null);
+			int r = NativeMethods.uv_pipe_bind(NativeHandle, name);
+			Ensure.Success(r);
+			LocalAddress = name;
+		}
+
+		public string LocalAddress { get; private set; }
+	}
+
+	public class PipeListener : BasePipeListener<PipeListener, Pipe>
 	{
 		public PipeListener()
 			: this(Loop.Constructor)
 		{
 		}
 
-		unsafe public PipeListener(Loop loop)
-			: base(loop, HandleType.UV_NAMED_PIPE)
+		public PipeListener(Loop loop)
+			: base(loop, false)
 		{
-			// the ipc setting in the listener is irrelevant
-			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, 0);
-			Ensure.Success(r);
 		}
 
 		protected override UVStream Create()
 		{
 			return new Pipe(Loop);
 		}
+	}
 
-		[DllImport("uv")]
-		static extern int uv_pipe_bind(IntPtr handle, string name);
-
-		public void Bind(string name)
+	public class IPCPipeListener : BasePipeListener<IPCPipeListener, IPCPipe>
+	{
+		public IPCPipeListener()
+			: this(Loop.Constructor)
 		{
-			Ensure.ArgumentNotNull(name, null);
-			int r = uv_pipe_bind(NativeHandle, name);
-			Ensure.Success(r);
-			LocalAddress = name;
 		}
 
-		public string LocalAddress { get; private set; }
+		public IPCPipeListener(Loop loop)
+			: base(loop, true)
+		{
+		}
+
+		protected override UVStream Create()
+		{
+			return new IPCPipe(Loop);
+		}
 	}
 
 	public class Pipe : UVStream, IConnectable<Pipe, string>, IRemoteAddress<string>
@@ -56,7 +81,7 @@ namespace LibuvSharp
 		{
 			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
 			Ensure.Success(r);
-			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_NAMED_PIPE) - sizeof(uv_pipe_t));
+			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_STREAM));
 		}
 
 		unsafe public bool InterProcessCommunication {
@@ -115,49 +140,70 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_write2_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
 
-		public void Write(UVStream stream, byte[] data, int index, int count, Action<Exception> callback)
+		public void Write(Handle handle, ArraySegment<byte> segment, Action<Exception> callback)
 		{
-			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			GCHandle datagchandle = GCHandle.Alloc(segment.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback = (status, cpr2) => {
 				datagchandle.Free();
 				Ensure.Success(status, callback);
 			};
 
-			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
+			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset);
 
 			int r;
 			if (UV.isUnix) {
 				UnixBufferStruct[] buf = new UnixBufferStruct[1];
-				buf[0] = new UnixBufferStruct(ptr, count);
-				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.CallbackDelegate);
+				buf[0] = new UnixBufferStruct(ptr, segment.Count);
+				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, handle.NativeHandle, CallbackPermaRequest.CallbackDelegate);
 			} else {
 				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-				buf[0] = new WindowsBufferStruct(ptr, count);
-				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, stream.NativeHandle, CallbackPermaRequest.CallbackDelegate);
+				buf[0] = new WindowsBufferStruct(ptr, segment.Count);
+				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, handle.NativeHandle, CallbackPermaRequest.CallbackDelegate);
 			}
 
 			Ensure.Success(r);
 		}
-		public void Write(UVStream stream, byte[] data, int index, Action<Exception> callback)
+
+		[DllImport(NativeMethods.libuv, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int uv_pipe_pending_count(IntPtr handle);
+
+		[DllImport(NativeMethods.libuv, CallingConvention = CallingConvention.Cdecl)]
+		public static extern HandleType uv_pipe_pending_type(IntPtr pipe);
+
+		protected override void OnData(ArraySegment<byte> data)
 		{
-			Write(stream, data, index, data.Length - index, callback);
+			var count = uv_pipe_pending_count(NativeHandle);
+			if (count-- > 0) {
+				var type = uv_pipe_pending_type(NativeHandle);
+				Handle handle = null;
+				switch (type) {
+				case HandleType.UV_UDP:
+					handle = new Udp(Loop);
+					break;
+				case HandleType.UV_TCP:
+					handle = new Tcp(Loop);
+					break;
+				case HandleType.UV_NAMED_PIPE:
+					handle = new Pipe(Loop);
+					break;
+				}
+				if (handle != null) {
+					int r = NativeMethods.uv_accept(NativeHandle, handle.NativeHandle);
+					Ensure.Success(r);
+					OnHandleData(handle, data);
+				}
+			}
+			base.OnData(data);
 		}
-		public void Write(UVStream stream, byte[] data, Action<Exception> callback)
+
+		protected virtual void OnHandleData(Handle handle, ArraySegment<byte> data)
 		{
-			Write(stream, data, 0, data.Length, callback);
+			if (HandleData != null) {
+				HandleData(handle, data);
+			}
 		}
-		public void Write(UVStream stream, byte[] data, int index, int count)
-		{
-			Write(stream, data, index, count, null);
-		}
-		public void Write(UVStream stream, byte[] data, int index)
-		{
-			Write(stream, data, index, data.Length - index, null);
-		}
-		public void Write(UVStream stream, byte[] data)
-		{
-			Write(stream, data, 0, data.Length, null);
-		}
+
+		public event Action<Handle, ArraySegment<byte>> HandleData;
 	}
 }

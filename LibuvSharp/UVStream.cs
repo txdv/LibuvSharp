@@ -134,7 +134,7 @@ namespace LibuvSharp
 
 		public event Action<Exception> Error;
 
-		void OnData(ArraySegment<byte> data)
+		protected virtual void OnData(ArraySegment<byte> data)
 		{
 			if (Data != null) {
 				Data(data);

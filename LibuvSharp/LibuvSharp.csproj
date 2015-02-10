@@ -132,6 +132,7 @@
     <Compile Include="IFileDescriptor.cs" />
     <Compile Include="HandleFileDescriptor.cs" />
     <Compile Include="IFileDescriptorExtensions.cs" />
+    <Compile Include="IPCExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
