@@ -31,15 +31,14 @@ namespace LibuvSharp
 		public void Bind(IPEndPoint ipEndPoint)
 		{
 			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
+			Ensure.AddressFamily(ipEndPoint.Address);
 			int r;
 			if (ipEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
-			} else if (ipEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
+			} else {
 				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_bind(NativeHandle, ref address, 0);
-			} else {
-				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
@@ -91,6 +90,7 @@ namespace LibuvSharp
 		{
 			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
 			Ensure.ArgumentNotNull(callback, "callback");
+			Ensure.AddressFamily(ipEndPoint.Address);
 
 			ConnectRequest cpr = new ConnectRequest();
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, callback);
@@ -99,11 +99,9 @@ namespace LibuvSharp
 			if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
 				sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.CallbackDelegate);
-			} else if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
+			} else {
 				sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
 				r = uv_tcp_connect(cpr.Handle, NativeHandle, ref address, CallbackPermaRequest.CallbackDelegate);
-			} else {
-				throw new ArgumentException("ipEndPoint must be either an ipv4 or ipv6", "ipEndPoint");
 			}
 			Ensure.Success(r);
 		}
