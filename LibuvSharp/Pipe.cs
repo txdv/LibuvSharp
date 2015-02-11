@@ -24,7 +24,7 @@ namespace LibuvSharp
 
 		public string LocalAddress {
 			get {
-				return UV.ToString(4096, (buffer, length) => NativeMethods.uv_pipe_getsockname(NativeHandle, buffer, ref length)).TrimEnd('\0');
+				return UV.ToString(4096, (buffer, length) => NativeMethods.uv_pipe_getsockname(NativeHandle, buffer, ref length));
 			}
 		}
 	}
@@ -107,21 +107,15 @@ namespace LibuvSharp
 			cpr.Callback = (status, cpr2) => Ensure.Success(status, callback, name);
 
 			uv_pipe_connect(cpr.Handle, pipe.NativeHandle, name, ConnectRequest.CallbackDelegate);
-			RemoteAddress = name;
 		}
 
-		public string RemoteAddress { get; private set; }
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_pipe_getpeername(IntPtr handle, IntPtr buf, ref IntPtr len);
 
-		protected override void OnComplete()
-		{
-			RemoteAddress = null;
-			base.OnComplete();
-		}
-
-		protected override void OnError(Exception exception)
-		{
-			RemoteAddress = null;
-			base.OnError(exception);
+		public string RemoteAddress {
+			get {
+				return UV.ToString(4096, (buffer, length) => uv_pipe_getpeername(NativeHandle, buffer, ref length));
+			}
 		}
 	}
 
