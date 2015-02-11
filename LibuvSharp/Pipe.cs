@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace LibuvSharp
 {
 	public abstract class BasePipeListener<TListener, TStream> : Listener<TStream>, ILocalAddress<string>, IBindable<TListener, string>
-		where TStream : class, IUVStream
+		where TStream : class, IUVStream<ArraySegment<byte>>
 		where TListener : IListener<TStream>
 	{
 		internal BasePipeListener(Loop loop, bool ipc)
