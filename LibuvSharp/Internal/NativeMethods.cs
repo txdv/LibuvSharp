@@ -24,6 +24,9 @@ namespace LibuvSharp
 
 		[DllImport(libuv, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int uv_pipe_bind(IntPtr handle, string name);
+
+		[DllImport(libuv, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int uv_pipe_getsockname(IntPtr handle, IntPtr buf, ref IntPtr len);
 	}
 }
 

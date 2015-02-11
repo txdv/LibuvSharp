@@ -20,10 +20,13 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(name, null);
 			int r = NativeMethods.uv_pipe_bind(NativeHandle, name);
 			Ensure.Success(r);
-			LocalAddress = name;
 		}
 
-		public string LocalAddress { get; private set; }
+		public string LocalAddress {
+			get {
+				return UV.ToString(4096, (buffer, length) => NativeMethods.uv_pipe_getsockname(NativeHandle, buffer, ref length)).TrimEnd('\0');
+			}
+		}
 	}
 
 	public class PipeListener : BasePipeListener<PipeListener, Pipe>
