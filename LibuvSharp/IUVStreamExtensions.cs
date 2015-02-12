@@ -34,7 +34,7 @@ namespace LibuvSharp
 		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
-			stream.Write(data, data.Length, callback);
+			stream.Write(data, 0, data.Length, callback);
 		}
 		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data)
 		{
