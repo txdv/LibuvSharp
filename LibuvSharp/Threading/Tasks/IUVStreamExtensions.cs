@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using LibuvSharp.Threading.Tasks;
 
