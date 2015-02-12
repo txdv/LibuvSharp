@@ -11,6 +11,8 @@ namespace LibuvSharp.Tests
 		public void Simple()
 		{
 			Default.SimpleTest<string, PipeListener, Pipe>(Default.Pipename);
+
+			Loop.Default.Run(async () => await Default.SimpleTestAsync<string, PipeListener, Pipe>(Default.Pipename));
 		}
 
 		[Fact]

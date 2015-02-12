@@ -19,6 +19,8 @@ namespace LibuvSharp.Tests
 		public void SimpleTest(IPEndPoint ep)
 		{
 			Default.SimpleTest<IPEndPoint, TcpListener, Tcp>(ep);
+
+			Loop.Default.Run(async () => await Default.SimpleTestAsync<IPEndPoint, TcpListener, Tcp>(ep));
 		}
 
 		[Fact]

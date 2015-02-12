@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using LibuvSharp.Threading.Tasks;
 using Xunit;
 
 namespace LibuvSharp.Tests
@@ -234,6 +236,55 @@ namespace LibuvSharp.Tests
 			#if DEBUG
 			Assert.Equal(1, UV.PointerCount);
 			#endif
+		}
+
+		public static async Task SimpleTestServerAsync<TEndPoint, TListener, TClient>(TEndPoint endPoint)
+			where TListener : IBindable<TListener, TEndPoint>, IListener<TClient>, IDisposable, new()
+			where TClient : IUVStream<ArraySegment<byte>>, IDisposable, new()
+		{
+			using (var server = new TListener()) {
+				server.Bind(endPoint);
+				server.Listen();
+				using (var client = await server.AcceptAsync()) {
+					var data = await client.ReadStructAsync();
+					if (data.HasValue) {
+						if (Encoding.Default.GetString(data.Value) == "PING") {
+							client.Write("PONG");
+							await client.ShutdownAsync();
+						}
+					}
+				}
+			}
+		}
+
+		public static async Task SimpleTestClientAsync<TEndPoint, TClient>(TEndPoint endPoint)
+			where TClient : IConnectable<TClient, TEndPoint>, IUVStream<ArraySegment<byte>>, IDisposable, new()
+		{
+			using (var client = new TClient()) {
+				await client.ConnectAsync(endPoint);
+
+				client.Write("PING");
+				var data = await client.ReadStructAsync();
+				if (data.HasValue) {
+					var text = Encoding.Default.GetString(data.Value);
+					if (text != "PONG") {
+						throw new Exception("Should be PONG");
+					}
+				} else {
+					throw new Exception("Shouldn't be null");
+				}
+				await client.ShutdownAsync();
+			}
+		}
+
+		public static async Task SimpleTestAsync<TEndPoint, TListener, TClient>(TEndPoint endPoint)
+			where TListener : IBindable<TListener, TEndPoint>, IListener<TClient>, IDisposable, new()
+			where TClient : IConnectable<TClient, TEndPoint>, IUVStream<ArraySegment<byte>>, IDisposable, new()
+		{
+			await Task.WhenAll(
+				SimpleTestServerAsync<TEndPoint, TListener, TClient>(endPoint),
+				SimpleTestClientAsync<TEndPoint, TClient>(endPoint)
+			);
 		}
 	}
 }

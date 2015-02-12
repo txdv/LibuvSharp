@@ -55,6 +55,7 @@
     <Compile Include="ThreadingFixture.cs" />
     <Compile Include="TimeoutFixture.cs" />
     <Compile Include="IPCFixture.cs" />
+    <Compile Include="EncodingExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
