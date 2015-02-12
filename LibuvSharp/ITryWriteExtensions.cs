@@ -20,6 +20,16 @@ namespace LibuvSharp
 		{
 			return handle.TryWrite(data, 0);
 		}
+
+		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, Encoding encoding, string text)
+		{
+			return handle.TryWrite(encoding.GetBytes(text));
+		}
+
+		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, string text)
+		{
+			return handle.TryWrite(Encoding.Default, text);
+		}
 	}
 }
 
