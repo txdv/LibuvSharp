@@ -83,11 +83,47 @@ namespace LibuvSharp
 			return tcs.Task;
 		}
 
+		public static Task<TResult> Wrap<T, TResult>(T arg1, Func<T, Action<Exception>, TResult> func)
+		{
+			var tcs = new TaskCompletionSource<TResult>();
+			try {
+				var res = default(TResult);
+				res = func(arg1, (ex) => {
+					if (ex == null) {
+						tcs.SetResult(res);
+					} else {
+						tcs.SetException(ex);
+					}
+				});
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
+
 		public static Task Wrap<T1, T2>(T1 arg1, T2 arg2, Action<T1, T2, Action<Exception>> action)
 		{
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(arg1, arg2, Exception(tcs));
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
+
+		public static Task<TResult> Wrap<T1, T2, TResult>(T1 arg1, T2 arg2, Func<T1, T2, Action<Exception>, TResult> func)
+		{
+			var tcs = new TaskCompletionSource<TResult>();
+			try {
+				var res = default(TResult);
+				res = func(arg1, arg2, (ex) => {
+					if (ex == null) {
+						tcs.SetResult(res);
+					} else {
+						tcs.SetException(ex);
+					}
+				});
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}

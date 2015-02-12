@@ -50,6 +50,16 @@ namespace LibuvSharp.Threading.Tasks
 			return WriteAsync(stream, data, 0, data.Length);
 		}
 
+		public static Task<int> WriteAsync(this IUVStream<ArraySegment<byte>> stream, Encoding encoding, string text)
+		{
+			return HelperFunctions.Wrap<Encoding, string, int>(encoding, text, stream.Write);
+		}
+
+		public static Task<int> WriteAsync(this IUVStream<ArraySegment<byte>> stream, string text)
+		{
+			return stream.WriteAsync(Encoding.Default, text);
+		}
+
 		public static Task ShutdownAsync(this IUVStream<ArraySegment<byte>> stream)
 		{
 			return HelperFunctions.Wrap(stream.Shutdown);
