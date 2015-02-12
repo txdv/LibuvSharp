@@ -1,20 +1,19 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using LibuvSharp.Threading.Tasks;
 
 namespace LibuvSharp.Threading.Tasks
 {
 	public static class IUVStreamExtensions
 	{
-		public static Task<TMessage?> ReadAsync<TMessage>(this IUVStream<TMessage> stream) where TMessage : struct
+		public static Task<TData?> ReadStructAsync<TData>(this IUVStream<TData> stream) where TData : struct
 		{
-			var tcs = new TaskCompletionSource<TMessage?>();
+			var tcs = new TaskCompletionSource<TData?>();
 
-			Action<Exception, TMessage?> finish = null;
+			Action<Exception, TData?> finish = null;
 
 			Action<Exception> error = (e) => finish(e, null);
-			Action<TMessage> data = (val) => finish(null, val);
+			Action<TData> data = (val) => finish(null, val);
 			Action end = () => finish(null, null);
 
 			finish = HelperFunctions.Finish(tcs, () => {
