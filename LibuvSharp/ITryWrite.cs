@@ -2,9 +2,9 @@
 
 namespace LibuvSharp
 {
-	public interface ITryWrite
+	public interface ITryWrite<TData>
 	{
-		int TryWrite(ArraySegment<byte> data);
+		int TryWrite(TData data);
 	}
 }
 
