@@ -6,7 +6,7 @@ using LibuvSharp;
 public class HashStream : IDisposable
 {
 	public HashAlgorithm HashAlgorithm { get; private set; }
-	public IUVStream Stream { get; private set; }
+	public IUVStream<ArraySegment<byte>> Stream { get; private set; }
 	public byte[] Hash { get; private set; }
 	public string HashString {
 		get {
@@ -14,7 +14,7 @@ public class HashStream : IDisposable
 		}
 	}
 
-	public HashStream(HashAlgorithm algorithm, IUVStream stream)
+	public HashStream(HashAlgorithm algorithm, IUVStream<ArraySegment<byte>> stream)
 	{
 		HashAlgorithm = algorithm;
 		Stream = stream;
@@ -42,7 +42,7 @@ public class HashStream : IDisposable
 		}
 	}
 
-	public static void Compute(HashAlgorithm hashAlgorithm, IUVStream stream, Action<byte[]> callback)
+	public static void Compute(HashAlgorithm hashAlgorithm, IUVStream<ArraySegment<byte>> stream, Action<byte[]> callback)
 	{
 		var hs = new HashStream(hashAlgorithm, stream);
 		hs.Complete += () => {
@@ -51,7 +51,7 @@ public class HashStream : IDisposable
 		};
 	}
 
-	public static void ComputeString(HashAlgorithm hashAlgorithm, IUVStream stream, Action<string> callback)
+	public static void ComputeString(HashAlgorithm hashAlgorithm, IUVStream<ArraySegment<byte>> stream, Action<string> callback)
 	{
 		var hs = new HashStream(hashAlgorithm, stream);
 		hs.Complete += () => {
