@@ -42,12 +42,12 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task WriteAsync(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index)
 		{
-			return WriteAsync(stream, data, index, data.Length - index);
+			return HelperFunctions.Wrap(data, index, stream.Write);
 		}
 
 		public static Task WriteAsync(this IUVStream<ArraySegment<byte>> stream, byte[] data)
 		{
-			return WriteAsync(stream, data, 0, data.Length);
+			return HelperFunctions.Wrap(data, stream.Write);
 		}
 
 		public static Task<int> WriteAsync(this IUVStream<ArraySegment<byte>> stream, Encoding encoding, string text)
@@ -57,7 +57,7 @@ namespace LibuvSharp.Threading.Tasks
 
 		public static Task<int> WriteAsync(this IUVStream<ArraySegment<byte>> stream, string text)
 		{
-			return stream.WriteAsync(Encoding.Default, text);
+			return HelperFunctions.Wrap<string, int>(text, stream.Write);
 		}
 
 		public static Task ShutdownAsync(this IUVStream<ArraySegment<byte>> stream)
