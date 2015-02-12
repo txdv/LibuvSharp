@@ -24,7 +24,7 @@ namespace LibuvSharp
 
 		public string LocalAddress {
 			get {
-				return UV.ToString(4096, (buffer, length) => NativeMethods.uv_pipe_getsockname(NativeHandle, buffer, ref length));
+				return UV.ToString(4096, (IntPtr buffer, ref IntPtr length) => NativeMethods.uv_pipe_getsockname(NativeHandle, buffer, ref length));
 			}
 		}
 	}
@@ -114,7 +114,7 @@ namespace LibuvSharp
 
 		public string RemoteAddress {
 			get {
-				return UV.ToString(4096, (buffer, length) => uv_pipe_getpeername(NativeHandle, buffer, ref length));
+				return UV.ToString(4096, (IntPtr buffer, ref IntPtr length) => uv_pipe_getpeername(NativeHandle, buffer, ref length));
 			}
 		}
 	}

@@ -78,7 +78,7 @@ namespace LibuvSharp
 
 		public string Path {
 			get {
-				return UV.ToString(4096, (buffer, length) => uv_fs_event_getpath(NativeHandle, buffer, ref length));
+				return UV.ToString(4096, (IntPtr buffer, ref IntPtr length) => uv_fs_event_getpath(NativeHandle, buffer, ref length));
 			}
 		}
 
