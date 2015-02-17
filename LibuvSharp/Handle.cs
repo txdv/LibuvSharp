@@ -147,7 +147,11 @@ namespace LibuvSharp
 
 		public bool IsClosing {
 			get {
-				return uv_is_closing(NativeHandle) != 0;
+				if (IsClosed) {
+					return false;
+				} else {
+					return uv_is_closing(NativeHandle) != 0;
+				}
 			}
 		}
 
