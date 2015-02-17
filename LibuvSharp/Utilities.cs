@@ -1,15 +1,30 @@
 using System;
+using System.Threading.Tasks;
 
 namespace LibuvSharp.Utilities
 {
 	public static class UtilitiesExtensions
 	{
-		public static void Pump(this IUVStream<ArraySegment<byte>> readStream, IUVStream<ArraySegment<byte>> writeStream)
+		public static Task PumpAsync<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
 		{
-			Pump(readStream, writeStream, null);
+			return HelperFunctions.Wrap(writeStream, readStream.Pump);
 		}
 
-		public static void Pump(this IUVStream<ArraySegment<byte>> readStream, IUVStream<ArraySegment<byte>> writeStream, Action<Exception, Exception> callback)
+		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
+		{
+			Pump(readStream, writeStream, (Action<Exception>)null);
+		}
+
+		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream, Action<Exception> callback)
+		{
+			readStream.Pump(writeStream, (ex1, ex2) => {
+				if (callback != null) {
+					callback(ex1 ?? ex2);
+				}
+			});
+		}
+
+		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream, Action<Exception, Exception> callback)
 		{
 			bool pending = false;
 			bool done = false;
@@ -24,8 +39,8 @@ namespace LibuvSharp.Utilities
 				}
 			};
 
-			readStream.Data += ((bb) => {
-				writeStream.Write(bb.Array, bb.Offset, bb.Count);
+			readStream.Data += ((data) => {
+				writeStream.Write(data, null);
 				if (writeStream.WriteQueueSize > 0) {
 					pending = true;
 					readStream.Pause();
