@@ -55,8 +55,11 @@ namespace LibuvSharp
 		internal UVStream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
-			read_cb_unix = read_callback_u;
-			read_cb_win = read_callback_w;
+			if (UV.isUnix) {
+				read_cb_unix = read_callback_u;
+			} else {
+				read_cb_win = read_callback_w;
+			}
 			stream = (uv_stream_t *)(handle.ToInt64() + Handle.Size(HandleType.UV_HANDLE));
 		}
 
