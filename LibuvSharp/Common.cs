@@ -185,10 +185,19 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static uint uv_version();
 
+		public static void GetVersion(out int major, out int minor, out int patch)
+		{
+			uint version = uv_version();
+			major = (int)(version & 0xFF0000) >> 16;
+			minor = (int)(version & 0xFF00) >> 8;
+			patch = (int)(version & 0xFF);
+		}
+
 		public static Version Version {
 			get {
-				uint version = uv_version();
-				return new Version((int)(version & 0xFF0000) >> 16, (int)(version & 0xFF00) >> 8, (int)(version & 0xFF));
+				int major, minor, patch;
+				GetVersion(out major, out minor, out patch);
+				return new Version(major, minor, patch);
 			}
 		}
 
