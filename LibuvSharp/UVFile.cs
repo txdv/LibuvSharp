@@ -77,47 +77,54 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, NativeMethods.uv_fs_cb callback);
+		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, UnixBufferStruct[] buf, int nbufs, long offset, NativeMethods.uv_fs_cb callback);
 
-		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
+		public void Read(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
 		{
-			GCHandle datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			var datagchandle = GCHandle.Alloc(segment.Array, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex) => {
 				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileDescriptor, ptr, (IntPtr)count, offset, FileSystemRequest.CallbackDelegate);
+			UnixBufferStruct[] buf = new UnixBufferStruct[1];
+			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject() + segment.Offset, segment.Count);
+			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, 1, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
+		}
+
+		public void Read(Loop loop, int offset, byte[] data, int index, int count, Action<Exception, int> callback)
+		{
+			Read(loop, offset, new ArraySegment<byte>(data, index, count), callback);
 		}
 		public void Read(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Read(loop, data, index, count, callback, -1);
+			Read(loop, -1, data, index, count, callback);
 		}
-		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback, int offset)
+		public void Read(Loop loop, int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Read(loop, data, index, data.Length - index, callback, offset);
+			Ensure.ArgumentNotNull(data, "data");
+			Read(loop, offset, data, index, data.Length - index, callback);
 		}
 		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Read(loop, data, index, callback, -1);
+			Read(loop, -1, data, index, callback);
 		}
-		public void Read(Loop loop, byte[] data, Action<Exception, int> callback, int offset)
+		public void Read(Loop loop, int offset, byte[] data, Action<Exception, int> callback)
 		{
-			Read(loop, data, 0, callback, offset);
+			Read(loop, offset, data, 0, callback);
 		}
 		public void Read(Loop loop, byte[] data, Action<Exception, int> callback)
 		{
-			Read(loop, data, callback, -1);
+			Read(loop, -1, data, callback);
 		}
-		public void Read(Loop loop, byte[] data, int index, int count, int offset)
+		public void Read(Loop loop, int offset, byte[] data, int index, int count)
 		{
-			Read(loop, data, index, count, null, offset);
+			Read(loop, offset, data, index, count, null);
 		}
 		public void Read(Loop loop, byte[] data, int index, int count)
 		{
-			Read(loop, data, index, count, -1);
+			Read(loop, -1, data, index, count);
 		}
 		public void Read(Loop loop, byte[] data, int index)
 		{
@@ -128,33 +135,33 @@ namespace LibuvSharp
 			Read(loop, data, 0);
 		}
 
-		public void Read(byte[] data, int index, int count, Action<Exception, int> callback, int offset)
+		public void Read(int offset, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Read(this.Loop, data, index, count, callback, offset);
+			Read(this.Loop, offset, data, index, count, callback);
 		}
 		public void Read(byte[] data, int index, int count, Action<Exception, int> callback)
 		{
 			Read(this.Loop, data, index, count, callback);
 		}
-		public void Read(byte[] data, int index, Action<Exception, int> callback, int offset)
+		public void Read(int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Read(this.Loop, data, index, callback, offset);
+			Read(this.Loop, offset, data, index, callback);
 		}
 		public void Read(byte[] data, int index, Action<Exception, int> callback)
 		{
 			Read(this.Loop, data, index, callback);
 		}
-		public void Read(byte[] data, Action<Exception, int> callback, int offset)
+		public void Read(int offset, byte[] data, Action<Exception, int> callback)
 		{
-			Read(this.Loop, data, callback, offset);
+			Read(this.Loop, offset, data, callback);
 		}
 		public void Read(byte[] data, Action<Exception, int> callback)
 		{
 			Read(this.Loop, data, callback);
 		}
-		public void Read(byte[] data, int index, int count, int offset)
+		public void Read(int offset, byte[] data, int index, int count)
 		{
-			Read(this.Loop, data, index, count, offset);
+			Read(this.Loop, offset, data, index, count);
 		}
 		public void Read(byte[] data, int index, int count)
 		{
@@ -169,48 +176,119 @@ namespace LibuvSharp
 			Read(this.Loop, data);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, IntPtr buf, IntPtr length, long offset, NativeMethods.uv_fs_cb fs_cb);
-
-		public void Write(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback, int offset)
+		public void Read(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback)
 		{
-			var datagchandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			Read(loop, -1, data, callback);
+		}
+		public void Read(Loop loop, int offset, ArraySegment<byte> data)
+		{
+			Read(loop, offset, data, null);
+		}
+		public void Read(Loop loop, ArraySegment<byte> data)
+		{
+			Read(loop, data, null);
+		}
+
+		public void Read(int offset, ArraySegment<byte> data, Action<Exception, int> callback)
+		{
+			Read(Loop, offset, data, callback);
+		}
+		public void Read(ArraySegment<byte> data, Action<Exception, int> callback)
+		{
+			Read(-1, data, callback);
+		}
+		public void Read(int offset, ArraySegment<byte> data)
+		{
+			Read(offset, data, null);
+		}
+		public void Read(ArraySegment<byte> data)
+		{
+			Read(data, null);
+		}
+
+		public int Read(Loop loop, int offset, Encoding encoding, string text, Action<Exception, int> callback)
+		{
+			var bytes = encoding.GetBytes(text);
+			Read(loop, offset, bytes, callback);
+			return bytes.Length;
+		}
+		public int Read(Loop loop, Encoding encoding, string text, Action<Exception, int> callback)
+		{
+			return Read(loop, -1, encoding, text, callback);
+		}
+		public int Read(Loop loop, int offset, Encoding encoding, string text)
+		{
+			return Read(loop, offset, encoding, text, null);
+		}
+		public int Read(Loop loop, Encoding encoding, string text)
+		{
+			return Read(loop, -1, encoding, text);
+		}
+		public int Read(Loop loop, int offset, string text, Action<Exception, int> callback)
+		{
+			return Read(loop, offset, Encoding ?? Encoding.Default, text, callback);
+		}
+		public int Read(Loop loop, string text, Action<Exception, int> callback)
+		{
+			return Read(loop, -1, text, callback);
+		}
+		public int Read(Loop loop, int offset, string text)
+		{
+			return Read(loop, offset, text, null);
+		}
+		public int Read(Loop loop, string text)
+		{
+			return Read(loop, -1, text);
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, UnixBufferStruct[] bufs, int nbufs, long offset, NativeMethods.uv_fs_cb fs_cb);
+
+		public void Write(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
+		{
+			var datagchandle = GCHandle.Alloc(segment.Array, GCHandleType.Pinned);
 			var fsr = new FileSystemRequest();
 			fsr.Callback = (ex) => {
 				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileDescriptor, ptr, (IntPtr)count, offset, FileSystemRequest.CallbackDelegate);
+			UnixBufferStruct[] buf = new UnixBufferStruct[1];
+			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject() + segment.Offset, segment.Count);
+			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, segment.Count, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
+		}
+
+		public void Write(Loop loop, int offset, byte[] data, int index, int count, Action<Exception, int> callback)
+		{
+			Write(loop, offset, new ArraySegment<byte>(data, index, count), callback);
 		}
 		public void Write(Loop loop, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Write(loop, data, index, count, callback, -1);
+			Write(loop, -1, data, index, count, callback);
 		}
-		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback, int offset)
+		public void Write(Loop loop, int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Write(loop, data, index, data.Length - index, callback, offset);
+			Write(loop, offset, data, index, data.Length - index, callback);
 		}
 		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Write(loop, data, index, callback, -1);
+			Write(loop, -1, data, index, callback);
 		}
-		public void Write(Loop loop, byte[] data, Action<Exception, int> callback, int offset)
+		public void Write(Loop loop, int offset, byte[] data, Action<Exception, int> callback)
 		{
-			Write(loop, data, 0, data.Length, callback, offset);
+			Write(loop, offset, data, 0, data.Length, callback);
 		}
 		public void Write(Loop loop, byte[] data, Action<Exception, int> callback)
 		{
-			Write(loop, data, callback, -1);
+			Write(loop, -1, data, callback);
 		}
-		public void Write(Loop loop, byte[] data, int index, int count, int offset)
+		public void Write(Loop loop, int offset, byte[] data, int index, int count)
 		{
-			Write(loop, data, index, count, null, offset);
+			Write(loop, offset, data, index, count, null);
 		}
 		public void Write(Loop loop, byte[] data, int index, int count)
 		{
-			Write(loop, data, index, count, -1);
+			Write(loop, -1, data, index, count);
 		}
 		public void Write(Loop loop, byte[] data, int index)
 		{
@@ -221,37 +299,37 @@ namespace LibuvSharp
 			Write(loop, data, 0);
 		}
 
-		public void Write(byte[] data, int index, int count, Action<Exception, int> callback, int offset)
+		public void Write(int offset, byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Write(this.Loop, data, index, count, callback, offset);
+			Write(this.Loop, offset, data, index, count, callback);
 		}
 		public void Write(byte[] data, int index, int count, Action<Exception, int> callback)
 		{
-			Write(data, index, count, callback, -1);
+			Write(-1, data, index, count, callback);
 		}
-		public void Write(byte[] data, int index, Action<Exception, int> callback, int offset)
+		public void Write(int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
-			Write(this.Loop, data, index, data.Length - index, callback, offset);
+			Write(this.Loop, offset, data, index, data.Length - index, callback);
 		}
 		public void Write(byte[] data, int index, Action<Exception, int> callback)
 		{
 			Write(this.Loop, data, index, callback);
 		}
-		public void Write(byte[] data, Action<Exception, int> callback, int offset)
+		public void Write(int offset, byte[] data, Action<Exception, int> callback)
 		{
-			Write(this.Loop, data, callback, offset);
+			Write(this.Loop, offset, data, callback);
 		}
 		public void Write(byte[] data, Action<Exception, int> callback)
 		{
 			Write(this.Loop, data, callback);
 		}
-		public void Write(byte[] data, int index, int count, int offset)
+		public void Write(int offset, byte[] data, int index, int count)
 		{
-			Write(data, index, count, null, offset);
+			Write(offset, data, index, count, null);
 		}
 		public void Write(byte[] data, int index, int count)
 		{
-			Write(data, index, count, -1);
+			Write(-1, data, index, count);
 		}
 		public void Write(byte[] data, int index)
 		{
@@ -262,102 +340,98 @@ namespace LibuvSharp
 			Write(data, 0);
 		}
 
-		public void Write(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback, int offset)
-		{
-			Write(loop, data.Array, data.Offset, data.Count, callback, offset);
-		}
 		public void Write(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback)
 		{
-			Write(loop, data, callback, -1);
+			Write(loop, -1, data, callback);
 		}
-		public void Write(Loop loop, ArraySegment<byte> data, int offset)
+		public void Write(int offset, Loop loop, ArraySegment<byte> data)
 		{
-			Write(loop, data, null, offset);
+			Write(loop, offset, data, null);
 		}
 		public void Write(Loop loop, ArraySegment<byte> data)
 		{
 			Write(loop, data, null);
 		}
 
-		public void Write(ArraySegment<byte> data, Action<Exception, int> callback, int offset)
+		public void Write(int offset, ArraySegment<byte> data, Action<Exception, int> callback)
 		{
-			Write(Loop, data, callback, offset);
+			Write(Loop, offset, data, callback);
 		}
 		public void Write(ArraySegment<byte> data, Action<Exception, int> callback)
 		{
-			Write(data, callback, -1);
+			Write(-1, data, callback);
 		}
-		public void Write(ArraySegment<byte> data, int offset)
+		public void Write(int offset, ArraySegment<byte> data)
 		{
-			Write(data, null, offset);
+			Write(offset, data, null);
 		}
 		public void Write(ArraySegment<byte> data)
 		{
 			Write(data, null);
 		}
 
-		public int Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback, int offset)
+		public int Write(Loop loop, int offset, Encoding encoding, string text, Action<Exception, int> callback)
 		{
 			var bytes = encoding.GetBytes(text);
-			Write(loop, bytes, callback, offset);
+			Write(loop, offset, bytes, callback);
 			return bytes.Length;
 		}
 		public int Write(Loop loop, Encoding encoding, string text, Action<Exception, int> callback)
 		{
-			return Write(loop, encoding, text, callback, -1);
+			return Write(loop, -1, encoding, text, callback);
 		}
-		public int Write(Loop loop, Encoding encoding, string text, int offset)
+		public int Write(Loop loop, int offset, Encoding encoding, string text)
 		{
-			return Write(loop, encoding, text, null, offset);
+			return Write(loop, offset, encoding, text, null);
 		}
 		public int Write(Loop loop, Encoding encoding, string text)
 		{
-			return Write(loop, encoding, text, -1);
+			return Write(loop, -1, encoding, text);
 		}
-		public int Write(Loop loop, string text, Action<Exception, int> callback, int offset)
+		public int Write(Loop loop, int offset, string text, Action<Exception, int> callback)
 		{
-			return Write(loop, Encoding ?? Encoding.Default, text, callback, offset);
+			return Write(loop, offset, Encoding ?? Encoding.Default, text, callback);
 		}
 		public int Write(Loop loop, string text, Action<Exception, int> callback)
 		{
-			return Write(loop, text, callback, -1);
+			return Write(loop, -1, text, callback);
 		}
-		public int Write(Loop loop, string text, int offset)
+		public int Write(Loop loop, int offset, string text)
 		{
-			return Write(loop, text, null, offset);
+			return Write(loop, offset, text, null);
 		}
 		public int Write(Loop loop, string text)
 		{
-			return Write(loop, text, -1);
+			return Write(loop, -1, text);
 		}
 
-		public int Write(Encoding encoding, string text, Action<Exception, int> callback, int offset)
+		public int Write(int offset, Encoding encoding, string text, Action<Exception, int> callback)
 		{
-			return Write(this.Loop, encoding, text, callback, offset);
+			return Write(this.Loop, offset, encoding, text, callback);
 		}
 		public int Write(Encoding encoding, string text, Action<Exception, int> callback)
 		{
 			return Write(this.Loop, encoding, text, callback);
 		}
-		public int Write(Encoding encoding, string text, int offset)
+		public int Write(int offset, Encoding encoding, string text)
 		{
-			return Write(this.Loop, encoding, text, offset);
+			return Write(this.Loop, offset, encoding, text);
 		}
 		public int Write(Encoding encoding, string text)
 		{
 			return Write(this.Loop, encoding, text);
 		}
-		public int Write(string text, Action<Exception, int> callback, int offset)
+		public int Write(int offset, string text, Action<Exception, int> callback)
 		{
-			return Write(this.Loop, text, callback, offset);
+			return Write(this.Loop, offset, text, callback);
 		}
 		public int Write(string text, Action<Exception, int> callback)
 		{
 			return Write(this.Loop, text, callback);
 		}
-		public int Write(string text, int offset)
+		public int Write(int offset, string text)
 		{
-			return Write(this.Loop, text, offset);
+			return Write(this.Loop, offset, text);
 		}
 		public int Write(string text)
 		{
@@ -446,7 +520,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, int fd, long offset, NativeMethods.uv_fs_cb callback);
+		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, int file, long offset, NativeMethods.uv_fs_cb callback);
 
 		public void Truncate(Loop loop, int offset, Action<Exception> callback)
 		{

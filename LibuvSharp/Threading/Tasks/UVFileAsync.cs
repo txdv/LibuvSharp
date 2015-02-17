@@ -70,140 +70,151 @@ namespace LibuvSharp.Threading.Tasks
 			return Readlink(Loop.Constructor, path);
 		}
 
-		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index, int count, int offset)
+		#region ReadAsync
+
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, ArraySegment<byte> data)
 		{
-			var tcs = new TaskCompletionSource<int>();
-			try {
-				file.Read(loop, data, index, count, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				}, offset);
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap<Loop, int, ArraySegment<byte>, int>(loop, offset, data, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, int offset, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<int, ArraySegment<byte>, int>(offset, data, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<Loop, ArraySegment<byte>, int>(loop, data, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<ArraySegment<byte>, int>(data, file.Read);
+		}
+
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, byte[] data, int index, int count)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int, int, int>(loop, offset, data, index, count, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, int offset, byte[] data, int index, int count)
+		{
+			return HelperFunctions.Wrap<int, byte[], int, int, int>(offset, data, index, count, file.Read);
 		}
 		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index, int count)
 		{
-			return file.ReadAsync(loop, data, index, count, -1);
+			return HelperFunctions.Wrap<Loop, byte[], int, int, int>(loop, data, index, count, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, byte[] data, int index, int count)
+
+		{
+			return HelperFunctions.Wrap<byte[], int, int, int>(data, index, count, file.Read);
+		}
+
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, byte[] data, int index)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int, int>(loop, offset, data, index, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, int offset, byte[] data, int index)
+		{
+			return HelperFunctions.Wrap<int, byte[], int, int>(offset, data, index, file.Read);
 		}
 		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index)
 		{
-			return file.ReadAsync(loop, data, index, data.Length - index);
-		}
-		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data)
-		{
-			return file.ReadAsync(loop, data, 0);
-		}
-		public static Task<int> ReadAsync(this UVFile file, byte[] data, int index, int count, int offset)
-		{
-			return file.ReadAsync(file.Loop, data, index, count, offset);
-		}
-		public static Task<int> ReadAsync(this UVFile file, byte[] data, int index, int count)
-		{
-			return file.ReadAsync(file.Loop, data, index, count);
+			return HelperFunctions.Wrap<Loop, byte[], int, int>(loop, data, index, file.Read);
 		}
 		public static Task<int> ReadAsync(this UVFile file, byte[] data, int index)
 		{
-			return file.ReadAsync(file.Loop, data, index);
+			return HelperFunctions.Wrap<byte[], int, int>(data, index, file.Read);
+		}
+
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, byte[] data)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int>(loop, offset, data, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, int offset, byte[] data)
+		{
+			return HelperFunctions.Wrap<int, byte[], int>(offset, data, file.Read);
+		}
+		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data)
+		{
+			return HelperFunctions.Wrap<Loop, byte[], int>(loop, data, file.Read);
 		}
 		public static Task<int> ReadAsync(this UVFile file, byte[] data)
 		{
-			return file.ReadAsync(file.Loop, data);
+			return HelperFunctions.Wrap<byte[], int>(data, file.Read);
 		}
 
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data, int index, int count, int offset)
+		#endregion
+
+		#region WriteAsync
+
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, ArraySegment<byte> data)
 		{
-			var tcs = new TaskCompletionSource<int>();
-			try {
-				file.Write(loop, data, index, count, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				}, offset);
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
+			return HelperFunctions.Wrap<Loop, int, ArraySegment<byte>, int>(loop, offset, data, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, int offset, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<int, ArraySegment<byte>, int>(offset, data, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<Loop, ArraySegment<byte>, int>(loop, data, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, ArraySegment<byte> data)
+		{
+			return HelperFunctions.Wrap<ArraySegment<byte>, int>(data, file.Write);
+		}
+
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, byte[] data, int index, int count)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int, int, int>(loop, offset, data, index, count, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, int offset, byte[] data, int index, int count)
+		{
+			return HelperFunctions.Wrap<int, byte[], int, int, int>(offset, data, index, count, file.Write);
 		}
 		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data, int index, int count)
 		{
-			return file.WriteAsync(loop, data, index, count, -1);
+			return HelperFunctions.Wrap<Loop, byte[], int, int, int>(loop, data, index, count, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, byte[] data, int index, int count)
+
+		{
+			return HelperFunctions.Wrap<byte[], int, int, int>(data, index, count, file.Write);
+		}
+
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, byte[] data, int index)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int, int>(loop, offset, data, index, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, int offset, byte[] data, int index)
+		{
+			return HelperFunctions.Wrap<int, byte[], int, int>(offset, data, index, file.Write);
 		}
 		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data, int index)
 		{
-			return file.WriteAsync(loop, data, index, data.Length - index);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data)
-		{
-			return file.WriteAsync(loop, data, 0);
-		}
-		public static Task<int> WriteAsync(this UVFile file, byte[] data, int index, int count, int offset)
-		{
-			return file.WriteAsync(file.Loop, data, index, count, offset);
-		}
-		public static Task<int> WriteAsync(this UVFile file, byte[] data, int index, int count)
-		{
-			return file.WriteAsync(file.Loop, data, index, count);
+			return HelperFunctions.Wrap<Loop, byte[], int, int>(loop, data, index, file.Write);
 		}
 		public static Task<int> WriteAsync(this UVFile file, byte[] data, int index)
 		{
-			return file.WriteAsync(file.Loop, data, index);
+			return HelperFunctions.Wrap<byte[], int, int>(data, index, file.Write);
+		}
+
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, byte[] data)
+		{
+			return HelperFunctions.Wrap<Loop, int, byte[], int>(loop, offset, data, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, int offset, byte[] data)
+		{
+			return HelperFunctions.Wrap<int, byte[], int>(offset, data, file.Write);
+		}
+		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data)
+		{
+			return HelperFunctions.Wrap<Loop, byte[], int>(loop, data, file.Write);
 		}
 		public static Task<int> WriteAsync(this UVFile file, byte[] data)
 		{
-			return file.WriteAsync(file.Loop, data);
+			return HelperFunctions.Wrap<byte[], int>(data, file.Write);
 		}
 
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, Encoding encoding, string text, int offset)
-		{
-			var tcs = new TaskCompletionSource<int>();
-			try {
-				file.Write(loop, encoding, text, (e, result) => {
-					if (e == null) {
-						tcs.SetResult(result);
-					} else {
-						tcs.SetException(e);
-					}
-				}, offset);
-			} catch (Exception e) {
-				tcs.SetException(e);
-			}
-			return tcs.Task;
-		}
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, Encoding encoding, string text)
-		{
-			return file.WriteAsync(loop, encoding, text, -1);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, string text, int offset)
-		{
-			return file.WriteAsync(loop, Encoding.Default, text, offset);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, string text)
-		{
-			return file.WriteAsync(loop, text, -1);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Encoding encoding, string text, int offset)
-		{
-			return file.WriteAsync(file.Loop, encoding, text, offset);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Encoding encoding, string text)
-		{
-			return file.WriteAsync(file.Loop, encoding, text);
-		}
-		public static Task<int> WriteAsync(this UVFile file, string text, int offset)
-		{
-			return file.WriteAsync(file.Loop, text, offset);
-		}
-		public static Task<int> WriteAsync(this UVFile file, string text)
-		{
-			return file.WriteAsync(file.Loop, text);
-		}
+		#endregion
 
 		public static Task SyncAsync(this UVFile file, Loop loop)
 		{

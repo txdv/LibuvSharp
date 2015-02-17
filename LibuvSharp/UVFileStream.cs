@@ -3,9 +3,40 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	public class UVFileStream : IUVStream<ArraySegment<byte>>
+	public class UVFileStream : IUVStream<ArraySegment<byte>>, IDisposable, IHandle
 	{
+		public void Ref()
+		{
+		}
+
+		public void Unref()
+		{
+		}
+
+		public void Close(Action callback)
+		{
+			Close((ex) => {
+				if (callback != null) {
+					callback();
+				}
+			});
+		}
+
+		public bool HasRef {
+			get {
+				return true;
+			}
+		}
+
 		public Loop Loop { get; private set; }
+
+		public bool IsClosed {
+			get {
+				return uvfile == null;
+			}
+		}
+
+		public bool IsClosing { get; private set; }
 
 		public UVFileStream()
 			: this(Loop.Constructor)
@@ -39,6 +70,10 @@ namespace LibuvSharp
 				break;
 			case UVFileAccess.Write:
 				Writeable = true;
+				break;
+			case UVFileAccess.ReadWrite:
+				Writeable = true;
+				Readable = true;
 				break;
 			default:
 				throw new ArgumentException("access not supported");
@@ -104,7 +139,7 @@ namespace LibuvSharp
 
 		void WorkRead()
 		{
-			uvfile.Read(buffer, HandleRead, readposition);
+			uvfile.Read(Loop, readposition, new ArraySegment<byte>(buffer, 0, buffer.Length), HandleRead);
 		}
 
 		public void Resume()
@@ -147,19 +182,23 @@ namespace LibuvSharp
 		void WorkWrite()
 		{
 			if (queue.Count == 0) {
-				OnDrain();
 				if (shutdown) {
 					uvfile.Truncate(writeoffset, Finish);
+					//uvfile.Close(shutdownCallback);
 				}
-				return;
+				OnDrain();
+			} else {
+				// handle next write
+				var item = queue.Peek();
+				uvfile.Write(Loop, writeoffset, item.Item1, HandleWrite);
 			}
-			var item = queue.Peek();
-			uvfile.Write(item.Item1, HandleWrite, writeoffset);
 		}
 
 		void Finish(Exception ex)
 		{
 			uvfile.Close((ex2) => {
+				uvfile = null;
+				IsClosing = false;
 				if (shutdownCallback != null) {
 					shutdownCallback(ex ?? ex2);
 				}
@@ -201,21 +240,20 @@ namespace LibuvSharp
 
 		void Close(Action<Exception> callback)
 		{
-			uvfile.Close(callback);
-		}
-
-		void Close(Action callback)
-		{
-			Close((ex) => {
-				if (callback != null) {
-					callback();
-				}
-			});
+			if (!IsClosed && !IsClosing) {
+				IsClosing = true;
+				uvfile.Close(callback);
+			}
 		}
 
 		void Close()
 		{
 			Close((ex) => { });
+		}
+
+		public void Dispose()
+		{
+			Close();
 		}
 	}
 }
