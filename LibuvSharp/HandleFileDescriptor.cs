@@ -20,10 +20,10 @@ namespace LibuvSharp
 		{
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("uv", EntryPoint = "uv_fileno", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_fileno_windows(IntPtr handle, out IntPtr fd);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("uv", EntryPoint = "uv_fileno", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_fileno_unix(IntPtr handle, out int fd);
 
 		public IntPtr FileDescriptor {
