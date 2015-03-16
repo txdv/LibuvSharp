@@ -8,16 +8,28 @@ namespace LibuvSharp.Threading.Tasks
 	{
 		public Loop Loop { get; private set; }
 
+		public Thread Thread { get; private set; }
+
 		public int PendingOperations { get; private set; }
 
 		public LoopSynchronizationContext(Loop loop)
+			: this(loop, Thread.CurrentThread)
+		{
+		}
+
+		public LoopSynchronizationContext(Loop loop, Thread thread)
 		{
 			Loop = loop;
+			Thread = thread;
 		}
 
 		public override void Post(SendOrPostCallback d, object state)
 		{
-			d(state);
+			if (Thread == Thread.CurrentThread) {
+				d(state);
+			} else {
+				Loop.Sync(() => d(state));
+			}
 		}
 
 		public override void OperationStarted()
