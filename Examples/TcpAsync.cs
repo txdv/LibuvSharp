@@ -14,18 +14,20 @@ namespace Test
 		public static async Task Server()
 		{
 			try {
-				var server = new TcpListener();
-				server.Bind(ep);
-				server.Listen();
+				using (var server = new TcpListener()) {
+					server.Bind(ep);
+					server.Listen();
 
-				var client = await server.AcceptAsync();
+					using (var client = await server.AcceptAsync()) {
 
-				client.Write(Encoding.ASCII, "Hello World!");
-				var str = await client.ReadStringAsync();
-				Console.WriteLine("From Client: {0}", str);
+						client.Write("Hello World!");
+						var str = await client.ReadStringAsync();
+						Console.WriteLine("From Client: {0}", str);
 
-				client.Shutdown();
-				server.Close();
+						client.Shutdown();
+						server.Close();
+					}
+				}
 			} catch (Exception e) {
 				Console.WriteLine("Server Exception:");
 				Console.WriteLine(e);
@@ -35,14 +37,13 @@ namespace Test
 		public static async Task Client()
 		{
 			try {
-				var client = new Tcp();
-				await client.ConnectAsync(ep);
+				using (var client = new Tcp()) {
+					await client.ConnectAsync(ep);
 
-				client.Write(Encoding.ASCII, "Labas Pasauli!");
-				var str = await client.ReadStringAsync();
-				Console.WriteLine("From Server: {0}", str);
-
-				client.Shutdown();
+					client.Write("Labas Pasauli!");
+					var str = await client.ReadStringAsync();
+					Console.WriteLine("From Server: {0}", str);
+				}
 			} catch (Exception e) {
 				Console.WriteLine("Client Exception:");
 				Console.WriteLine(e);
