@@ -86,6 +86,10 @@ namespace LibuvSharp
 
 		public void Pause()
 		{
+			if (NativeHandle == IntPtr.Zero) {
+				return;
+			}
+
 			int r = uv_read_stop(NativeHandle);
 			Ensure.Success(r);
 		}
