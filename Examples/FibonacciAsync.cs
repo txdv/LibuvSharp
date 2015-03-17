@@ -1,10 +1,3 @@
-/*
- * An example which proves how wrong the 'node is cancer' article is about
- * event loops. Well, the Fibonacci calculation is not executed in the
- * event loop, but in a different thread, but the api exposed in the loop
- * class makes it easy to utilize the thread pool avoiding blocking the
- * main event loop with long calclulations.
- */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +11,15 @@ namespace Test
 {
 	class MainClass
 	{
+		/*
+		 * An example which proves how wrong the 'node is cancer' article is about
+		 * event loops. Well, the Fibonacci calculation is not executed in the
+		 * event loop, but in a different thread, but the api exposed in the loop
+		 * class makes it easy to utilize the thread pool in order to avoid blocking
+		 * the main event loop with long calclulations.
+		 * http://pages.citebite.com/b2x0j8q1megb
+		 */
+
 		public static BigInteger Fibonacci(int n)
 		{
 			switch (n) {
@@ -42,6 +44,20 @@ namespace Test
 			Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 		}
 
+		public static async Task TrackCalculateFibonacci(LinkedList<Task> jobs, int n)
+		{
+			LinkedListNode<Task> node = null;
+			try {
+				var task = CalculateFibonacci(n);
+				node = jobs.AddLast(task);
+				await task;
+			} finally {
+				if (node != null) {
+					jobs.Remove(node);
+				}
+			}
+		}
+
 		public static void Main(string[] args)
 		{
 			Loop.Default.Run(async () => {
@@ -58,9 +74,7 @@ namespace Test
 							Console.WriteLine("Supply an integer to the fib command");
 							return;
 						}
-						var task = CalculateFibonacci(n);
-						var node = jobs.AddLast(task);
-						task.ContinueWith((_) => jobs.Remove(node));
+						TrackCalculateFibonacci(jobs, n);
 					} else if (str == "help") {
 						Console.WriteLine("Available commands: ");
 						Console.WriteLine("fib <n:int> - start a thread which calculates fib");
