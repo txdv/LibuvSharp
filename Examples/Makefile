@@ -10,6 +10,7 @@ files= \
 	TcpAsync.exe         \
 	UVDirectoryAsync.exe \
 	UVTimerAsync.exe     \
+	CrossAsync.exe       \
 
 binaries=$(addprefix $(output), $(files))
 

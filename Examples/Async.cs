@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,5 +26,31 @@ static class AsyncExtensions
 		}
 		var b = buffer.Value;
 		return encoding.GetString(b.Array, b.Offset, b.Count);
+	}
+}
+
+public static class EncodingExtensions
+{
+	public static string GetString(this Encoding encoding, ArraySegment<byte> segment)
+	{
+		return encoding.GetString(segment.Array, segment.Offset, segment.Count);
+	}
+
+	public static string GetString(this Encoding encoding, ArraySegment<byte>? segment)
+	{
+		if (!segment.HasValue) {
+			return null;
+		} else {
+			var value = segment.Value;
+			return encoding.GetString(value.Array, value.Offset, value.Count);
+		}
+	}
+}
+
+static class TcpClientExtensions
+{
+	public static async Task ConnectAsync(this TcpClient client, IPEndPoint ipEndPoint)
+	{
+		await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
 	}
 }
