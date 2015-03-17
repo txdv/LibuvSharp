@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4BF2B904-9AEB-4C7B-B87C-F353FD35E4A6}</ProjectGuid>
+    <ProjectGuid>{1E075747-F4DF-4761-A080-A930D9EB7492}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>TcpAsync</RootNamespace>
     <AssemblyName>TcpAsync</AssemblyName>
