@@ -8,17 +8,17 @@ using LibuvSharp.Threading.Tasks;
 
 static class AsyncExtensions
 {
-	public static async Task<string> ReadStringAsync(this IUVStream stream)
+	public static async Task<string> ReadStringAsync(this IUVStream<ArraySegment<byte>> stream)
 	{
 		return await ReadStringAsync(stream, Encoding.Default);
 	}
 
-	public static async Task<string> ReadStringAsync(this IUVStream stream, Encoding encoding)
+	public static async Task<string> ReadStringAsync(this IUVStream<ArraySegment<byte>> stream, Encoding encoding)
 	{
 		if (encoding == null) {
 			throw new ArgumentException("encoding");
 		}
-		var buffer = await stream.ReadAsync();
+		var buffer = await stream.ReadStructAsync();
 		if (!buffer.HasValue) {
 			return null;
 		}
