@@ -24,8 +24,7 @@ static class AsyncExtensions
 		if (!buffer.HasValue) {
 			return null;
 		}
-		var b = buffer.Value;
-		return encoding.GetString(b.Array, b.Offset, b.Count);
+		return encoding.GetString(buffer.Value);
 	}
 }
 
