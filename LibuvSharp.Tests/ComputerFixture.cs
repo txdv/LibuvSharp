@@ -24,7 +24,6 @@ namespace LibuvSharp.Tests
 
 				Assert.True(cpu.Speed > 0);
 				Assert.True(cpu.Times.Idle > 0);
-				Assert.True(cpu.Times.Nice > 0);
 				Assert.True(cpu.Times.System > 0);
 				Assert.True(cpu.Times.User > 0);
 			}
