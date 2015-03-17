@@ -1,27 +1,15 @@
-# Travis-CI Build
-# see travis-ci.org for details
 
-language: c
+language: csharp
+solution: LibuvSharp.sln
 
 install:
- - sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
- - sudo sh -c "echo 'deb http://download.mono-project.com/repo/debian wheezy main' >> /etc/apt/sources.list.d/mono-xamarin.list"
- - sudo sh -c "echo 'deb http://download.mono-project.com/repo/debian wheezy-libtiff-compat main' >> /etc/apt/sources.list.d/mono-xamarin.list"
- - sudo apt-get update -qq
- - sudo apt-get install -qq mono-complete nuget mono-vbnc fsharp
- - mozroots --import --sync --quiet
+  - nuget restore LibuvSharp.sln
+  - mkdir -p bin/Debug
+  - make
+  - sudo cp libuv/.libs/libuv.so /usr/lib
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory bin/Debug
 
-# Run the Build script
 script:
- - make
- - sudo cp libuv.so /usr/lib/
- - mkdir packages
- - nuget install LibuvSharp.Tests/packages.config -OutputDirectory packages/
- - xbuild LibuvSharp.sln
- - cd bin/Debug/
- - nuget install xunit.runners -Version 1.9.2
-
-# Run Tests
-after_script:
- - cd bin/Debug
- - sudo mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
+  - xbuild LibuvSharp.sln
+  - cd bin/Debug
+  - mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
