@@ -42,7 +42,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Async.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="FibonacciAsync.cs" />
   </ItemGroup>
   <ItemGroup>
