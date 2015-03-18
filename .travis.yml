@@ -1,4 +1,3 @@
-
 language: csharp
 solution: LibuvSharp.sln
 
@@ -6,10 +5,9 @@ install:
   - nuget restore LibuvSharp.sln
   - mkdir -p bin/Debug
   - make
-  - sudo cp libuv/.libs/libuv.so /usr/lib
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory bin/Debug
 
 script:
   - xbuild LibuvSharp.sln
   - cd bin/Debug
-  - mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
+  - LD_LIBRARY_PATH=$(HOME)/libuv/.libs/:$LD_LIBRARY_PATH mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
