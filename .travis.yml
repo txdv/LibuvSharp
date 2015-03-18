@@ -1,6 +1,6 @@
-
 language: csharp
 solution: LibuvSharp.sln
+sudo: false
 
 install:
   - nuget restore LibuvSharp.sln
