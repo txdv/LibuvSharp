@@ -4,9 +4,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using LibuvSharp;
 using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
+using System.Security.Cryptography;
 
 static class AsyncExtensions
 {
@@ -51,5 +53,43 @@ static class TcpClientExtensions
 	public static async Task ConnectAsync(this TcpClient client, IPEndPoint ipEndPoint)
 	{
 		await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
+	}
+}
+
+public static class HexExtensions
+{
+	public static string ToHex(this byte[] bytes)
+	{
+		return String.Join(string.Empty, Array.ConvertAll(bytes, x => x.ToString("x2")));
+	}
+
+	public static string ToHex(this ArraySegment<byte> segment)
+	{
+		return String.Join(String.Empty, segment.Select((x) => x.ToString("x2")));
+	}
+}
+
+public static class HashAlgorithmExtensions
+{
+	public static void TransformBlock(this HashAlgorithm hashAlgorithm, ArraySegment<byte> input, byte[] outputBuffer, int outputOffset)
+	{
+		hashAlgorithm.TransformBlock(input.Array, input.Offset, input.Count, outputBuffer, outputOffset);
+	}
+
+	public static void TransformBlock(this HashAlgorithm hashAlgorithm, ArraySegment<byte> input)
+	{
+		hashAlgorithm.TransformBlock(input, null, 0);
+	}
+
+	public static void TransformFinalBlock(this HashAlgorithm hashAlgorithm, ArraySegment<byte> input)
+	{
+		hashAlgorithm.TransformFinalBlock(input.Array, input.Offset, input.Count);
+	}
+
+	static byte[] emptyBuffer = new byte[0];
+
+	public static void TransformFinalBlock(this HashAlgorithm hashAlgorithm)
+	{
+		hashAlgorithm.TransformFinalBlock(emptyBuffer, 0, 0);
 	}
 }

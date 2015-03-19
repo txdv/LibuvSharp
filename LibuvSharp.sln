@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FibonacciAsync", "Examples\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpAsync", "Examples\TcpAsync.csproj", "{1E075747-F4DF-4761-A080-A930D9EB7492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashStreamAsync", "Examples\HashStreamAsync.csproj", "{4255BBCC-C193-4779-B3C4-384E80BBC472}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{3B81C6F3-9280-4CE6-B64E-F73493ED8A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B81C6F3-9280-4CE6-B64E-F73493ED8A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B81C6F3-9280-4CE6-B64E-F73493ED8A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4255BBCC-C193-4779-B3C4-384E80BBC472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4255BBCC-C193-4779-B3C4-384E80BBC472}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4255BBCC-C193-4779-B3C4-384E80BBC472}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4255BBCC-C193-4779-B3C4-384E80BBC472}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4BF2B904-9AEB-4C7B-B87C-F353FD35E4A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BF2B904-9AEB-4C7B-B87C-F353FD35E4A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BF2B904-9AEB-4C7B-B87C-F353FD35E4A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
