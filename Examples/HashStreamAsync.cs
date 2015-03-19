@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using System.Net.Http;
 using LibuvSharp;
 using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
@@ -16,6 +19,20 @@ public class MainClass
 		return await Compute(stream);
 	}
 
+	public static async Task<byte[]> Compute(Uri uri)
+	{
+		var client = new HttpClient();
+		var a = await client.GetAsync(uri);
+		return Compute(await a.Content.ReadAsByteArrayAsync());
+	}
+
+	public static byte[] Compute(byte[] data)
+	{
+		var hashAlgorithm = SHA1Managed.Create();
+		hashAlgorithm.TransformFinalBlock(data);
+		return hashAlgorithm.Hash;
+	}
+
 	public static async Task<byte[]> Compute(IUVStream<ArraySegment<byte>> stream)
 	{
 		var hashAlgorithm = SHA1Managed.Create();
@@ -27,6 +44,17 @@ public class MainClass
 		return hashAlgorithm.Hash;
 	}
 
+	static IEnumerable<string> files;
+
+	public static async Task<byte[]> Differentiate(string argument)
+	{
+		if (files.Contains(argument)) {
+			return await Compute(argument);
+		} else {
+			return await Compute(new Uri(argument));
+		}
+	}
+
 	public static void Main(string[] args)
 	{
 		if (args.Length == 0) {
@@ -34,9 +62,14 @@ public class MainClass
 			return;
 		}
 
+		// initiating app state, so blocking calls are ok,
+		// because we will wait for this in any case
+		// in this small app
+		files = new System.IO.DirectoryInfo("./").GetFiles().Select((di) => di.Name);
+
 		var now = DateTime.Now;
 		Loop.Default.Run(async () => {
-			foreach (var file in await Task.WhenAll(args.Select(async (file) => Tuple.Create(file, await Compute(file))))) {
+			foreach (var file in await Task.WhenAll(args.Select(async (file) => Tuple.Create(file, await Differentiate(file))))) {
 				Console.WriteLine("{1} {0}", file.Item1, file.Item2.ToHex());
 			}
 		});
