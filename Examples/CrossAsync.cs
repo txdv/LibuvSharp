@@ -16,8 +16,6 @@ namespace CrossAsync
 	*/
 	class MainClass
 	{
-		static IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
-
 		public static void Main(string[] args)
 		{
 			Loop.Default.Run(async () => {
@@ -32,7 +30,7 @@ namespace CrossAsync
 		public static async Task BclClient()
 		{
 			using (var client = new TcpClient()) {
-				await client.ConnectAsync(ipEndPoint);
+				await client.ConnectAsync(Default.IPEndPoint);
 				var stream = client.GetStream();
 				var sw = new StreamWriter(stream);
 				await sw.WriteAsync("Hello World from BCL!");
@@ -43,7 +41,7 @@ namespace CrossAsync
 		// BCL Tcp Server
 		public static async Task BclServer()
 		{
-			var listener = new System.Net.Sockets.TcpListener(ipEndPoint);
+			var listener = new System.Net.Sockets.TcpListener(Default.IPEndPoint);
 			try {
 				listener.Start();
 				using (var client = await listener.AcceptTcpClientAsync()) {
@@ -60,7 +58,7 @@ namespace CrossAsync
 		public static async Task LoopClient()
 		{
 			using (var client = new Tcp()) {
-				await client.ConnectAsync(ipEndPoint);
+				await client.ConnectAsync(Default.IPEndPoint);
 				await client.WriteAsync("Hello World from LibuvSharp!");
 			}
 		}
@@ -69,7 +67,7 @@ namespace CrossAsync
 		public static async Task LoopServer()
 		{
 			using (var server = new LibuvSharp.TcpListener()) {
-				server.Bind(ipEndPoint);
+				server.Bind(Default.IPEndPoint);
 				server.Listen();
 
 				using (var client = await server.AcceptAsync()) {

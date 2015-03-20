@@ -9,13 +9,11 @@ namespace Test
 {
 	class MainClass
 	{
-		static IPEndPoint ep = new IPEndPoint(IPAddress.Any, 8080);
-
 		public static async Task Server()
 		{
 			try {
 				using (var server = new TcpListener()) {
-					server.Bind(ep);
+					server.Bind(Default.IPEndPoint);
 					server.Listen();
 
 					using (var client = await server.AcceptAsync()) {
@@ -38,7 +36,7 @@ namespace Test
 		{
 			try {
 				using (var client = new Tcp()) {
-					await client.ConnectAsync(ep);
+					await client.ConnectAsync(Default.IPEndPoint);
 
 					client.Write("Labas Pasauli!");
 					var str = await client.ReadStringAsync();

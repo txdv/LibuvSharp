@@ -10,6 +10,11 @@ using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
 using System.Security.Cryptography;
 
+public static class Default
+{
+	public static IPEndPoint IPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7000);
+}
+
 static class AsyncExtensions
 {
 	public static async Task<string> ReadStringAsync(this IUVStream<ArraySegment<byte>> stream)
