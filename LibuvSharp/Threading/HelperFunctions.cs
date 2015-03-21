@@ -1,10 +1,22 @@
 using System;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace LibuvSharp
 {
 	class HelperFunctions
 	{
+		static System.Reflection.FieldInfo statusField;
+		static HelperFunctions()
+		{
+			statusField = typeof(Task).GetField("status", BindingFlags.NonPublic | BindingFlags.Instance);
+		}
+
+		static void SetStatus(Task task, TaskStatus status)
+		{
+			statusField.SetValue(task, status);
+		}
+
 		public static Action<Exception, T> Finish<T>(TaskCompletionSource<T> tcs, Action callback)
 		{
 			bool finished = false;
@@ -55,6 +67,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(() => tcs.SetResult(null));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -66,6 +79,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -77,6 +91,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(arg1, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -87,6 +102,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(arg1, arg2, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -97,6 +113,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(arg1, arg2, arg3, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -107,6 +124,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<object>();
 			try {
 				action(arg1, arg2, arg3, arg4, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -125,6 +143,7 @@ namespace LibuvSharp
 						tcs.SetException(ex);
 					}
 				});
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -142,16 +161,19 @@ namespace LibuvSharp
 						tcs.SetException(ex);
 					}
 				});
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
 			return tcs.Task;
 		}
+
 		public static Task<TResult> Wrap<T, TResult>(T arg1, Action<T, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
 				action(arg1, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -162,6 +184,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
 				action(arg1, arg2, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -172,6 +195,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
 				action(arg1, arg2, arg3, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -182,6 +206,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
 				action(arg1, arg2, arg3, arg4, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
@@ -192,6 +217,7 @@ namespace LibuvSharp
 			var tcs = new TaskCompletionSource<TResult>();
 			try {
 				action(arg1, arg2, arg3, arg4, arg5, Exception(tcs));
+				SetStatus(tcs.Task, TaskStatus.Running);
 			} catch (Exception ex) {
 				tcs.SetException(ex);
 			}
