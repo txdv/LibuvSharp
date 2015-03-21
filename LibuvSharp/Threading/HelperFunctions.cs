@@ -82,6 +82,36 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
+		public static Task Wrap<T1, T2>(T1 arg1, T2 arg2, Action<T1, T2, Action<Exception>> action)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				action(arg1, arg2, Exception(tcs));
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
+		public static Task Wrap<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, Action<T1, T2, T3, Action<Exception>> action)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				action(arg1, arg2, arg3, Exception(tcs));
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
+		public static Task Wrap<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, Action<T1, T2, T3, T4, Action<Exception>> action)
+		{
+			var tcs = new TaskCompletionSource<object>();
+			try {
+				action(arg1, arg2, arg3, arg4, Exception(tcs));
+			} catch (Exception ex) {
+				tcs.SetException(ex);
+			}
+			return tcs.Task;
+		}
 
 		public static Task<TResult> Wrap<T, TResult>(T arg1, Func<T, Action<Exception>, TResult> func)
 		{
@@ -100,18 +130,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
-		public static Task Wrap<T1, T2>(T1 arg1, T2 arg2, Action<T1, T2, Action<Exception>> action)
-		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				action(arg1, arg2, Exception(tcs));
-			} catch (Exception ex) {
-				tcs.SetException(ex);
-			}
-			return tcs.Task;
-		}
-
 		public static Task<TResult> Wrap<T1, T2, TResult>(T1 arg1, T2 arg2, Func<T1, T2, Action<Exception>, TResult> func)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
@@ -129,29 +147,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
-		public static Task Wrap<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3, Action<T1, T2, T3, Action<Exception>> action)
-		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				action(arg1, arg2, arg3, Exception(tcs));
-			} catch (Exception ex) {
-				tcs.SetException(ex);
-			}
-			return tcs.Task;
-		}
-
-		public static Task Wrap<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, Action<T1, T2, T3, T4, Action<Exception>> action)
-		{
-			var tcs = new TaskCompletionSource<object>();
-			try {
-				action(arg1, arg2, arg3, arg4, Exception(tcs));
-			} catch (Exception ex) {
-				tcs.SetException(ex);
-			}
-			return tcs.Task;
-		}
-
 		public static Task<TResult> Wrap<T, TResult>(T arg1, Action<T, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
@@ -162,7 +157,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
 		public static Task<TResult> Wrap<T1, T2, TResult>(T1 arg1, T2 arg2, Action<T1, T2, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
@@ -173,7 +167,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
 		public static Task<TResult> Wrap<T1, T2, T3, TResult>(T1 arg1, T2 arg2, T3 arg3, Action<T1, T2, T3, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
@@ -184,7 +177,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
 		public static Task<TResult> Wrap<T1, T2, T3, T4, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, Action<T1, T2, T3, T4, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
@@ -195,7 +187,6 @@ namespace LibuvSharp
 			}
 			return tcs.Task;
 		}
-
 		public static Task<TResult> Wrap<T1, T2, T3, T4, T5, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, Action<T1, T2, T3, T4, T5, Action<Exception, TResult>> action)
 		{
 			var tcs = new TaskCompletionSource<TResult>();
