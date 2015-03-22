@@ -8,7 +8,7 @@
     <ProjectGuid>{E33F8D91-A4C7-4BA0-9153-DA2FDA6EAB4A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>UVDirectoryAsync</RootNamespace>
-    <AssemblyName>UVDirectoryAsync</AssemblyName>
+    <AssemblyName>UVTimerAsync</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,14 +33,14 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="UVDirectoryAsync.cs" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\LibuvSharp\LibuvSharp.csproj">
       <Project>{281B560A-E3B1-437C-9274-DD655E860E6E}</Project>
       <Name>LibuvSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UVTimerAsync.cs" />
   </ItemGroup>
 </Project>
