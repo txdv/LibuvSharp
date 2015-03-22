@@ -6,10 +6,9 @@ install:
   - nuget restore LibuvSharp.sln
   - mkdir -p bin/Debug
   - make
-  - cp libuv/.libs/libuv.so bin/Debug
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory bin/Debug
 
 script:
   - xbuild LibuvSharp.sln
   - cd bin/Debug
-  - LD_LIBRARY_PATH=$(PWD):$LD_LIBRARY_PATH mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
+  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/libuv/.libs:$LD_LIBRARY_PATH mono --debug xunit.runners.1.9.2/tools/xunit.console.clr4.exe LibuvSharp.Tests.dll
