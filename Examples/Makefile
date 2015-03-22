@@ -1,20 +1,9 @@
 basesrc=Common.cs
 output=../bin/Debug/
-includes=../bin/Debug/LibuvSharp.dll,System.Numerics
+includes=../bin/Debug/LibuvSharp.dll,System.Numerics,System.Net.Http.dll
+src=$(shell ls *.cs | grep -v $(basesrc))
 
-files= \
-	CrossAsync.exe       \
-	DirectoryAsync.exe   \
-	Fibonacci.exe        \
-	FibonacciAsync.exe   \
-	HashStream.exe       \
-	HashStreamAsync.exe  \
-	Stat.exe             \
-	TcpAsync.exe         \
-	UVDirectoryAsync.exe \
-	UVTimerAsync.exe     \
-
-binaries=$(addprefix $(output), $(files))
+binaries=$(addprefix $(output), $(src:%.cs=%.exe))
 
 all: $(binaries)
 
