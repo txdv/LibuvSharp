@@ -1,14 +1,14 @@
-basesrc=Common.cs
-output=../bin/Debug/
-includes=../bin/Debug/LibuvSharp.dll,System.Numerics,System.Net.Http.dll
-src=$(shell ls *.cs | grep -v $(basesrc))
+BASESRC=Common.cs
+OUTPUT=../bin/Debug/
+INCLUDES=../bin/Debug/LibuvSharp.dll,System.Numerics,System.Net.Http.dll
+SRC=$(shell ls *.cs | grep -v $(BASESRC))
 
-binaries=$(addprefix $(output), $(src:%.cs=%.exe))
+BIN=$(addprefix $(OUTPUT), $(SRC:%.cs=%.exe))
 
-all: $(binaries)
+all: $(BIN)
 
-$(output)%.exe: %.cs $(basesrc)
-	gmcs -unsafe -sdk:4.5 $^ -r:$(includes) -out:$@
+$(OUTPUT)%.exe: %.cs $(BASESRC)
+	gmcs -unsafe -sdk:4.5 $^ -r:$(INCLUDES) -out:$@
 
 clean:
-	rm -rvf $(binaries)
+	rm -rvf $(BIN)
