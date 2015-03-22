@@ -6,15 +6,29 @@ namespace LibuvSharp
 {
 	class HelperFunctions
 	{
-		static System.Reflection.FieldInfo statusField;
+		static System.Reflection.FieldInfo monoStatusField;
+		static System.Reflection.FieldInfo dotNetStatusField;
+		// http://referencesource.microsoft.com/#mscorlib/system/threading/Tasks/Task.cs,189
+		internal const int TASK_STATE_DELEGATE_INVOKED = 0x20000;
+
 		static HelperFunctions()
 		{
-			statusField = typeof(Task).GetField("status", BindingFlags.NonPublic | BindingFlags.Instance);
+			monoStatusField = typeof(Task).GetField("status", BindingFlags.NonPublic | BindingFlags.Instance);
+			dotNetStatusField = typeof(Task).GetField("m_stateFlags", BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 
 		static void SetStatus(Task task, TaskStatus status)
 		{
-			statusField.SetValue(task, status);
+			if (monoStatusField != null) {
+				monoStatusField.SetValue(task, status);
+			} else if (dotNetStatusField != null) {
+				if (status != TaskStatus.Running) {
+					throw new ApplicationException("SetStatus only supported with status = TaskStatus.Running");
+				}
+				dotNetStatusField.SetValue(task, (int)dotNetStatusField.GetValue(task) | TASK_STATE_DELEGATE_INVOKED);
+			} else {
+				throw new ApplicationException("Platform not supported: The Status of the Task can't be set to Running.");
+			}
 		}
 
 		public static Action<Exception, T> Finish<T>(TaskCompletionSource<T> tcs, Action callback)
