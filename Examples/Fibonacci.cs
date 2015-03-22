@@ -1,10 +1,3 @@
-/*
- * An example which proves how wrong the 'node is cancer' article is about
- * event loops. Well, the Fibonacci calculation is not executed in the
- * event loop, but in a different thread, but the api exposed in the loop
- * class makes it easy to utilize the thread pool avoiding blocking the
- * main event loop with long calclulations.
- */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +9,15 @@ namespace Test
 {
 	class MainClass
 	{
+		/*
+		 * An example which proves how wrong the 'node is cancer' article is about
+		 * event loops. Well, the Fibonacci calculation is not executed in the
+		 * event loop, but in a different thread, but the api exposed in the loop
+		 * class makes it easy to utilize the thread pool in order to avoid blocking
+		 * the main event loop with long calclulations.
+		 * http://pages.citebite.com/b2x0j8q1megb
+		 */
+
 		public static BigInteger Fibonacci(int n)
 		{
 			switch (n) {
