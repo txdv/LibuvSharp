@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Diagnostics;
 using LibuvSharp;
 
 public class HashStream : IDisposable
@@ -82,8 +83,8 @@ public class HashStream : IDisposable
 			Compute(Loop.Default, arg);
 		}
 
-		var now = DateTime.Now;
+		var stopwatch = Stopwatch.StartNew();
 		Loop.Default.Run();
-		Console.WriteLine((DateTime.Now - now).TotalMilliseconds);
+		Console.WriteLine(stopwatch.Elapsed.TotalMilliseconds);
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using LibuvSharp;
 using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
@@ -11,11 +12,13 @@ namespace Test
 {
 	class Job
 	{
+		Stopwatch stopwatch = new Stopwatch();
+
 		public Task Task { get; private set; }
 		public DateTime StartTime { get; private set; }
 		public TimeSpan TimeRunning {
 			get {
-				return DateTime.Now - StartTime;
+				return stopwatch.Elapsed;
 			}
 		}
 
@@ -28,6 +31,7 @@ namespace Test
 		{
 			Task = task;
 			StartTime = startTime;
+			stopwatch.Start();
 		}
 	}
 
@@ -56,13 +60,14 @@ namespace Test
 
 		public static async Task CalculateFibonacci(int n)
 		{
-			TimeSpan span = TimeSpan.Zero;
 			BigInteger res = 0;
+			TimeSpan span = TimeSpan.Zero;
 			await Task.Run(() => {
-				var now = DateTime.Now;
-				Console.WriteLine("fib({0}) started {1}", n, now);
+				var stopwatch = Stopwatch.StartNew();
+				Console.WriteLine("fib({0}) started {1}", n, DateTime.Now);
 				res = Fibonacci(n);
-				span = DateTime.Now - now;
+				stopwatch.Stop();
+				span = stopwatch.Elapsed;
 			});
 			Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 		}

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using LibuvSharp.Threading;
 using Xunit;
 
@@ -11,9 +12,10 @@ namespace LibuvSharp.Tests
 		{
 			TimeSpan span = TimeSpan.Zero;
 			Loop.Default.QueueUserWorkItem(() => {
-				var now = DateTime.Now;
+				var stopwatch = Stopwatch.StartNew();
 				System.Threading.Thread.Sleep(1000);
-				span = DateTime.Now - now;
+				stopwatch.Stop();
+				span = stopwatch.Elapsed;
 			}, null);
 			Loop.Default.Run();
 

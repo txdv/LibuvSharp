@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Net.Http;
+using System.Diagnostics;
 using LibuvSharp;
 using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
@@ -67,12 +68,14 @@ public class MainClass
 		// in this small app
 		files = new System.IO.DirectoryInfo("./").GetFiles().Select((di) => di.Name);
 
-		var now = DateTime.Now;
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		Loop.Default.Run(async () => {
 			foreach (var file in await Task.WhenAll(args.Select(async (file) => Tuple.Create(file, await Differentiate(file))))) {
 				Console.WriteLine("{1} {0}", file.Item1, file.Item2.ToHex());
 			}
 		});
-		Console.WriteLine((DateTime.Now - now).TotalMilliseconds);
+		stopwatch.Stop();
+		Console.WriteLine(stopwatch.Elapsed.TotalMilliseconds);
 	}
 }

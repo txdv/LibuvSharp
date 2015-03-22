@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
+using System.Diagnostics;
 using LibuvSharp;
 using LibuvSharp.Threading;
 
@@ -44,9 +45,10 @@ namespace Test
 					TimeSpan span = TimeSpan.Zero;
 					BigInteger res = 0;
 					Loop.Default.QueueUserWorkItem(() => {
-						var now = DateTime.Now;
+						var stopwatch = Stopwatch.StartNew();
 						res = Fibonacci(n);
-						span = DateTime.Now - now;
+						stopwatch.Stop();
+						span = stopwatch.Elapsed;
 					}, () => {
 						Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 					});

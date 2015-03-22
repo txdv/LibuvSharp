@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using LibuvSharp;
 using LibuvSharp.Threading.Tasks;
 
@@ -11,9 +12,10 @@ class MainClass
 	{
 		Loop.Default.Run(async () => {
 			var t = new UVTimer();
-			var now = DateTime.Now;
+			var stopwatch = Stopwatch.StartNew();
 			await t.StartAsync(TimeSpan.FromSeconds(1));
-			Console.WriteLine(DateTime.Now - now);
+			stopwatch.Stop();
+			Console.WriteLine(stopwatch.Elapsed);
 		});
 	}
 }
