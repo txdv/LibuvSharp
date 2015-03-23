@@ -108,7 +108,7 @@ namespace LibuvSharp
 
 				var list = new List<UVDirectoryEntity>();
 				uv_dirent_t entity;
-				while (UVException.Map(uv_fs_scandir_next(fsr.Handle, out entity)) != UVErrorCode.UV_EOF) {
+				while (UVException.Map(uv_fs_scandir_next(fsr.Handle, out entity)) != UVErrorCode.EOF) {
 					list.Add(new UVDirectoryEntity(entity));
 				}
 

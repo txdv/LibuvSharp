@@ -112,7 +112,7 @@ namespace LibuvSharp
 			if (nread == 0) {
 				return;
 			} else if (nread < 0) {
-				if (UVException.Map((int)nread) == UVErrorCode.UV_EOF) {
+				if (UVException.Map((int)nread) == UVErrorCode.EOF) {
 					Close(Complete);
 				} else {
 					OnError(Ensure.Map((int)nread));

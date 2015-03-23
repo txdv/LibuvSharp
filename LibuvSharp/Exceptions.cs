@@ -56,14 +56,14 @@ namespace LibuvSharp
 		public static UVErrorCode Map(int systemErrorCode)
 		{
 			if (systemErrorCode == 0) {
-				return UVErrorCode.UV_OK;
+				return UVErrorCode.OK;
 			}
 			return Map(ErrorName(systemErrorCode));
 		}
 
 		public static UVErrorCode Map(string errorName)
 		{
-			return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), "UV_" + errorName);
+			return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), errorName);
 		}
 	}
 }

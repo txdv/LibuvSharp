@@ -8,8 +8,8 @@
 void print_err()
 {
   printf("using System;\n\nnamespace LibuvSharp\n{\n\tpublic enum UVErrorCode\n\t{\n");
-  printf("\t\tUV_OK = 0,\n");
-#define XX(value, description) printf("\t\tUV_%s,\n", #value);
+  printf("\t\tOK = 0,\n");
+#define XX(value, description) printf("\t\t%s,\n", #value);
   UV_ERRNO_MAP(XX)
 #undef XX
   printf("\t}\n}\n");

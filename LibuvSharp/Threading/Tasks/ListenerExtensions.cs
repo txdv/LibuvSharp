@@ -12,7 +12,7 @@ namespace LibuvSharp.Threading.Tasks
 			try {
 				tcs.SetResult(listener.Accept());
 			} catch (UVException ex) {
-				if (ex.ErrorCode != UVErrorCode.UV_EAGAIN) {
+				if (ex.ErrorCode != UVErrorCode.EAGAIN) {
 					tcs.SetException(ex);
 				}
 			}
