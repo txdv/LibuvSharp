@@ -9,7 +9,10 @@ void print_err()
 {
   printf("using System;\n\nnamespace LibuvSharp\n{\n\tpublic enum UVErrorCode\n\t{\n");
   printf("\t\tOK = 0,\n");
-#define XX(value, description) printf("\t\t%s,\n", #value);
+#define XX(value, description) printf("\t\t/// <summary>\n" \
+                                      "\t\t/// %s\n" \
+                                      "\t\t/// </summary>\n" \
+                                      "\t\t%s,\n", description, #value);
   UV_ERRNO_MAP(XX)
 #undef XX
   printf("\t}\n}\n");
