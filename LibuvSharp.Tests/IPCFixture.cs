@@ -14,13 +14,18 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void CanSendHandles()
 		{
+			TestCanSendHandles(Default.Pipename, Default.IPv4.IPEndPoint);
+			TestCanSendHandles(Default.Pipename, Default.IPv6.IPEndPoint);
+		}
+
+		void TestCanSendHandles(string pipename, IPEndPoint ipep)
+		{
 			int count = 0;
 
 			Loop.Default.Run(async () => {
 				var handles = new Stack<Handle>();
-				string name = "test";
 				var pipelistener = new IPCPipeListener();
-				pipelistener.Bind(name);
+				pipelistener.Bind(pipename);
 				pipelistener.Connection += () => {
 					var client = pipelistener.Accept();
 					client.Resume();
@@ -38,10 +43,8 @@ namespace LibuvSharp.Tests
 				pipelistener.Listen();
 
 				var pipe = new IPCPipe();
-				await pipe.ConnectAsync(name);
+				await pipe.ConnectAsync(pipename);
 
-
-				var ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7000);
 				var tcplistener = new TcpListener();
 				tcplistener.Bind(ipep);
 				tcplistener.Connection += () => {
