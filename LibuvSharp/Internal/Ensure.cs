@@ -8,20 +8,24 @@ namespace LibuvSharp
 {
 	internal class Ensure
 	{
-		internal static Exception Map(int errorCode, string name = null)
+		internal static Exception Map(int systemErrorCode, string name = null)
 		{
-			return Map((uv_err_code)errorCode, name);
+			if (systemErrorCode < 0) {
+				return Map(new UVException(systemErrorCode), name);
+			}
+
+			return null;
 		}
 
-		internal static Exception Map(uv_err_code error, string name = null)
+		internal static Exception Map(UVException exception, string name = null)
 		{
-			if (error == uv_err_code.UV_OK) {
+			if (exception.ErrorCode == uv_err_code.UV_OK) {
 				return null;
 			}
 
-			switch (error) {
+			switch (exception.ErrorCode) {
 			case uv_err_code.UV_EINVAL:
-				return new ArgumentException(UVException.StringError(error));
+				return new ArgumentException(exception.Description);
 			case uv_err_code.UV_ENOENT:
 				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
@@ -34,14 +38,16 @@ namespace LibuvSharp
 			case uv_err_code.UV_ENOTSUP:
 				return new NotSupportedException();
 			default:
-				return new UVException(error);
+				break;
 			}
+
+			return exception;
 		}
 
 		public static void Success(int errorCode)
 		{
 			if (errorCode < 0) {
-				var e = Map((uv_err_code)errorCode);
+				var e = Map(errorCode);
 				if (e != null) {
 					throw e;
 				}

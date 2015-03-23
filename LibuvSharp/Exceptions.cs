@@ -5,27 +5,37 @@ namespace LibuvSharp
 {
 	unsafe public class UVException : Exception
 	{
-		public int Code { get; protected set; }
+		/// <summary>
+		/// Independent error code, has the same value on all
+		/// systems.
+		/// </summary>
+		/// <value>The error code.</value>
+		internal uv_err_code ErrorCode { get; set; }
+
+		/// <summary>
+		/// Gets the the underlying system error code of the error
+		/// They might be different on windows and unix, EAGAIN
+		/// for example is -4088 on windows while it is -11 on UNIX.
+		/// </summary>
+		/// <value>The system error code.</value>
+		public int SystemErrorCode { get; protected set; }
 		public string Name { get; protected set; }
 		public string Description { get; protected set; }
 
-		public UVException(int code, string name, string description)
-			: base(string.Format("{0}({1}): {2}", name, code, description))
+		public UVException(int systemErrorCode, string name, string description)
+			: base(string.Format("{0}({1}): {2}", name, systemErrorCode, description))
 		{
-			Code = code;
+			ErrorCode = (uv_err_code)Enum.Parse(typeof(uv_err_code), "UV_" + name);
+			SystemErrorCode = systemErrorCode;
 			Name = name;
 			Description = description;
 		}
 
-		internal UVException(int errorCode)
-			: this(errorCode, StringError(errorCode), ErrorName(errorCode))
+		internal UVException(int systemErrorCode)
+			: this(systemErrorCode, ErrorName(systemErrorCode), StringError(systemErrorCode))
 		{
 		}
 
-		internal UVException(uv_err_code errorCode)
-			: this((int)errorCode)
-		{
-		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_strerror(int error);
