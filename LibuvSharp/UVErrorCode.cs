@@ -2,7 +2,7 @@ using System;
 
 namespace LibuvSharp
 {
-	enum uv_err_code
+	public enum UVErrorCode
 	{
 		UV_OK = 0,
 		UV_E2BIG,

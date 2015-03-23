@@ -19,23 +19,23 @@ namespace LibuvSharp
 
 		internal static Exception Map(UVException exception, string name = null)
 		{
-			if (exception.ErrorCode == uv_err_code.UV_OK) {
+			if (exception.ErrorCode == UVErrorCode.UV_OK) {
 				return null;
 			}
 
 			switch (exception.ErrorCode) {
-			case uv_err_code.UV_EINVAL:
+			case UVErrorCode.UV_EINVAL:
 				return new ArgumentException(exception.Description);
-			case uv_err_code.UV_ENOENT:
+			case UVErrorCode.UV_ENOENT:
 				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
-			case uv_err_code.UV_EADDRINUSE:
+			case UVErrorCode.UV_EADDRINUSE:
 				return new SocketException(10048);
-			case uv_err_code.UV_EADDRNOTAVAIL:
+			case UVErrorCode.UV_EADDRNOTAVAIL:
 				return new SocketException(10049);
-			case uv_err_code.UV_ECONNREFUSED:
+			case UVErrorCode.UV_ECONNREFUSED:
 				return new SocketException(10061);
-			case uv_err_code.UV_ENOTSUP:
+			case UVErrorCode.UV_ENOTSUP:
 				return new NotSupportedException();
 			default:
 				break;

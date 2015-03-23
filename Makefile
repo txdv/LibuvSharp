@@ -1,5 +1,5 @@
 uv=libuv/libuv.a
-gensrc=LibuvSharp/Internal/uv_err_code.cs LibuvSharp/HandleType.cs LibuvSharp/Internal/RequestType.cs
+gensrc=LibuvSharp/UVErrorCode.cs LibuvSharp/HandleType.cs LibuvSharp/Internal/RequestType.cs
 
 all: libuv.so $(gensrc)
 
@@ -18,7 +18,7 @@ libuv.so: libuv/Makefile
 generate: generate.c libuv.so
 	$(CC) -Ilibuv/include/ -lpthread -ldl -lrt libuv.so -lm generate.c -o generate
 
-LibuvSharp/Internal/uv_err_code.cs: libuv/include/uv.h generate
+LibuvSharp/UVErrorCode.cs: libuv/include/uv.h generate
 	./generate err > $@
 
 LibuvSharp/HandleType.cs: libuv/include/uv.h generate

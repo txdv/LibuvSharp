@@ -55,7 +55,6 @@
     <Compile Include="IListener.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Internal\Ensure.cs" />
-    <Compile Include="Internal\uv_err_code.cs" />
     <Compile Include="Poll.cs" />
     <Compile Include="Internal\FileSystemRequest.cs" />
     <Compile Include="Internal\PermaRequest.cs" />
@@ -134,6 +133,7 @@
     <Compile Include="IPCExtensions.cs" />
     <Compile Include="ITryWrite.cs" />
     <Compile Include="ITryWriteExtensions.cs" />
+    <Compile Include="UVErrorCode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

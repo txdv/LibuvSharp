@@ -10,7 +10,7 @@ namespace LibuvSharp
 		/// systems.
 		/// </summary>
 		/// <value>The error code.</value>
-		internal uv_err_code ErrorCode { get; set; }
+		internal UVErrorCode ErrorCode { get; set; }
 
 		/// <summary>
 		/// Gets the the underlying system error code of the error
@@ -25,7 +25,7 @@ namespace LibuvSharp
 		public UVException(int systemErrorCode, string name, string description)
 			: base(string.Format("{0}({1}): {2}", name, systemErrorCode, description))
 		{
-			ErrorCode = (uv_err_code)Enum.Parse(typeof(uv_err_code), "UV_" + name);
+			ErrorCode = Map(name);
 			SystemErrorCode = systemErrorCode;
 			Name = name;
 			Description = description;
@@ -38,24 +38,29 @@ namespace LibuvSharp
 
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern sbyte *uv_strerror(int error);
+		private static extern sbyte *uv_strerror(int systemErrorCode);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern sbyte *uv_err_name(int error);
+		private static extern sbyte *uv_err_name(int systemErrorCode);
 
-		internal static string StringError(int error)
+		internal static string StringError(int systemErrorCode)
 		{
-			return new string(uv_strerror(error));
+			return new string(uv_strerror(systemErrorCode));
 		}
 
-		internal static string StringError(uv_err_code error)
+		internal static string ErrorName(int systemErrorCode)
 		{
-			return StringError((int)error);
+			return new string(uv_err_name(systemErrorCode));
 		}
 
-		internal static string ErrorName(int error)
+		public static UVErrorCode Map(int systemErrorCode)
 		{
-			return new string(uv_err_name(error));
+			return Map(StringError(systemErrorCode));
+		}
+
+		public static UVErrorCode Map(string errorName)
+		{
+			return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), "UV_" + errorName);
 		}
 	}
 }
