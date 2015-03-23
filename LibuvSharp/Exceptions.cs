@@ -55,7 +55,10 @@ namespace LibuvSharp
 
 		public static UVErrorCode Map(int systemErrorCode)
 		{
-			return Map(StringError(systemErrorCode));
+			if (systemErrorCode == 0) {
+				return UVErrorCode.UV_OK;
+			}
+			return Map(ErrorName(systemErrorCode));
 		}
 
 		public static UVErrorCode Map(string errorName)
