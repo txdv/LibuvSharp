@@ -105,7 +105,7 @@ namespace LibuvSharp
 		}
 
 #if DEBUG
-		static List<IntPtr> pointers = new List<IntPtr>();
+		static HashSet<IntPtr> pointers = new HashSet<IntPtr>();
 #endif
 
 		internal static IntPtr Alloc(RequestType type)
