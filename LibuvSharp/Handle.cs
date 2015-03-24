@@ -45,6 +45,11 @@ namespace LibuvSharp
 			}
 		}
 
+		static Handle()
+		{
+			close_cb = CloseCallback;
+		}
+
 		internal Handle(Loop loop, IntPtr handle)
 		{
 			Ensure.ArgumentNotNull(loop, "loop");
@@ -54,8 +59,6 @@ namespace LibuvSharp
 			Loop = loop;
 
 			Loop.handles[NativeHandle] = this;
-
-			close_cb = CloseCallback;
 
 			DataPointer = GCHandle.ToIntPtr(GCHandle);
 		}
@@ -78,12 +81,14 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void close_callback(IntPtr handle);
 
-		close_callback close_cb;
 		Action closeCallback;
 
-		void CloseCallback(IntPtr handle)
+		static close_callback close_cb;
+		static void CloseCallback(IntPtr handlePointer)
 		{
-			Cleanup(handle, closeCallback);
+			var handle = FromIntPtr<Handle>(handlePointer);
+
+			handle.Cleanup(handlePointer, handle.closeCallback);
 		}
 
 		public void Cleanup(IntPtr nativeHandle, Action callback)
