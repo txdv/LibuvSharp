@@ -64,7 +64,11 @@ namespace LibuvSharp
 
 		public static UVErrorCode Map(string errorName)
 		{
-			return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), errorName);
+			try {
+				return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), errorName);
+			} catch {
+				return UVErrorCode.UNKNOWN;
+			}
 		}
 
 		/// <summary>
