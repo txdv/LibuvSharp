@@ -25,13 +25,18 @@ namespace LibuvSharp
 			}
 		}
 
-		public IntPtr DataPointer {
+		internal IntPtr DataPointer {
 			get {
 				return handle->data;
 			}
 			set {
 				handle->data = value;
 			}
+		}
+
+		internal static T FromIntPtr<T>(IntPtr ptr)
+		{
+			return (T)GCHandle.FromIntPtr(((uv_handle_t*)ptr)->data).Target;
 		}
 
 		public HandleType HandleType {
@@ -51,6 +56,8 @@ namespace LibuvSharp
 			Loop.handles[NativeHandle] = this;
 
 			close_cb = CloseCallback;
+
+			DataPointer = GCHandle.ToIntPtr(GCHandle);
 		}
 
 		internal Handle(Loop loop, int size)
