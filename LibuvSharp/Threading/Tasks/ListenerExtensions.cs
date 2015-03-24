@@ -8,6 +8,7 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task<TClient> AcceptAsync<TClient>(this IListener<TClient> listener)
 		{
 			var tcs = new TaskCompletionSource<TClient>();
+			HelperFunctions.SetStatus(tcs.Task, TaskStatus.Running);
 
 			try {
 				tcs.SetResult(listener.Accept());

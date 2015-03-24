@@ -17,7 +17,7 @@ namespace LibuvSharp
 			dotNetStatusField = typeof(Task).GetField("m_stateFlags", BindingFlags.NonPublic | BindingFlags.Instance);
 		}
 
-		static void SetStatus(Task task, TaskStatus status)
+		public static void SetStatus(Task task, TaskStatus status)
 		{
 			if (monoStatusField != null) {
 				monoStatusField.SetValue(task, status);

@@ -9,6 +9,7 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task StartAsync(this UVTimer timer, ulong timeout)
 		{
 			var tcs = new TaskCompletionSource<object>();
+			HelperFunctions.SetStatus(tcs.Task, TaskStatus.Running);
 			try {
 				timer.Start(timeout, () => {
 					tcs.SetResult(null);
