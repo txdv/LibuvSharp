@@ -57,7 +57,7 @@ namespace LibuvSharp.Tests
 			s1.Listen();
 			s2.Bind(IPAddress.Any, Default.Port);
 
-			Assert.Throws<SocketException>(() => s2.Listen());
+			Assert.Throws<UVException>(() => s2.Listen());
 
 			s1.Close();
 			s2.Close();

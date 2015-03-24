@@ -29,12 +29,6 @@ namespace LibuvSharp
 			case UVErrorCode.ENOENT:
 				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
-			case UVErrorCode.EADDRINUSE:
-				return new SocketException(10048);
-			case UVErrorCode.EADDRNOTAVAIL:
-				return new SocketException(10049);
-			case UVErrorCode.ECONNREFUSED:
-				return new SocketException(10061);
 			case UVErrorCode.ENOTSUP:
 				return new NotSupportedException();
 			default:
