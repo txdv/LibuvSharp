@@ -10,22 +10,16 @@ namespace LibuvSharp
 	{
 		internal static Exception Map(int systemErrorCode, string name = null)
 		{
-			if (systemErrorCode < 0) {
-				return Map(new UVException(systemErrorCode), name);
-			}
-
-			return null;
-		}
-
-		internal static Exception Map(UVException exception, string name = null)
-		{
-			if (exception.ErrorCode == UVErrorCode.OK) {
+			// no error, just return null
+			if (!(systemErrorCode < 0)) {
 				return null;
 			}
 
-			switch (exception.ErrorCode) {
+			// map some error codes
+			var errorCode = UVException.Map(systemErrorCode);
+			switch (errorCode) {
 			case UVErrorCode.EINVAL:
-				return new ArgumentException(exception.Description);
+				return new ArgumentException(UVException.StringError(systemErrorCode));
 			case UVErrorCode.ENOENT:
 				var path = (name == null ? System.IO.Directory.GetCurrentDirectory() : Path.Combine(System.IO.Directory.GetCurrentDirectory(), name));
 				return new System.IO.FileNotFoundException(string.Format("Could not find file '{0}'.", path), path);
@@ -35,7 +29,8 @@ namespace LibuvSharp
 				break;
 			}
 
-			return exception;
+			// everything else is a UVException
+			return new UVException(systemErrorCode);
 		}
 
 		public static void Success(int errorCode)
