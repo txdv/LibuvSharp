@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
@@ -64,6 +65,121 @@ namespace LibuvSharp
 		public static UVErrorCode Map(string errorName)
 		{
 			return (UVErrorCode)Enum.Parse(typeof(UVErrorCode), errorName);
+		}
+
+		/// <summary>
+		/// Returns the corresponding SocketError.
+		/// </summary>
+		/// <value>The socket error.</value>
+		public SocketError SocketError {
+			get {
+				// every comment prefixed with WSA is not in the reference source
+				// every comment prefixed with SocktError is not defined in uv.h
+				switch (ErrorCode) {
+				case UVErrorCode.EINTR:
+					return SocketError.Interrupted;
+				case UVErrorCode.EACCES:
+					return SocketError.AccessDenied;
+				case UVErrorCode.EFAULT:
+					return SocketError.Fault;
+				case UVErrorCode.EINVAL:
+					return SocketError.InvalidArgument;
+				case UVErrorCode.EMFILE:
+					return SocketError.TooManyOpenSockets;
+				case UVErrorCode.EAGAIN:
+					return SocketError.WouldBlock;
+				case UVErrorCode.EALREADY:
+					return SocketError.AlreadyInProgress;
+				case UVErrorCode.ENOTSOCK:
+					return SocketError.NotSocket;
+				case UVErrorCode.EDESTADDRREQ:
+					return SocketError.DestinationAddressRequired;
+				case UVErrorCode.EMSGSIZE:
+					return SocketError.MessageSize;
+				case UVErrorCode.EPROTOTYPE:
+					return SocketError.ProtocolType;
+				// SocketError.ProtocolOption
+				case UVErrorCode.EPROTONOSUPPORT:
+					return SocketError.ProtocolNotSupported;
+				// SocketNotSupported;
+				case UVErrorCode.ENOTSUP:
+					return SocketError.OperationNotSupported;
+				// SocketError.ProtocolFamilyNotSupported
+				case UVErrorCode.EAFNOSUPPORT:
+					return SocketError.AddressFamilyNotSupported;
+				case UVErrorCode.EADDRINUSE:
+					return SocketError.AddressAlreadyInUse;
+				case UVErrorCode.EADDRNOTAVAIL:
+					return SocketError.AddressNotAvailable;
+				case UVErrorCode.ENETDOWN:
+					return SocketError.NetworkDown;
+				case UVErrorCode.ENETUNREACH:
+					return SocketError.NetworkUnreachable;
+				// SocketError.NetworkReset
+				case UVErrorCode.ECONNABORTED:
+					return SocketError.ConnectionAborted;
+				case UVErrorCode.ECONNRESET:
+					return SocketError.ConnectionReset;
+				case UVErrorCode.ENOBUFS:
+					return SocketError.NoBufferSpaceAvailable;
+				case UVErrorCode.EISCONN:
+					return SocketError.IsConnected;
+				case UVErrorCode.ENOTCONN:
+					return SocketError.NotConnected;
+				case UVErrorCode.ESHUTDOWN:
+					return SocketError.Shutdown;
+				case UVErrorCode.ETIMEDOUT:
+					return SocketError.TimedOut;
+				case UVErrorCode.ECONNREFUSED:
+					return SocketError.ConnectionRefused;
+				// WSAELOOP
+				// WSAENAMETOOLONG
+				// SocketError.HostDown
+				case UVErrorCode.EHOSTUNREACH:
+					return SocketError.HostUnreachable;
+				// WSAENOTEMPTY
+				// SocketError.ProcessLimit
+				// WSAEUSERS
+				// WSAEDQUOT
+				// WSAESTALE
+
+				// Windows only error codes:
+
+				// WSASYSNOTREADY
+				// SocketError.SystemNotReady
+
+				// WSAVERNOTSUPPORTED
+				// SocketError.VersionNotSupported
+
+				// WSANOTINITIALISED
+				// SocketError.NotInitialized
+
+				// WSAEDISCON
+				// SocketError.Disconnecting
+
+				// WSATYPE_NOT_FOUND
+				// SocketError.TypeNotFound
+
+				// WSAHOST_NOT_FOUND
+				// SocketError.HostNotFound
+
+				// WSATRY_AGAIN
+				// SocketError.TryAgain
+
+				// WSANO_RECOVERY
+				// SocketError.NoRecovery
+
+				// WSANO_DATA
+				// SocketError.NoData
+
+				// os, overlapped:
+
+				// SocketError.IOPending
+				// SocketError.OperationAborted
+				default:
+					return SocketError.SocketError;
+				}
+			}
 		}
 	}
 }
