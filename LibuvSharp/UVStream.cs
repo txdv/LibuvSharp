@@ -52,14 +52,15 @@ namespace LibuvSharp
 			}
 		}
 
+		static UVStream()
+		{
+			read_cb_unix = read_callback_u;
+			read_cb_win = read_callback_w;
+		}
+
 		internal UVStream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
-			if (UV.isUnix) {
-				read_cb_unix = read_callback_u;
-			} else {
-				read_cb_win = read_callback_w;
-			}
 			stream = (uv_stream_t *)(handle.ToInt64() + Handle.Size(HandleType.UV_HANDLE));
 		}
 
@@ -94,32 +95,34 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		read_callback_unix read_cb_unix;
-		internal void read_callback_u(IntPtr stream, IntPtr size, UnixBufferStruct buf)
+		static read_callback_unix read_cb_unix;
+		static void read_callback_u(IntPtr stream, IntPtr size, UnixBufferStruct buf)
 		{
 			read_callback(stream, size);
 		}
 
-		read_callback_win read_cb_win;
-		internal void read_callback_w(IntPtr stream, IntPtr size, WindowsBufferStruct buf)
+		static read_callback_win read_cb_win;
+		static void read_callback_w(IntPtr stream, IntPtr size, WindowsBufferStruct buf)
 		{
 			read_callback(stream, size);
 		}
 
-		internal void read_callback(IntPtr stream, IntPtr size)
+		static void read_callback(IntPtr streamPointer, IntPtr size)
 		{
+			var stream = FromIntPtr<UVStream>(streamPointer);
+
 			long nread = size.ToInt64();
 			if (nread == 0) {
 				return;
 			} else if (nread < 0) {
 				if (UVException.Map((int)nread) == UVErrorCode.EOF) {
-					Close(Complete);
+					stream.Close(stream.Complete);
 				} else {
-					OnError(Ensure.Map((int)nread));
-					Close();
+					stream.OnError(Ensure.Map((int)nread));
+					stream.Close();
 				}
 			} else {
-				OnData(ByteBufferAllocator.Retrieve(size.ToInt32()));
+				stream.OnData(stream.ByteBufferAllocator.Retrieve(size.ToInt32()));
 			}
 		}
 
