@@ -12,8 +12,9 @@ namespace LibuvSharp.Threading.Tasks
 		}
 		public static Task Create(Loop loop, string name)
 		{
-			return Create(Loop.Constructor, name);
+			return HelperFunctions.Wrap(loop, name, UVDirectory.Create);
 		}
+
 		public static Task Create(string name, int mode)
 		{
 			return Create(Loop.Constructor, name, mode);
