@@ -23,9 +23,6 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, short flags);
 
-		recv_start_callback_win recv_start_cb_win;
-		recv_start_callback_unix recv_start_cb_unix;
-
 		ByteBufferAllocatorBase allocator;
 		public ByteBufferAllocatorBase ByteBufferAllocator {
 			get {
@@ -34,6 +31,15 @@ namespace LibuvSharp
 			set {
 				allocator = value;
 			}
+		}
+
+		static recv_start_callback_win recv_start_cb_win;
+		static recv_start_callback_unix recv_start_cb_unix;
+
+		static Udp()
+		{
+			recv_start_cb_win = recv_start_callback_w;
+			recv_start_cb_unix = recv_start_callback_u;
 		}
 
 		public Udp()
@@ -46,14 +52,6 @@ namespace LibuvSharp
 		{
 			int r = uv_udp_init(loop.NativeHandle, NativeHandle);
 			Ensure.Success(r);
-			// we can't supply just recv_start_callback in Receive
-			// because it will create a temporary delegate which could(and will) be garbage collected at any time
-			// happens in my case after 10 or 20 calls
-			// so we have to reference it, so it won't garbage collect it until the object itself
-			// is gone
-			recv_start_cb_win = recv_start_callback_w;
-			recv_start_cb_unix = recv_start_callback_u;
-
 		}
 
 		bool dualstack = false;
@@ -164,20 +162,22 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_recv_start_win(IntPtr handle, alloc_callback_win alloc_callback, recv_start_callback_win callback);
+		extern static int uv_udp_recv_start_win(IntPtr handle, alloc_callback_win alloc_callback, recv_start_callback_win callback);
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_recv_start_unix(IntPtr handle, alloc_callback_unix alloc_callback, recv_start_callback_unix callback);
+		extern static int uv_udp_recv_start_unix(IntPtr handle, alloc_callback_unix alloc_callback, recv_start_callback_unix callback);
 
-		internal void recv_start_callback_w(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags)
+		static void recv_start_callback_w(IntPtr handlePointer, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
-			recv_start_callback(handle, nread, sockaddr, flags);
+			var handle = FromIntPtr<Udp>(handlePointer);
+			handle.recv_start_callback(handlePointer, nread, sockaddr, flags);
 		}
-		internal void recv_start_callback_u(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
+		static void recv_start_callback_u(IntPtr handlePointer, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
-			recv_start_callback(handle, nread, sockaddr, flags);
+			var handle = FromIntPtr<Udp>(handlePointer);
+			handle.recv_start_callback(handlePointer, nread, sockaddr, flags);
 		}
-		internal void recv_start_callback(IntPtr handle, IntPtr nread, IntPtr sockaddr, ushort flags)
+		void recv_start_callback(IntPtr handle, IntPtr nread, IntPtr sockaddr, ushort flags)
 		{
 			int n = (int)nread;
 
