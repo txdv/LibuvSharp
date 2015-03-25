@@ -143,8 +143,11 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_is_active(IntPtr handle);
 
-		public bool Active {
+		public bool IsActive {
 			get {
+				if (IsClosed) {
+					return false;
+				}
 				return uv_is_active(NativeHandle) != 0;
 			}
 		}
@@ -156,9 +159,19 @@ namespace LibuvSharp
 			get {
 				if (IsClosed) {
 					return false;
-				} else {
-					return uv_is_closing(NativeHandle) != 0;
 				}
+				return uv_is_closing(NativeHandle) != 0;
+			}
+		}
+
+		/// <summary>
+		/// Is the underlying still alive? Returns true if handle
+		/// is not closing or closed.
+		/// </summary>
+		/// <value><c>true</c> if this instance is not closing or closed; otherwise, <c>false</c>.</value>
+		public bool IsAlive {
+			get {
+				return !IsClosed && !IsClosing;
 			}
 		}
 
