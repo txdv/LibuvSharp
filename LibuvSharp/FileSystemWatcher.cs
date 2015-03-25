@@ -50,6 +50,8 @@ namespace LibuvSharp
 
 		public void Start(string path, FileSystemEventFlags flags)
 		{
+			CheckDisposed();
+
 			uv_fs_event = fs_event;
 			int r = uv_fs_event_start(NativeHandle, uv_fs_event, path, (int)flags);
 			Ensure.Success(r);
@@ -78,6 +80,8 @@ namespace LibuvSharp
 
 		public string Path {
 			get {
+				CheckDisposed();
+
 				return UV.ToString(4096, (IntPtr buffer, ref IntPtr length) => uv_fs_event_getpath(NativeHandle, buffer, ref length));
 			}
 		}
@@ -87,6 +91,8 @@ namespace LibuvSharp
 
 		public void Stop()
 		{
+			CheckDisposed();
+
 			int r = uv_fs_event_stop(NativeHandle);
 			Ensure.Success(r);
 		}

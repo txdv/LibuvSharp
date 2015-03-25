@@ -98,6 +98,8 @@ namespace LibuvSharp
 
 		public void Connect(string name, Action<Exception> callback)
 		{
+			CheckDisposed();
+
 			Ensure.ArgumentNotNull(name, "name");
 			Ensure.ArgumentNotNull(callback, "callback");
 
@@ -114,6 +116,8 @@ namespace LibuvSharp
 
 		public string RemoteAddress {
 			get {
+				CheckDisposed();
+
 				return UV.ToString(4096, (IntPtr buffer, ref IntPtr length) => uv_pipe_getpeername(NativeHandle, buffer, ref length));
 			}
 		}
@@ -139,6 +143,8 @@ namespace LibuvSharp
 
 		public void Write(Handle handle, ArraySegment<byte> segment, Action<Exception> callback)
 		{
+			CheckDisposed();
+
 			GCHandle datagchandle = GCHandle.Alloc(segment.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
 			cpr.Callback = (status, cpr2) => {

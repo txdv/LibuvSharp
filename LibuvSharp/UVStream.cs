@@ -38,6 +38,8 @@ namespace LibuvSharp
 
 		public long WriteQueueSize {
 			get {
+				CheckDisposed();
+
 				return stream->write_queue_size.ToInt64();
 			}
 		}
@@ -76,6 +78,8 @@ namespace LibuvSharp
 
 		public void Resume()
 		{
+			CheckDisposed();
+
 			int r;
 			if (UV.isUnix) {
 				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
@@ -87,9 +91,7 @@ namespace LibuvSharp
 
 		public void Pause()
 		{
-			if (NativeHandle == IntPtr.Zero) {
-				return;
-			}
+			CheckDisposed();
 
 			int r = uv_read_stop(NativeHandle);
 			Ensure.Success(r);
@@ -164,7 +166,7 @@ namespace LibuvSharp
 
 		public void Write(ArraySegment<byte> data, Action<Exception> callback)
 		{
-			Ensure.ArgumentNotNull(data, "data");
+			CheckDisposed();
 
 			int index = data.Offset;
 			int count = data.Count;
@@ -202,6 +204,8 @@ namespace LibuvSharp
 
 		public void Shutdown(Action<Exception> callback)
 		{
+			CheckDisposed();
+
 			var cbr = new CallbackPermaRequest(RequestType.UV_SHUTDOWN);
 			cbr.Callback = (status, _) => {
 				Ensure.Success(status, (ex) => Close(() => {
@@ -219,6 +223,8 @@ namespace LibuvSharp
 		internal bool readable;
 		public bool Readable {
 			get {
+				CheckDisposed();
+
 				return uv_is_readable(NativeHandle) != 0;
 			}
 			set {
@@ -232,6 +238,8 @@ namespace LibuvSharp
 		internal bool writeable;
 		public bool Writeable {
 			get {
+				CheckDisposed();
+
 				return uv_is_writable(NativeHandle) != 0;
 			}
 			set {
@@ -247,6 +255,8 @@ namespace LibuvSharp
 
 		unsafe public int TryWrite(ArraySegment<byte> data)
 		{
+			CheckDisposed();
+
 			Ensure.ArgumentNotNull(data.Array, "data");
 
 			fixed (byte* bytePtr = data.Array) {

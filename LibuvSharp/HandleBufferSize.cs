@@ -31,6 +31,8 @@ namespace LibuvSharp
 
 		int Apply(buffer_size_function buffer_size, int value)
 		{
+			CheckDisposed();
+
 			int r = buffer_size(NativeHandle, out value);
 			Ensure.Success(r);
 			return value;

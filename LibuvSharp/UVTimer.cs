@@ -41,6 +41,8 @@ namespace LibuvSharp
 
 		public ulong LongRepeat {
 			get {
+				CheckDisposed();
+
 				return uv_timer_get_repeat(NativeHandle);
 			}
 			set {
@@ -61,6 +63,8 @@ namespace LibuvSharp
 
 		public void Start(ulong timeout, ulong repeat)
 		{
+			CheckDisposed();
+
 			if (Running) {
 				Stop();
 			}
@@ -110,6 +114,8 @@ namespace LibuvSharp
 
 		public void Stop()
 		{
+			CheckDisposed();
+
 			if (Running) {
 				uv_timer_stop(NativeHandle);
 			}

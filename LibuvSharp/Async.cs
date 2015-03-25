@@ -33,6 +33,8 @@ namespace LibuvSharp
 
 		public void Send()
 		{
+			CheckDisposed();
+
 			uv_async_send(NativeHandle);
 		}
 

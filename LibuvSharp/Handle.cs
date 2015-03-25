@@ -21,6 +21,7 @@ namespace LibuvSharp
 
 		uv_handle_t *handle {
 			get {
+				CheckDisposed();
 				return (uv_handle_t *)NativeHandle;
 			}
 		}
@@ -186,16 +187,25 @@ namespace LibuvSharp
 
 		public void Ref()
 		{
+			if (IsClosed) {
+				return;
+			}
 			uv_ref(NativeHandle);
 		}
 
 		public void Unref()
 		{
+			if (IsClosed) {
+				return;
+			}
 			uv_unref(NativeHandle);
 		}
 
 		public bool HasRef {
 			get {
+				if (IsClosed) {
+					return false;
+				}
 				return uv_has_ref(NativeHandle) != 0;
 			}
 		}
@@ -214,6 +224,13 @@ namespace LibuvSharp
 		public static HandleType Guess(int fd)
 		{
 			return uv_guess_handle(fd);
+		}
+
+		protected void CheckDisposed()
+		{
+			if (NativeHandle == IntPtr.Zero) {
+				throw new ObjectDisposedException(GetType().ToString(), "handle was closed");
+			}
 		}
 	}
 }

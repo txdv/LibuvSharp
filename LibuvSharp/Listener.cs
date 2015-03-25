@@ -24,6 +24,8 @@ namespace LibuvSharp
 
 		public void Listen(int backlog)
 		{
+			CheckDisposed();
+
 			int r = NativeMethods.uv_listen(NativeHandle, backlog, listen_cb);
 			Ensure.Success(r);
 		}

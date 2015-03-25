@@ -41,6 +41,8 @@ namespace LibuvSharp
 
 		public TTYMode Mode {
 			set {
+				CheckDisposed();
+
 				int r = uv_tty_set_mode(NativeHandle, (int)value);
 				Ensure.Success(r);
 			}
@@ -59,6 +61,8 @@ namespace LibuvSharp
 
 		public bool GetWindowSize(out int width, out int height)
 		{
+			CheckDisposed();
+
 			int r = uv_tty_get_winsize(NativeHandle, out width, out height);
 			return r == 0;
 		}

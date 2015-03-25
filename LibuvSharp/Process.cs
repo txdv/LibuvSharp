@@ -111,17 +111,15 @@ namespace LibuvSharp
 
 		uv_process_t* process {
 			get {
+				CheckDisposed();
+
 				return (uv_process_t*)(NativeHandle.ToInt32() + Handle.Size(HandleType.UV_HANDLE));
 			}
 		}
 
 		public int ID {
 			get {
-				if (NativeHandle != IntPtr.Zero) {
-					return process->pid;
-				} else {
-					return -1;
-				}
+				return process->pid;
 			}
 		}
 
@@ -153,6 +151,8 @@ namespace LibuvSharp
 
 		public void Kill(int signum)
 		{
+			CheckDisposed();
+
 			int r = uv_process_kill(NativeHandle, signum);
 			Ensure.Success(r);
 		}

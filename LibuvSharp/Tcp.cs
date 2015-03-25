@@ -30,6 +30,8 @@ namespace LibuvSharp
 
 		public void Bind(IPEndPoint ipEndPoint)
 		{
+			CheckDisposed();
+
 			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
 			Ensure.AddressFamily(ipEndPoint.Address);
 			int r;
@@ -53,12 +55,16 @@ namespace LibuvSharp
 
 		public bool SimultaneosAccepts {
 			set {
+				CheckDisposed();
+
 				uv_tcp_simultaneos_accepts(NativeHandle, (value ? 1 : 0));
 			}
 		}
 
 		public IPEndPoint LocalAddress {
 			get {
+				CheckDisposed();
+
 				return UV.GetSockname(this);
 			}
 		}
@@ -88,6 +94,8 @@ namespace LibuvSharp
 
 		public void Connect(IPEndPoint ipEndPoint, Action<Exception> callback)
 		{
+			CheckDisposed();
+
 			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
 			Ensure.ArgumentNotNull(callback, "callback");
 			Ensure.AddressFamily(ipEndPoint.Address);
@@ -114,12 +122,16 @@ namespace LibuvSharp
 
 		public bool NoDelay {
 			set {
+				CheckDisposed();
+
 				uv_tcp_nodelay(NativeHandle, (value ? 1 : 0));
 			}
 		}
 
 		public void SetKeepAlive(bool enable, int delay)
 		{
+			CheckDisposed();
+
 			uv_tcp_keepalive(NativeHandle, (enable ? 1 : 0), delay);
 		}
 
@@ -128,12 +140,16 @@ namespace LibuvSharp
 
 		public IPEndPoint LocalAddress {
 			get {
+				CheckDisposed();
+
 				return UV.GetSockname(this);
 			}
 		}
 
 		unsafe public IPEndPoint RemoteAddress {
 			get {
+				CheckDisposed();
+
 				sockaddr_in6 addr;
 				IntPtr ptr = new IntPtr(&addr);
 				int length = sizeof(sockaddr_in6);

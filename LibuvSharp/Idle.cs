@@ -40,12 +40,16 @@ namespace LibuvSharp
 
 		internal void Start(IntPtr callback)
 		{
+			CheckDisposed();
+
 			int r = uv_idle_start(NativeHandle, callback);
 			Ensure.Success(r);
 		}
 
 		public void Stop()
 		{
+			CheckDisposed();
+
 			int r = uv_idle_stop(NativeHandle);
 			Ensure.Success(r);
 		}

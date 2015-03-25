@@ -59,6 +59,8 @@ namespace LibuvSharp
 		bool dualstack = false;
 		void Bind(IPAddress ipAddress, int port, short flags)
 		{
+			CheckDisposed();
+
 			Ensure.AddressFamily(ipAddress);
 
 			dualstack = (flags & (short)uv_udp_flags.UV_UDP_IPV6ONLY) == 0
@@ -117,6 +119,8 @@ namespace LibuvSharp
 
 		public void Send(UdpMessage message, Action<Exception> callback)
 		{
+			CheckDisposed();
+
 			Ensure.ArgumentNotNull(message.EndPoint, "message EndPoint");
 			Ensure.AddressFamily(message.EndPoint.Address);
 
@@ -225,12 +229,9 @@ namespace LibuvSharp
 			return new IPAddress(data);
 		}
 
-		bool receiving = false;
 		public void Resume()
 		{
-			if (receiving) {
-				return;
-			}
+			CheckDisposed();
 
 			int r;
 			if (UV.isUnix) {
@@ -239,7 +240,6 @@ namespace LibuvSharp
 				r = uv_udp_recv_start_win(NativeHandle, ByteBufferAllocator.AllocCallbackWin, recv_start_cb_win);
 			}
 			Ensure.Success(r);
-			receiving = true;
 		}
 
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
@@ -247,9 +247,8 @@ namespace LibuvSharp
 
 		public void Pause()
 		{
-			if (!receiving) {
-				return;
-			}
+			CheckDisposed();
+
 			int r = uv_udp_recv_stop(NativeHandle);
 			Ensure.Success(r);
 		}
@@ -262,6 +261,8 @@ namespace LibuvSharp
 		public byte TTL
 		{
 			set {
+				CheckDisposed();
+
 				int r = uv_udp_set_ttl(NativeHandle, (int)value);
 				Ensure.Success(r);
 			}
@@ -272,6 +273,8 @@ namespace LibuvSharp
 
 		public bool Broadcast {
 			set {
+				CheckDisposed();
+
 				int r = uv_udp_set_broadcast(NativeHandle, value ? 1 : 0);
 				Ensure.Success(r);
 			}
@@ -282,6 +285,8 @@ namespace LibuvSharp
 
 		public byte MulticastTTL {
 			set {
+				CheckDisposed();
+
 				int r = uv_udp_set_multicast_ttl(NativeHandle, (int)value);
 				Ensure.Success(r);
 			}
@@ -292,6 +297,8 @@ namespace LibuvSharp
 
 		public bool MulticastLoop {
 			set {
+				CheckDisposed();
+
 				int r = uv_udp_set_multicast_loop(NativeHandle, value ? 1 : 0);
 				Ensure.Success(r);
 			}
