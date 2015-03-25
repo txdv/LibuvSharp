@@ -5,12 +5,12 @@ namespace LibuvSharp
 {
 	public class UdpReceiveMessage : UdpMessage
 	{
-		internal UdpReceiveMessage()
+		public UdpReceiveMessage()
 			: base()
 		{
 		}
 
-		internal UdpReceiveMessage(IPEndPoint endPoint, ArraySegment<byte> data, bool @partial)
+		public UdpReceiveMessage(IPEndPoint endPoint, ArraySegment<byte> data, bool @partial)
 			: base(endPoint, data)
 		{
 			Partial = @partial;
