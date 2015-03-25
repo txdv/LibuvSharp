@@ -22,10 +22,14 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void uv_fs_event_cb(IntPtr handle, string filename, int events, int status);
 
-		uv_fs_event_cb uv_fs_event;
-
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_event_init(IntPtr loop, IntPtr handle);
+
+		static uv_fs_event_cb fs_event_callback;
+		static FileSystemWatcher()
+		{
+			fs_event_callback = fs_event;
+		}
 
 		public FileSystemWatcher()
 			: this(Loop.Constructor)
@@ -35,7 +39,6 @@ namespace LibuvSharp
 		public FileSystemWatcher(Loop loop)
 			: base(loop, HandleType.UV_FS_EVENT)
 		{
-			uv_fs_event = fs_event;
 			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle);
 			Ensure.Success(r);
 		}
@@ -52,18 +55,19 @@ namespace LibuvSharp
 		{
 			CheckDisposed();
 
-			uv_fs_event = fs_event;
-			int r = uv_fs_event_start(NativeHandle, uv_fs_event, path, (int)flags);
+			int r = uv_fs_event_start(NativeHandle, fs_event_callback, path, (int)flags);
 			Ensure.Success(r);
 		}
 
-		void fs_event(IntPtr handle, string filename, int events, int status)
+		static void fs_event(IntPtr handlePointer, string filename, int events, int status)
 		{
+			var handle = FromIntPtr<FileSystemWatcher>(handlePointer);
 			if (status != 0) {
-				Close();
+				handle.Close();
 			} else {
-				OnChange(filename, (FileSystemEvent)events);
+				handle.OnChange(filename, (FileSystemEvent)events);
 			}
+
 		}
 
 		public event Action<string, FileSystemEvent> Change;
