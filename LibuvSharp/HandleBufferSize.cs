@@ -3,23 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class HandleBufferSize : HandleFileDescriptor, ISendBufferSize, IReceiveBufferSize
+	public partial class HandleBase : ISendBufferSize, IReceiveBufferSize
 	{
-		internal HandleBufferSize(Loop loop, IntPtr handle)
-			: base(loop, handle)
-		{
-		}
-
-		internal HandleBufferSize(Loop loop, int size)
-			: this(loop, UV.Alloc(size))
-		{
-		}
-
-		internal HandleBufferSize(Loop loop, HandleType type)
-			: this(loop, Handle.Size(type))
-		{
-		}
-
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate int buffer_size_function(IntPtr handle, out int value);
 

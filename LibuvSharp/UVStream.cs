@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe public abstract class UVStream : HandleBufferSize, IUVStream<ArraySegment<byte>>, ITryWrite<ArraySegment<byte>>
+	unsafe public abstract class UVStream : HandleBase, IUVStream<ArraySegment<byte>>, ITryWrite<ArraySegment<byte>>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);

@@ -3,23 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class HandleFileDescriptor : Handle, IFileDescriptor
+	public partial class HandleBase : IFileDescriptor
 	{
-		internal HandleFileDescriptor(Loop loop, IntPtr handle)
-			: base(loop, handle)
-		{
-		}
-
-		internal HandleFileDescriptor(Loop loop, int size)
-			: this(loop, UV.Alloc(size))
-		{
-		}
-
-		internal HandleFileDescriptor(Loop loop, HandleType type)
-			: this(loop, Handle.Size(type))
-		{
-		}
-
 		[DllImport("uv", EntryPoint = "uv_fileno", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_fileno_windows(IntPtr handle, out IntPtr fd);
 
