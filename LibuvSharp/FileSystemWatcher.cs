@@ -51,10 +51,7 @@ namespace LibuvSharp
 
 		public void Start(string path, FileSystemEventFlags flags)
 		{
-			CheckDisposed();
-
-			int r = uv_fs_event_start(NativeHandle, fs_event_callback, path, (int)flags);
-			Ensure.Success(r);
+			Invoke(uv_fs_event_start, fs_event_callback, path, (int)flags);
 		}
 
 		static void fs_event(IntPtr handlePointer, string filename, int events, int status)
@@ -93,12 +90,8 @@ namespace LibuvSharp
 
 		public void Stop()
 		{
-			CheckDisposed();
-
-			int r = uv_fs_event_stop(NativeHandle);
-			Ensure.Success(r);
+			Invoke(uv_fs_event_stop);
 		}
-
 	}
 }
 

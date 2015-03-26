@@ -109,10 +109,7 @@ namespace LibuvSharp
 
 		public void Pause()
 		{
-			CheckDisposed();
-
-			int r = uv_read_stop(NativeHandle);
-			Ensure.Success(r);
+			Invoke(uv_read_stop);
 		}
 
 		static read_callback_unix read_cb_unix;

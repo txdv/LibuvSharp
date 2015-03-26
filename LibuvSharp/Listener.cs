@@ -36,10 +36,7 @@ namespace LibuvSharp
 
 		public void Listen(int backlog)
 		{
-			CheckDisposed();
-
-			int r = NativeMethods.uv_listen(NativeHandle, backlog, listen_cb);
-			Ensure.Success(r);
+			Invoke(NativeMethods.uv_listen, backlog, listen_cb);
 		}
 
 		public void Listen()
@@ -50,8 +47,12 @@ namespace LibuvSharp
 		public TStream Accept()
 		{
 			var stream = Create();
-			int r = NativeMethods.uv_accept(NativeHandle, stream.NativeHandle);
-			Ensure.Success(r);
+			try {
+				Invoke(NativeMethods.uv_accept, stream.NativeHandle);
+			} catch (Exception) {
+				stream.Dispose();
+				throw;
+			}
 			return stream as TStream;
 		}
 

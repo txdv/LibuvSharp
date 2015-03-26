@@ -39,10 +39,7 @@ namespace LibuvSharp
 
 		public TTYMode Mode {
 			set {
-				CheckDisposed();
-
-				int r = uv_tty_set_mode(NativeHandle, (int)value);
-				Ensure.Success(r);
+				Invoke(uv_tty_set_mode, (int)value);
 			}
 		}
 

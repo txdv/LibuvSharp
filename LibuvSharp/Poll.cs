@@ -35,18 +35,12 @@ namespace LibuvSharp
 
 		public void Start(PollEvent events)
 		{
-			CheckDisposed();
-
-			int r = uv_poll_start(NativeHandle, (int)events, poll_cb);
-			Ensure.Success(r);
+			Invoke(uv_poll_start, (int)events, poll_cb);
 		}
 
 		public void Stop()
 		{
-			CheckDisposed();
-
-			int r = uv_poll_stop(NativeHandle);
-			Ensure.Success(r);
+			Invoke(uv_poll_stop);
 		}
 
 		event poll_callback poll_cb;

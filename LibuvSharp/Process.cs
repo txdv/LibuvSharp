@@ -151,10 +151,7 @@ namespace LibuvSharp
 
 		public void Kill(int signum)
 		{
-			CheckDisposed();
-
-			int r = uv_process_kill(NativeHandle, signum);
-			Ensure.Success(r);
+			Invoke(uv_process_kill, signum);
 		}
 
 		public void Kill(Signum signum)
