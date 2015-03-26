@@ -12,6 +12,18 @@ namespace LibuvSharp
 			listen_cb = listen_callback;
 		}
 
+		internal Listener(Loop loop, HandleType type, Func<IntPtr, IntPtr, int> constructor)
+			: this(loop, type)
+		{
+			Construct(constructor);
+		}
+
+		internal Listener(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int, int> constructor, int arg1)
+			: this(loop, handleType)
+		{
+			Construct(constructor, arg1);
+		}
+
 		public int DefaultBacklog { get; set; }
 
 		callback listen_cb;

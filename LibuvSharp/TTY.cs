@@ -30,10 +30,8 @@ namespace LibuvSharp
 		}
 
 		public TTY(Loop loop, int fd, bool readable)
-			: base(loop, HandleType.UV_TTY)
+			: base(loop, HandleType.UV_TTY, uv_tty_init, fd, readable ? 1 : 0)
 		{
-			int r = uv_tty_init(loop.NativeHandle, NativeHandle, fd, (readable ? 1 : 0));
-			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

@@ -18,6 +18,12 @@ namespace LibuvSharp
 			: this(loop, Handle.Size(type))
 		{
 		}
+
+		internal HandleBase(Loop loop, HandleType type, Func<IntPtr, IntPtr, int> constructor)
+			: this(loop, type)
+		{
+			Construct(constructor);
+		}
 	}
 }
 

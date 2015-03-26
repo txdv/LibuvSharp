@@ -9,10 +9,8 @@ namespace LibuvSharp
 		where TListener : IListener<TStream>
 	{
 		internal BasePipeListener(Loop loop, bool ipc)
-			: base(loop, HandleType.UV_NAMED_PIPE)
+			: base(loop, HandleType.UV_NAMED_PIPE, NativeMethods.uv_pipe_init, ipc ? 1 : 0)
 		{
-			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, ipc == true ? 1 : 0);
-			Ensure.Success(r);
 		}
 
 		public void Bind(string name)
@@ -80,10 +78,8 @@ namespace LibuvSharp
 		}
 
 		unsafe internal Pipe(Loop loop, bool interProcessCommunication)
-			: base(loop, HandleType.UV_NAMED_PIPE)
+			: base(loop, HandleType.UV_NAMED_PIPE, NativeMethods.uv_pipe_init, interProcessCommunication ? 1 : 0)
 		{
-			int r = NativeMethods.uv_pipe_init(loop.NativeHandle, NativeHandle, interProcessCommunication ? 1 : 0);
-			Ensure.Success(r);
 			pipe_t = (uv_pipe_t *)(this.NativeHandle.ToInt64() + Handle.Size(HandleType.UV_STREAM));
 		}
 

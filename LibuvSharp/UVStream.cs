@@ -76,6 +76,24 @@ namespace LibuvSharp
 		{
 		}
 
+		internal UVStream(Loop loop, HandleType type, Func<IntPtr, IntPtr, int> constructor)
+			: this(loop, type)
+		{
+			Construct(constructor);
+		}
+
+		internal UVStream(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int, int> constructor, int arg1)
+			: this(loop, handleType)
+		{
+			Construct(constructor, arg1);
+		}
+
+		internal UVStream(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int, int, int> constructor, int arg1, int arg2)
+			: this(loop, handleType)
+		{
+			Construct(constructor, arg1, arg2);
+		}
+
 		public void Resume()
 		{
 			CheckDisposed();

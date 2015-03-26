@@ -37,10 +37,8 @@ namespace LibuvSharp
 		}
 
 		public FileSystemWatcher(Loop loop)
-			: base(loop, HandleType.UV_FS_EVENT)
+			: base(loop, HandleType.UV_FS_EVENT, uv_fs_event_init)
 		{
-			int r = uv_fs_event_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 		}
 
 		public void Start(string path)

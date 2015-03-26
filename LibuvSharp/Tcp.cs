@@ -16,10 +16,8 @@ namespace LibuvSharp
 		}
 
 		public TcpListener(Loop loop)
-			: base(loop, HandleType.UV_TCP)
+			: base(loop, HandleType.UV_TCP, uv_tcp_init)
 		{
-			int r = uv_tcp_init(Loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -81,9 +79,8 @@ namespace LibuvSharp
 		}
 
 		public Tcp(Loop loop)
-			: base(loop, HandleType.UV_TCP)
+			: base(loop, HandleType.UV_TCP, uv_tcp_init)
 		{
-			uv_tcp_init(loop.NativeHandle, NativeHandle);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]

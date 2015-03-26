@@ -20,6 +20,11 @@ namespace LibuvSharp
 		{
 		}
 
+		public CallbackHandle(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int> constructor)
+			: base(loop, handleType, constructor)
+		{
+		}
+
 		static void uv_handle(IntPtr handle)
 		{
 			FromIntPtr<CallbackHandle>(handle).OnCallback();
@@ -45,16 +50,9 @@ namespace LibuvSharp
 
 	public abstract class StartableCallbackHandle : CallbackHandle
 	{
-		public StartableCallbackHandle(Loop loop, HandleType handleType)
-			: base(loop, handleType)
-		{
-		}
-
 		public StartableCallbackHandle(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int> constructor)
-			: this(loop, handleType)
+			: base(loop, handleType, constructor)
 		{
-			int r = constructor(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 		}
 
 		public abstract void Start();

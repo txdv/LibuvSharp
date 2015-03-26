@@ -66,9 +66,39 @@ namespace LibuvSharp
 		{
 		}
 
-		internal Handle(Loop loop, HandleType type)
-			: this(loop, Handle.Size(type))
+		internal Handle(Loop loop, HandleType handleType)
+			: this(loop, Handle.Size(handleType))
 		{
+		}
+
+		internal Handle(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int> constructor)
+			: this(loop, handleType)
+		{
+			Construct(constructor);
+		}
+
+		internal Handle(Loop loop, HandleType handleType, Func<IntPtr, IntPtr, int, int> constructor, int arg1)
+			: this(loop, handleType)
+		{
+			Construct(constructor, arg1);
+		}
+
+		internal void Construct(Func<IntPtr, IntPtr, int> constructor)
+		{
+			int r = constructor(Loop.NativeHandle, NativeHandle);
+			Ensure.Success(r);
+		}
+
+		internal void Construct(Func<IntPtr, IntPtr, int, int> constructor, int arg1)
+		{
+			int r = constructor(Loop.NativeHandle, NativeHandle, arg1);
+			Ensure.Success(r);
+		}
+
+		internal void Construct(Func<IntPtr, IntPtr, int, int, int> constructor, int arg1, int arg2)
+		{
+			int r = constructor(Loop.NativeHandle, NativeHandle, arg1, arg2);
+			Ensure.Success(r);
 		}
 
 		public event Action Closed;

@@ -48,10 +48,8 @@ namespace LibuvSharp
 		}
 
 		public Udp(Loop loop)
-			: base(loop, HandleType.UV_UDP)
+			: base(loop, HandleType.UV_UDP, uv_udp_init)
 		{
-			int r = uv_udp_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 		}
 
 		bool dualstack = false;
