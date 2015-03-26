@@ -16,8 +16,7 @@ namespace LibuvSharp
 		public void Bind(string name)
 		{
 			Ensure.ArgumentNotNull(name, null);
-			int r = NativeMethods.uv_pipe_bind(NativeHandle, name);
-			Ensure.Success(r);
+			Invoke(NativeMethods.uv_pipe_bind, name);
 		}
 
 		public string LocalAddress {
@@ -188,8 +187,7 @@ namespace LibuvSharp
 					break;
 				}
 				if (handle != null) {
-					int r = NativeMethods.uv_accept(NativeHandle, handle.NativeHandle);
-					Ensure.Success(r);
+					Invoke(NativeMethods.uv_accept, handle.NativeHandle);
 					OnHandleData(handle, data);
 				}
 			}

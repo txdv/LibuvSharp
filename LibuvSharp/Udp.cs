@@ -245,10 +245,7 @@ namespace LibuvSharp
 
 		public void Pause()
 		{
-			CheckDisposed();
-
-			int r = uv_udp_recv_stop(NativeHandle);
-			Ensure.Success(r);
+			Invoke(uv_udp_recv_stop);
 		}
 
 		public event Action<UdpReceiveMessage> Message;
@@ -259,10 +256,7 @@ namespace LibuvSharp
 		public byte TTL
 		{
 			set {
-				CheckDisposed();
-
-				int r = uv_udp_set_ttl(NativeHandle, (int)value);
-				Ensure.Success(r);
+				Invoke(uv_udp_set_ttl, (int)value);
 			}
 		}
 
@@ -271,10 +265,7 @@ namespace LibuvSharp
 
 		public bool Broadcast {
 			set {
-				CheckDisposed();
-
-				int r = uv_udp_set_broadcast(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r);
+				Invoke(uv_udp_set_broadcast, value ? 1 : 0);
 			}
 		}
 
@@ -283,10 +274,7 @@ namespace LibuvSharp
 
 		public byte MulticastTTL {
 			set {
-				CheckDisposed();
-
-				int r = uv_udp_set_multicast_ttl(NativeHandle, (int)value);
-				Ensure.Success(r);
+				Invoke(uv_udp_set_multicast_ttl, (int)value);
 			}
 		}
 
@@ -295,10 +283,7 @@ namespace LibuvSharp
 
 		public bool MulticastLoop {
 			set {
-				CheckDisposed();
-
-				int r = uv_udp_set_multicast_loop(NativeHandle, value ? 1 : 0);
-				Ensure.Success(r);
+				Invoke(uv_udp_set_multicast_loop, value ? 1 : 0);
 			}
 		}
 	}

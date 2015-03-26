@@ -14,13 +14,18 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_recv_buffer_size(IntPtr handle, out int value);
 
-		int Apply(buffer_size_function buffer_size, int value)
+		int Invoke(buffer_size_function function, int value)
 		{
 			CheckDisposed();
 
-			int r = buffer_size(NativeHandle, out value);
+			int r = function(NativeHandle, out value);
 			Ensure.Success(r);
-			return value;
+			return r;
+		}
+
+		int Apply(buffer_size_function buffer_size, int value)
+		{
+			return Invoke(buffer_size, value);
 		}
 
 		public int SendBufferSize {

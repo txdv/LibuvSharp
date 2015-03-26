@@ -38,14 +38,6 @@ namespace LibuvSharp
 				Callback();
 			}
 		}
-
-		protected void Invoke(Func<IntPtr, int> function)
-		{
-			CheckDisposed();
-
-			int r = function(NativeHandle);
-			Ensure.Success(r);
-		}
 	}
 
 	public abstract class StartableCallbackHandle : CallbackHandle

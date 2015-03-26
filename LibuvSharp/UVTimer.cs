@@ -70,7 +70,9 @@ namespace LibuvSharp
 			}
 			Running = true;
 			LongRepeat = repeat;
-			uv_timer_start(NativeHandle, cb, timeout, repeat);
+
+			int r = uv_timer_start(NativeHandle, cb, timeout, repeat);
+			Ensure.Success(r);
 		}
 
 		void OnTick(IntPtr handle, int status)
@@ -117,14 +119,15 @@ namespace LibuvSharp
 			CheckDisposed();
 
 			if (Running) {
-				uv_timer_stop(NativeHandle);
+				int r = uv_timer_stop(NativeHandle);
+				Ensure.Success(r);
 			}
 			Running = false;
 		}
 
 		public void Again()
 		{
-			uv_timer_again(NativeHandle);
+			Invoke(uv_timer_again);
 		}
 
 		public static UVTimer Once(Loop loop, TimeSpan timeout, Action callback)

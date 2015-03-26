@@ -262,6 +262,38 @@ namespace LibuvSharp
 				throw new ObjectDisposedException(GetType().ToString(), "handle was closed");
 			}
 		}
+
+		protected void Invoke(Func<IntPtr, int> function)
+		{
+			CheckDisposed();
+
+			int r = function(NativeHandle);
+			Ensure.Success(r);
+		}
+
+		protected void Invoke<T1>(Func<IntPtr, T1, int> function, T1 arg1)
+		{
+			CheckDisposed();
+
+			int r = function(NativeHandle, arg1);
+			Ensure.Success(r);
+		}
+
+		protected void Invoke<T1, T2>(Func<IntPtr, T1, T2, int> function, T1 arg1, T2 arg2)
+		{
+			CheckDisposed();
+
+			int r = function(NativeHandle, arg1, arg2);
+			Ensure.Success(r);
+		}
+
+		protected void Invoke<T1, T2, T3>(Func<IntPtr, T1, T2, T3, int> function, T1 arg1, T2 arg2, T3 arg3)
+		{
+			CheckDisposed();
+
+			int r = function(NativeHandle, arg1, arg2, arg3);
+			Ensure.Success(r);
+		}
 	}
 }
 
