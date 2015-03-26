@@ -32,10 +32,8 @@ namespace LibuvSharp
 		}
 
 		public UVTimer(Loop loop)
-			: base(loop, HandleType.UV_TIMER)
+			: base(loop, HandleType.UV_TIMER, uv_timer_init)
 		{
-			int r = uv_timer_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 			cb = OnTick;
 		}
 
