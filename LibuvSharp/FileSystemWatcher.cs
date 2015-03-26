@@ -23,7 +23,7 @@ namespace LibuvSharp
 		delegate void uv_fs_event_cb(IntPtr handle, string filename, int events, int status);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_event_init(IntPtr loop, IntPtr handle);
+		static extern int uv_fs_event_init(IntPtr loop, IntPtr handle);
 
 		static uv_fs_event_cb fs_event_callback;
 		static FileSystemWatcher()
@@ -47,7 +47,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_event_start(IntPtr handle, uv_fs_event_cb callback, string filename, int flags);
+		static extern int uv_fs_event_start(IntPtr handle, uv_fs_event_cb callback, string filename, int flags);
 
 		public void Start(string path, FileSystemEventFlags flags)
 		{

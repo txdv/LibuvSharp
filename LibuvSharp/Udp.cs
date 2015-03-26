@@ -9,19 +9,19 @@ namespace LibuvSharp
 	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
+		delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void recv_start_callback_unix(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags);
+		delegate void recv_start_callback_unix(IntPtr handle, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_init(IntPtr loop, IntPtr handle);
+		static extern int uv_udp_init(IntPtr loop, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, short flags);
+		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, short flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, short flags);
+		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, short flags);
 
 		ByteBufferAllocatorBase allocator;
 		public ByteBufferAllocatorBase ByteBufferAllocator {
