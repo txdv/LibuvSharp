@@ -6,22 +6,22 @@ namespace LibuvSharp
 	public class UVTimer : Handle
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_init(IntPtr loop, IntPtr timer);
+		static extern int uv_timer_init(IntPtr loop, IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_start(IntPtr timer, callback callback, ulong timeout, ulong repeat);
+		static extern int uv_timer_start(IntPtr timer, callback callback, ulong timeout, ulong repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_stop(IntPtr timer);
+		static extern int uv_timer_stop(IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_timer_again(IntPtr timer);
+		static extern int uv_timer_again(IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern void uv_timer_set_repeat(IntPtr timer, ulong repeat);
+		static extern void uv_timer_set_repeat(IntPtr timer, ulong repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern ulong uv_timer_get_repeat(IntPtr timer);
+		static extern ulong uv_timer_get_repeat(IntPtr timer);
 
 		callback cb;
 		Action onehit;
