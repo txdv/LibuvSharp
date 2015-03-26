@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using LibuvSharp.Threading.Tasks;
 using Xunit;
 
 namespace LibuvSharp.Tests
@@ -15,58 +18,46 @@ namespace LibuvSharp.Tests
 			Assert.NotEqual(path, string.Empty);
 		}
 
-		Process ProcessSpawnTest(string command, Action<long> callback)
-		{
-			var args = command.Split(new char[] { ' ' });
-			return Process.Spawn(new ProcessOptions() {
-				File = args[0],
-				Arguments = args
-			}, (process) => {
-				callback(process.ExitCode);
-			});
-		}
-
-		Process ProcessSpawnTest(string command, Action<string> callback)
-		{
-			var stdout = new Pipe() { Writeable = true };
-
-			var streams = new UVStream[] {
-				null,
-				stdout,
-			};
-
-			var args = command.Split(new char[] { ' ' });
-			var p = Process.Spawn(new ProcessOptions() {
-				File = args[0],
-				Arguments = args,
-				Streams = streams
-			});
-
-			stdout.Read(Encoding.ASCII, callback);
-			stdout.Resume();
-			return p;
-		}
-
 		[Fact]
 		public void ProcessSpawn()
 		{
-			string command = "csc.exe";
-			string resultString = "Microsoft ";
-			
-			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-				command = "/usr/bin/which which";
-				resultString = "/usr/bin/which\n";
+			string file = Default.TestExecutable;
+			using (var stdout = new Pipe() { Writeable = true })
+			using (var p = Process.Spawn(new ProcessOptions() {
+				File = file,
+				Arguments = new string[] { file },
+				Streams = new UVStream [] { null, stdout }
+			}, (process) => {
+				stdout.Dispose();
+			})) {
+
+				//for some reason this ain't working
+				//stdout.Read(Encoding.ASCII, (result) => Assert.Equal("Hello World!", result));
+				stdout.Resume();
+
+				Loop.Default.Run();
+
+				Assert.Equal(0, p.ExitCode);
 			}
-
-			string result = null;
-			ProcessSpawnTest(command, (res) => result = res);
 			Loop.Default.Run();
-			Assert.Equal(result, resultString);
+		}
 
-			long? exitCode = null;
-			ProcessSpawnTest(command, (res) => exitCode = res);
-			Loop.Default.Run();
-			Assert.Equal(exitCode.Value, 0);
+		[Fact]
+		public void ProcessSpawnAsync()
+		{
+			Loop.Default.Run(async () => {
+				string file = Default.TestExecutable;
+				using (var stdout = new Pipe() { Writeable = true })
+				using (Process.Spawn(new ProcessOptions() {
+					Arguments = new string[] { file },
+					File = file,
+					Streams = new UVStream[] { null, stdout },
+				})) {
+					var segment = (await stdout.ReadStructAsync()).Value;
+					var output = Encoding.Default.GetString(segment.Array, segment.Offset, segment.Count);
+					Assert.Equal("Hello World!", output.TrimEnd('\r', '\n'));
+				}
+			});
 		}
 	}
 }

@@ -41,6 +41,8 @@ namespace LibuvSharp.Tests
 			SecondDirectory = Directory + "2";
 
 			File = "file";
+
+			TestExecutable = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Test.exe");
 		}
 
 		public static int Port { get; private set; }
@@ -53,6 +55,8 @@ namespace LibuvSharp.Tests
 		public static string SecondDirectory { get; private set; }
 
 		public static string File { get; private set; }
+
+		public static string TestExecutable { get; private set; }
 
 		private static string Times(string str, int times)
 		{
