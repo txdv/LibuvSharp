@@ -322,7 +322,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern IntPtr uv_stop(IntPtr loop);
+		static extern void uv_stop(IntPtr loop);
 
 		public void Stop()
 		{
