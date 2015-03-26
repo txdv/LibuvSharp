@@ -1,37 +1,37 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Idle : StartableCallbackHandle
+	public class Check : StartableCallbackHandle
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_idle_init(IntPtr loop, IntPtr idle);
+		static extern int uv_check_init(IntPtr loop, IntPtr idle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_idle_start(IntPtr idle, uv_handle_cb callback);
+		static extern int uv_check_start(IntPtr check, uv_handle_cb callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_idle_stop(IntPtr idle);
+		static extern int uv_check_stop(IntPtr check);
 
-		public Idle()
+		public Check()
 			: this(Loop.Constructor)
 		{
 		}
 
-		public Idle(Loop loop)
-			: base(loop, HandleType.UV_IDLE, uv_idle_init)
+		public Check(Loop loop)
+			: base(loop, HandleType.UV_IDLE, uv_check_init)
 		{
 		}
 
 		public override void Start()
 		{
-			Invoke(uv_idle_start);
+			Invoke(uv_check_start);
 		}
 
 		public override void Stop()
 		{
-			Invoke(uv_idle_stop);
+			Invoke(uv_check_stop);
 		}
 	}
 }

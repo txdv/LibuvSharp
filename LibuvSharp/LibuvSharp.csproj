@@ -135,6 +135,8 @@
     <Compile Include="ITryWriteExtensions.cs" />
     <Compile Include="UVErrorCode.cs" />
     <Compile Include="HandleBase.cs" />
+    <Compile Include="CallbackHandle.cs" />
+    <Compile Include="Check.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

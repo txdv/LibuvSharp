@@ -3,16 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Prepare : Handle
+	public class Prepare : StartableCallbackHandle
 	{
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_prepare_init(IntPtr loop, IntPtr prepare);
+		static extern int uv_prepare_init(IntPtr loop, IntPtr prepare);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_prepare_start(IntPtr idle, IntPtr callback);
+		static extern int uv_prepare_start(IntPtr prepare, uv_handle_cb callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_prepare_stop(IntPtr prepare);
+		static extern int uv_prepare_stop(IntPtr prepare);
 
 		public Prepare()
 			: this(Loop.Constructor)
@@ -20,38 +20,18 @@ namespace LibuvSharp
 		}
 
 		public Prepare(Loop loop)
-			: base(loop, HandleType.UV_PREPARE)
+			: base(loop, HandleType.UV_PREPARE, uv_prepare_init)
 		{
-			int r = uv_prepare_init(loop.NativeHandle, NativeHandle);
-			Ensure.Success(r);
 		}
 
-		Action<IntPtr, int> cb;
-		public void Start(Action callback)
+		public override void Start()
 		{
-			cb = (ptr, status) => {
-				if (callback != null) {
-					callback();
-				}
-			};
-
-			Start(Marshal.GetFunctionPointerForDelegate(cb));
+			Invoke(uv_prepare_start);
 		}
 
-		internal void Start(IntPtr callback)
+		public override void Stop()
 		{
-			CheckDisposed();
-
-			int r = uv_prepare_start(NativeHandle, callback);
-			Ensure.Success(r);
-		}
-
-		public void Stop()
-		{
-			CheckDisposed();
-
-			int r = uv_prepare_stop(NativeHandle);
-			Ensure.Success(r);
+			Invoke(uv_prepare_stop);
 		}
 	}
 }
