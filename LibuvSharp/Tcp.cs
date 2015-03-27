@@ -53,9 +53,7 @@ namespace LibuvSharp
 
 		public bool SimultaneosAccepts {
 			set {
-				CheckDisposed();
-
-				uv_tcp_simultaneos_accepts(NativeHandle, (value ? 1 : 0));
+				Invoke(uv_tcp_simultaneos_accepts, value ? 1 : 0);
 			}
 		}
 
@@ -119,17 +117,13 @@ namespace LibuvSharp
 
 		public bool NoDelay {
 			set {
-				CheckDisposed();
-
-				uv_tcp_nodelay(NativeHandle, (value ? 1 : 0));
+				Invoke(uv_tcp_nodelay, value ? 1 : 0);
 			}
 		}
 
 		public void SetKeepAlive(bool enable, int delay)
 		{
-			CheckDisposed();
-
-			uv_tcp_keepalive(NativeHandle, (enable ? 1 : 0), delay);
+			Invoke(uv_tcp_keepalive, enable ? 1 : 0, delay);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
