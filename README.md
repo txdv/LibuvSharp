@@ -15,4 +15,8 @@ Compiling libuv
 ## Windows
 
 In order to compile libuv, open a Visual Studio Developer console and go to the subdirectory
-libuv and execute the command *vcbuild.bat release share*.
+libuv and execute the following command:
+
+```bash
+vcbuild.bat release share
+```
