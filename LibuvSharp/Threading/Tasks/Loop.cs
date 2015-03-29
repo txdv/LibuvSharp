@@ -30,6 +30,7 @@ namespace LibuvSharp
 				var loop = this;
 				SynchronizationContext.SetSynchronizationContext(new LoopSynchronizationContext(loop));
 				var task = asyncMethod();
+				HelperFunctions.SetStatus(task, TaskStatus.Running);
 				task.ContinueWith((t) => {
 					loop.Unref();
 					loop.Sync(() => { });
