@@ -18,8 +18,3 @@
     - uv_rwlock_*
     - uv_mutex_*
     - uv_thread_*
-  - strutility
-    c# has all the string manipulating utilities it needs.
-    - uv_strlcpy
-    - uv_strlcat
-
