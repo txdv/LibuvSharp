@@ -23,21 +23,18 @@ namespace LibuvSharp.Tests
 		{
 			string file = Default.TestExecutable;
 			using (var stdout = new Pipe() { Writeable = true })
-			using (var p = Process.Spawn(new ProcessOptions() {
-				File = file,
-				Arguments = new string[] { file },
+			using (var process = Process.Spawn(new ProcessOptions() {
+				File = Default.TestArguments[0],
+				Arguments = Default.TestArguments,
 				Streams = new UVStream [] { null, stdout }
-			}, (process) => {
-				stdout.Dispose();
 			})) {
-
 				//for some reason this ain't working
 				//stdout.Read(Encoding.ASCII, (result) => Assert.Equal("Hello World!", result));
 				stdout.Resume();
 
 				Loop.Default.Run();
 
-				Assert.Equal(0, p.ExitCode);
+				Assert.Equal(0, process.ExitCode);
 			}
 			Loop.Default.Run();
 		}
@@ -49,9 +46,9 @@ namespace LibuvSharp.Tests
 				string file = Default.TestExecutable;
 				using (var stdout = new Pipe() { Writeable = true })
 				using (Process.Spawn(new ProcessOptions() {
-					Arguments = new string[] { file },
-					File = file,
-					Streams = new UVStream[] { null, stdout },
+					File = Default.TestArguments[0],
+					Arguments = Default.TestArguments,
+					Streams = new UVStream[] { null, stdout }
 				})) {
 					var segment = (await stdout.ReadStructAsync()).Value;
 					var output = Encoding.Default.GetString(segment.Array, segment.Offset, segment.Count);

@@ -43,6 +43,11 @@ namespace LibuvSharp.Tests
 			File = "file";
 
 			TestExecutable = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Test.exe");
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				TestArguments = new string[] { "/usr/bin/mono", TestExecutable };
+			} else {
+				TestArguments = new string[] { TestExecutable };
+			}
 		}
 
 		public static int Port { get; private set; }
@@ -56,6 +61,7 @@ namespace LibuvSharp.Tests
 
 		public static string File { get; private set; }
 
+		public static string[] TestArguments { get; private set; }
 		public static string TestExecutable { get; private set; }
 
 		private static string Times(string str, int times)
