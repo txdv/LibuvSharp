@@ -11,13 +11,14 @@ namespace Test
 		{
 			Loop.Default.Run(async () => {
 				string file = Path.Combine(Directory.GetCurrentDirectory(), "Test.exe");
-				var stdout = new Pipe() { Writeable = true };
-				var stream = Process.Spawn(new ProcessOptions() {
-					Arguments = new string[] { file },
+				using (var stdout = new Pipe() { Writeable = true })
+				using (var process = Process.Spawn(new ProcessOptions() {
 					File = file,
+					Arguments = new string[] { file },
 					Streams = new UVStream[] { null, stdout },
-				});
-				Console.Write(await stdout.ReadStringAsync());
+				})) {
+					Console.WriteLine(await stdout.ReadStringAsync());
+				}
 			});
 		}
 	}
