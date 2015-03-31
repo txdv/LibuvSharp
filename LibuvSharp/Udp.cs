@@ -240,7 +240,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_recv_stop(IntPtr handle);
 
 		public void Pause()
