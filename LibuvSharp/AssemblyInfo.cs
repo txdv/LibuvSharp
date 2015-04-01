@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("LibuvSharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("This is a C# wrapper for the libuv library.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]

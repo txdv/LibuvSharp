@@ -1,3 +1,5 @@
+![LibuvSharp](https://raw.githubusercontent.com/txdv/LibuvSharp/master/img/banner.png)
+
 LibuvSharp [![Build Status](https://secure.travis-ci.org/txdv/LibuvSharp.png)](http://travis-ci.org/txdv/LibuvSharp)
 ==========
 
