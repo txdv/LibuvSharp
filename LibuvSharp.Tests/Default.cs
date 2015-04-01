@@ -95,7 +95,7 @@ namespace LibuvSharp.Tests
 						sv_recv_cb_called++;
 						Assert.Equal(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
-							socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+							socket.Write(Encoding.ASCII, "PONG", (s) => sv_send_cb_called++);
 						}
 						socket.Close(() => close_cb_called++);
 						server.Close(() => close_cb_called++);
@@ -107,7 +107,7 @@ namespace LibuvSharp.Tests
 				client.Connect(endPoint, (_) => {
 					client.Resume();
 					for (int i = 0; i < times; i++) {
-						client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+						client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
 					}
 					client.Read(Encoding.ASCII, (str) => {
 						cl_recv_cb_called++;
@@ -154,7 +154,7 @@ namespace LibuvSharp.Tests
 				pipe.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.Equal("PING", str);
-					pipe.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					pipe.Write(Encoding.ASCII, "PONG", (s) => sv_send_cb_called++);
 
 					pipe.Close(() => close_cb_called++);
 					server.Close(() => close_cb_called++);
@@ -211,7 +211,7 @@ namespace LibuvSharp.Tests
 				socket.Read(Encoding.ASCII, (str) => {
 					sv_recv_cb_called++;
 					Assert.Equal("PING", str);
-					socket.Write(Encoding.ASCII, "PONG", (s) => { sv_send_cb_called++; });
+					socket.Write(Encoding.ASCII, "PONG", (s) => sv_send_cb_called++);
 					socket.Close(() => close_cb_called++);
 					server.Close(() => close_cb_called++);
 				});
@@ -226,7 +226,7 @@ namespace LibuvSharp.Tests
 
 				client.Complete += () => close_cb_called++;
 				client.Resume();
-				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
+				client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
 			});
 
 			Assert.Equal(0, close_cb_called);
