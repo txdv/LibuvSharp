@@ -1,4 +1,5 @@
-LibuvSharp [![Build Status](https://secure.travis-ci.org/txdv/LibuvSharp.png)](http://travis-ci.org/txdv/LibuvSharp)
+LibuvSharp [![Build Status](https://secure.travis-ci.org/txdv/LibuvSharp.png)](http://travis-ci.org/txdv/LibuvSharp) [![License](http://img.shields.io/:license-mit-blue.svg)](http://en.wikipedia.org/wiki/MIT_License)
+
 ==========
 
 This is a C# wrapper for the [libuv library](https://github.com/libuv/libuv/).
