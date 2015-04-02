@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace LibuvSharp
 {
 	public abstract class BasePipeListener<TListener, TStream> : Listener<TStream>, ILocalAddress<string>, IBindable<TListener, string>
-		where TStream : class, IUVStream<ArraySegment<byte>>
+		where TStream : class, IUVStream
 		where TListener : IListener<TStream>
 	{
 		internal BasePipeListener(Loop loop, bool ipc)
@@ -169,13 +169,17 @@ namespace LibuvSharp
 		[DllImport(NativeMethods.libuv, CallingConvention = CallingConvention.Cdecl)]
 		public static extern HandleType uv_pipe_pending_type(IntPtr pipe);
 
-		protected override void OnData(ArraySegment<byte> data)
+		public int PendingCount {
+			get {
+				return uv_pipe_pending_count(NativeHandle);
+			}
+		}
+
+		public HandleBase Accept()
 		{
-			var count = uv_pipe_pending_count(NativeHandle);
-			if (count-- > 0) {
-				var type = uv_pipe_pending_type(NativeHandle);
-				Handle handle = null;
-				switch (type) {
+			if (PendingCount > 0) {
+				HandleBase handle = null;
+				switch (uv_pipe_pending_type(NativeHandle)) {
 				case HandleType.UV_UDP:
 					handle = new Udp(Loop);
 					break;
@@ -188,19 +192,10 @@ namespace LibuvSharp
 				}
 				if (handle != null) {
 					Invoke(NativeMethods.uv_accept, handle.NativeHandle);
-					OnHandleData(handle, data);
 				}
+				return handle;
 			}
-			base.OnData(data);
+			return null;
 		}
-
-		protected virtual void OnHandleData(Handle handle, ArraySegment<byte> data)
-		{
-			if (HandleData != null) {
-				HandleData(handle, data);
-			}
-		}
-
-		public event Action<Handle, ArraySegment<byte>> HandleData;
 	}
 }

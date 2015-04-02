@@ -22,7 +22,7 @@ namespace LibuvSharp.Tests
 
 		public static void WorksWith<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, IDisposable, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, IDisposable, new()
+			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, IDisposable, new()
 		{
 			var server = new TListener();
 			server.Unref();
@@ -55,7 +55,7 @@ namespace LibuvSharp.Tests
 
 		public static void WorksWithAsync<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, IDisposable, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, IDisposable, new()
+			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, IDisposable, new()
 		{
 			Loop.Default.Run(async () => {
 				using (var server = new TListener()) {

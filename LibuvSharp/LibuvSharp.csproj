@@ -93,9 +93,7 @@
     <Compile Include="Utilities.cs" />
     <Compile Include="UdpMessage.cs" />
     <Compile Include="Internal\uv_udp_flags.cs" />
-    <Compile Include="CopyingByteBufferAllocator.cs" />
     <Compile Include="LoopBackend.cs" />
-    <Compile Include="ByteBufferAllocatorBase.cs" />
     <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
     <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
     <Compile Include="Threading\HelperFunctions.cs" />

@@ -1,61 +1,49 @@
 using System;
 using System.Threading.Tasks;
+using LibuvSharp.Threading.Tasks;
 
 namespace LibuvSharp.Utilities
 {
 	public static class UtilitiesExtensions
 	{
-		public static Task PumpAsync<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
+		public static Task PumpAsync(this IUVStream readStream, ArraySegment<byte> buffer, IUVStream writeStream)
 		{
-			return HelperFunctions.Wrap(writeStream, readStream.Pump);
+			return HelperFunctions.Wrap(writeStream, buffer, readStream.Pump);
 		}
 
-		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
+		public static void Pump(this IUVStream readStream, IUVStream writeStream, ArraySegment<byte> buffer)
 		{
-			Pump(readStream, writeStream, null);
+			readStream.Pump(writeStream, buffer, null);
 		}
 
-		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream, Action<Exception> callback)
+		public static void Pump(this IUVStream readStream, IUVStream writeStream, ArraySegment<byte> buffer, Action<Exception> callback)
 		{
-			bool pending = false;
-			bool done = false;
+			Action<Exception, int> OnData = null;
 
-			Action<Exception> call = null;
-			Action complete = () => call(null);
-
-			call = (ex) => {
-				if (done) {
+			OnData = (readException, nread) => {
+				if (readException != null) {
+					callback(readException);
 					return;
 				}
 
-				readStream.Error -= call;
-				readStream.Complete -= complete;
-
-				done = true;
-				if (callback != null) {
-					callback(ex);
+				if (nread == 0) {
+					if (callback != null) {
+						callback(null);
+					}
+					return;
 				}
+
+				writeStream.Write(new ArraySegment<byte>(buffer.Array, buffer.Offset, nread), (writeException) => {
+					if (writeException != null) {
+						callback(writeException);
+						return;
+					}
+
+					readStream.Read(buffer, OnData);
+				});
 			};
 
-			readStream.Data += ((data) => {
-				writeStream.Write(data, null);
-				if (writeStream.WriteQueueSize > 0) {
-					pending = true;
-					readStream.Pause();
-				}
-			});
-
-			writeStream.Drain += () => {
-				if (pending) {
-					pending = false;
-					readStream.Resume();
-				}
-			};
-
-			readStream.Error += call;
-			readStream.Complete += complete;
-
-			readStream.Resume();
+			readStream.Read(buffer, OnData);
 		}
 	}
 }

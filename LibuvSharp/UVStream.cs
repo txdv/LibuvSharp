@@ -1,10 +1,11 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe public abstract class UVStream : HandleBase, IUVStream<ArraySegment<byte>>, ITryWrite<ArraySegment<byte>>
+	unsafe public abstract class UVStream : HandleBase, IUVStream, ITryWrite<ArraySegment<byte>>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);
@@ -44,15 +45,6 @@ namespace LibuvSharp
 			}
 		}
 
-		ByteBufferAllocatorBase allocator;
-		public ByteBufferAllocatorBase ByteBufferAllocator {
-			get {
-				return allocator ?? Loop.ByteBufferAllocator;
-			}
-			set {
-				allocator = value;
-			}
-		}
 
 		static UVStream()
 		{
@@ -94,20 +86,20 @@ namespace LibuvSharp
 			Construct(constructor, arg1, arg2);
 		}
 
-		public void Resume()
+		void Resume()
 		{
 			CheckDisposed();
 
 			int r;
 			if (UV.isUnix) {
-				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
+				r = uv_read_start(NativeHandle, alloc_unix, read_cb_unix);
 			} else {
-				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackWin, read_cb_win);
+				r = uv_read_start(NativeHandle, alloc_win, read_cb_win);
 			}
 			Ensure.Success(r);
 		}
 
-		public void Pause()
+		void Pause()
 		{
 			Invoke(uv_read_stop);
 		}
@@ -126,49 +118,52 @@ namespace LibuvSharp
 			stream.read_callback(streamPointer, size);
 		}
 
-		void read_callback(IntPtr streamPointer, IntPtr size)
+		void read_callback(IntPtr stream, IntPtr size)
 		{
 			long nread = size.ToInt64();
 			if (nread == 0) {
 				return;
-			} else if (nread < 0) {
-				if (UVException.Map((int)nread) == UVErrorCode.EOF) {
-					Close(Complete);
-				} else {
-					OnError(Ensure.Map((int)nread));
-					Close();
-				}
 			} else {
-				OnData(ByteBufferAllocator.Retrieve(size.ToInt32()));
+				var req = readRequests.Dequeue();
+				req.gchandle.Free();
+				if (nread < 0) {
+					if (UVException.Map((int)nread) == UVErrorCode.EOF) {
+						if (req.cb != null) {
+							req.cb(null, 0);
+						}
+					} else {
+						if (req.cb != null) {
+							req.cb(Ensure.Map((int)nread), 0);
+						}
+					}
+					Close();
+				} else {
+					if (req.cb != null) {
+						req.cb(null, size.ToInt32());
+					}
+				}
+
+				if (readRequests.Count <= 0) {
+					Pause();
+				}
 			}
 		}
 
-		protected virtual void OnComplete()
+		public void Read(ArraySegment<byte> buffer, Action<Exception, int> callback)
 		{
-			if (Complete != null) {
-				Complete();
+			CheckDisposed();
+
+			readRequests.Enqueue(new ReadRequest() {
+				buf = buffer,
+				cb = callback
+			});
+
+			if (readRequests.Count == 1) {
+				// TODO: quick hack, investigate this, Fibonacci example
+				// is crashing if I do not have this
+				try { Resume(); } catch { }
 			}
 		}
-
-		public event Action Complete;
-
-		protected virtual void OnError(Exception exception)
-		{
-			if (Error != null) {
-				Error(exception);
-			}
-		}
-
-		public event Action<Exception> Error;
-
-		protected virtual void OnData(ArraySegment<byte> data)
-		{
-			if (Data != null) {
-				Data(data);
-			}
-		}
-
-		public event Action<ArraySegment<byte>> Data;
 
 		void OnDrain()
 		{

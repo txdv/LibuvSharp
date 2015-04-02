@@ -26,7 +26,8 @@ namespace LibuvSharp.Tests
 			Udp server = new Udp();
 
 			server.Bind(ep);
-			server.Message += (msg) => {
+			var serverBuffer = new ArraySegment<byte>(new byte[1024]);
+			server.Receive(serverBuffer, (ex, msg) => {
 				var data = msg.Payload;
 				var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 				Assert.Equal(str, "PING");
@@ -35,19 +36,18 @@ namespace LibuvSharp.Tests
 					sv_send_cb_called++;
 					server.Close(() => close_cb_called++);
 				});
-			};
-			server.Resume();
+			});
 
 			client.Send(ep, Encoding.ASCII.GetBytes("PING"), (s) => {
 				cl_send_cb_called++;
-				client.Message += (msg) => {
+				var clientBuffer = new ArraySegment<byte>(new byte[1024]);
+				client.Receive(clientBuffer, (ex, msg) => {
 					var data = msg.Payload;
 					var str = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
 					Assert.Equal(str, "PONG");
 					cl_recv_cb_called++;
 					client.Close(() => close_cb_called++);
-				};
-				client.Resume();
+				});
 			});
 
 

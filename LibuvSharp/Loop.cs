@@ -39,7 +39,7 @@ namespace LibuvSharp
 		public static Loop Default {
 			get {
 				if (@default == null) {
-					@default = new Loop(uv_default_loop(), new CopyingByteBufferAllocator());
+					@default = new Loop(uv_default_loop());
 				}
 				return @default;
 			}
@@ -60,15 +60,12 @@ namespace LibuvSharp
 
 		public IntPtr NativeHandle { get; protected set; }
 
-		public ByteBufferAllocatorBase ByteBufferAllocator { get; protected set; }
-
 		Async async;
 		AsyncCallback callback;
 
-		internal Loop(IntPtr handle, ByteBufferAllocatorBase allocator)
+		internal Loop(IntPtr handle)
 		{
 			NativeHandle = handle;
-			ByteBufferAllocator = allocator;
 
 			callback = new AsyncCallback(this);
 			async = new Async(this);
@@ -85,12 +82,7 @@ namespace LibuvSharp
 		}
 
 		public Loop()
-			: this(new CopyingByteBufferAllocator())
-		{
-		}
-
-		public Loop(ByteBufferAllocatorBase allocator)
-			: this(CreateLoop(), allocator)
+			: this(CreateLoop())
 		{
 		}
 
@@ -229,13 +221,6 @@ namespace LibuvSharp
 
 			// make sure the callbacks of close are called
 			RunOnce();
-
-			if (disposing) {
-				if (ByteBufferAllocator != null) {
-					ByteBufferAllocator.Dispose();
-					ByteBufferAllocator = null;
-				}
-			}
 
 			int r = uv_loop_close(NativeHandle);
 			Ensure.Success(r);

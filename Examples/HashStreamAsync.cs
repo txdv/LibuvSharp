@@ -34,12 +34,13 @@ public class MainClass
 		return hashAlgorithm.Hash;
 	}
 
-	public static async Task<byte[]> Compute(IUVStream<ArraySegment<byte>> stream)
+	public static async Task<byte[]> Compute(IUVStream stream)
 	{
 		var hashAlgorithm = SHA1Managed.Create();
-		ArraySegment<byte>? data;
-		while ((data = await stream.ReadStructAsync()).HasValue) {
-			hashAlgorithm.TransformBlock(data.Value);
+		var buf = new ArraySegment<byte>(new byte[16 * 1024]);
+		int n;
+		while ((n = await stream.ReadAsync(buf)) > 0) {
+			hashAlgorithm.TransformBlock(buf.Take(n));
 		}
 		hashAlgorithm.TransformFinalBlock();
 		return hashAlgorithm.Hash;

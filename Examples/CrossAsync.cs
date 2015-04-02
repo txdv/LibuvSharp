@@ -71,8 +71,7 @@ namespace CrossAsync
 				server.Listen();
 
 				using (var client = await server.AcceptAsync()) {
-					var msg = await client.ReadStructAsync();
-					Console.WriteLine("LibuvSharp: " + Encoding.Default.GetString(msg));
+					Console.WriteLine("LibuvSharp: " + await client.ReadStringAsync());
 				}
 			}
 		}

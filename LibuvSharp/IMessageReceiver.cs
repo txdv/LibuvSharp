@@ -2,9 +2,9 @@
 
 namespace LibuvSharp
 {
-	public interface IMessageReceiver<TMessage>
+	public interface IMessageReceiver
 	{
-		event Action<TMessage> Message;
+		void Receive(ArraySegment<byte> buffer, Action<Exception, UdpReceiveMessage> message);
 	}
 }
 

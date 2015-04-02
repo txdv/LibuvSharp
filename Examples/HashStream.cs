@@ -7,7 +7,7 @@ using LibuvSharp;
 public class HashStream : IDisposable
 {
 	public HashAlgorithm HashAlgorithm { get; private set; }
-	public IUVStream<ArraySegment<byte>> Stream { get; private set; }
+	public IUVStream Stream { get; private set; }
 	public byte[] Hash { get; private set; }
 	public string HashString {
 		get {
@@ -15,22 +15,27 @@ public class HashStream : IDisposable
 		}
 	}
 
-	public HashStream(HashAlgorithm algorithm, IUVStream<ArraySegment<byte>> stream)
+	public HashStream(HashAlgorithm algorithm, IUVStream stream)
 	{
 		HashAlgorithm = algorithm;
 		Stream = stream;
 
-		Stream.Data += ((b) => {
-			HashAlgorithm.TransformBlock(b.Array, b.Offset, b.Count, null, 0);
-		});
+		Action<Exception, int> OnData = null;
 
-		Stream.Complete += () => {
-			HashAlgorithm.TransformFinalBlock(new byte[] { }, 0, 0);
-			Hash = HashAlgorithm.Hash;
-			if (Complete != null) {
-				Complete();
+		var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+		OnData = (exception, nread) => {
+			if (nread == 0) {
+				HashAlgorithm.TransformFinalBlock();
+				Hash = HashAlgorithm.Hash;
+				if (Complete != null) {
+					Complete();
+				}
+			} else {
+				HashAlgorithm.TransformBlock(buffer.Take(nread));
+				Stream.Read(buffer, OnData);
 			}
 		};
+		Stream.Read(buffer, OnData);
 	}
 
 	public event Action Complete;
@@ -43,7 +48,7 @@ public class HashStream : IDisposable
 		}
 	}
 
-	public static void Compute(HashAlgorithm hashAlgorithm, IUVStream<ArraySegment<byte>> stream, Action<byte[]> callback)
+	public static void Compute(HashAlgorithm hashAlgorithm, IUVStream stream, Action<byte[]> callback)
 	{
 		var hs = new HashStream(hashAlgorithm, stream);
 		hs.Complete += () => {
@@ -52,7 +57,7 @@ public class HashStream : IDisposable
 		};
 	}
 
-	public static void ComputeString(HashAlgorithm hashAlgorithm, IUVStream<ArraySegment<byte>> stream, Action<string> callback)
+	public static void ComputeString(HashAlgorithm hashAlgorithm, IUVStream stream, Action<string> callback)
 	{
 		var hs = new HashStream(hashAlgorithm, stream);
 		hs.Complete += () => {
@@ -68,7 +73,6 @@ public class HashStream : IDisposable
 			HashStream.ComputeString(SHA1Managed.Create(), @in, (str) => {
 				Console.WriteLine ("{0} {1}", str, file);
 			});
-			@in.Resume();
 		});
 	}
 

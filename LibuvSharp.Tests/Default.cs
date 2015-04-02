@@ -75,7 +75,7 @@ namespace LibuvSharp.Tests
 
 		public static void StressTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			for (int j = 0; j < 10; j++) {
 				int times = 10;
@@ -90,8 +90,9 @@ namespace LibuvSharp.Tests
 				server.Bind(endPoint);
 				server.Connection += () => {
 					var socket = server.Accept();
-					socket.Resume();
-					socket.Read(Encoding.ASCII, (str) => {
+					var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+					socket.Read(buffer, (ex, nread) => {
+						var str = Encoding.Default.GetString(buffer.Take(nread));
 						sv_recv_cb_called++;
 						Assert.Equal(Times("PING", times), str);
 						for (int i = 0; i < times; i++) {
@@ -105,11 +106,13 @@ namespace LibuvSharp.Tests
 
 				var client = new TClient();
 				client.Connect(endPoint, (_) => {
-					client.Resume();
 					for (int i = 0; i < times; i++) {
 						client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
 					}
-					client.Read(Encoding.ASCII, (str) => {
+					//client.Read(Encoding.ASCII, (str) => {
+					var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+					client.Read(buffer, (ex, nread) => {
+						var str = Encoding.Default.GetString(buffer.Take(nread));
 						cl_recv_cb_called++;
 						Assert.Equal(Times("PONG", times), str);
 						client.Close(() => close_cb_called++);
@@ -138,7 +141,7 @@ namespace LibuvSharp.Tests
 
 		public static void SimpleTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -150,8 +153,10 @@ namespace LibuvSharp.Tests
 			server.Bind(endPoint);
 			server.Connection += () => {
 				var pipe = server.Accept();
-				pipe.Resume();
-				pipe.Read(Encoding.ASCII, (str) => {
+
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+				pipe.Read(buffer, (exception, nread) => {
+					var str = Encoding.Default.GetString(buffer.Take(nread));
 					sv_recv_cb_called++;
 					Assert.Equal("PING", str);
 					pipe.Write(Encoding.ASCII, "PONG", (s) => sv_send_cb_called++);
@@ -164,9 +169,11 @@ namespace LibuvSharp.Tests
 
 			var client = new TClient();
 			client.Connect(endPoint, (_) => {
-				client.Resume();
 				client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
-				client.Read(Encoding.ASCII, (str) => {
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+
+				client.Read(buffer, (exception, nread) => {
+					var str = Encoding.Default.GetString(buffer.Take(nread));
 					cl_recv_cb_called++;
 					Assert.Equal("PONG", str);
 					client.Close(() => close_cb_called++);
@@ -194,7 +201,7 @@ namespace LibuvSharp.Tests
 
 		public static void OneSideCloseTest<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, new()
+			where TClient : IUVStream, IConnectable<TClient, TEndPoint>, IHandle, new()
 		{
 			int close_cb_called = 0;
 			int cl_send_cb_called = 0;
@@ -207,8 +214,9 @@ namespace LibuvSharp.Tests
 			server.Listen();
 			server.Connection += () => {
 				var socket = server.Accept();
-				socket.Resume();
-				socket.Read(Encoding.ASCII, (str) => {
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+				socket.Read(buffer, (exception, nread) => {
+					var str = Encoding.Default.GetString(buffer.Take(nread));
 					sv_recv_cb_called++;
 					Assert.Equal("PING", str);
 					socket.Write(Encoding.ASCII, "PONG", (s) => sv_send_cb_called++);
@@ -219,14 +227,20 @@ namespace LibuvSharp.Tests
 
 			var client = new TClient();
 			client.Connect(endPoint, (_) => {
-				client.Read(Encoding.ASCII, (str) => {
-					cl_recv_cb_called++;
-					Assert.Equal("PONG", str);
-				});
-
-				client.Complete += () => close_cb_called++;
-				client.Resume();
-				client.Write(Encoding.ASCII, "PING", (s) => cl_send_cb_called++);
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+				Action<Exception, int> OnData = null;
+				OnData = (exception, nread) => {
+					if (nread == 0) {
+						close_cb_called++;
+					} else {
+						var str = Encoding.Default.GetString(buffer.Take(nread));
+						cl_recv_cb_called++;
+						Assert.Equal("PONG", str);
+						client.Read(buffer, OnData);
+					}
+				};
+				client.Read(buffer, OnData);
+				client.Write(Encoding.ASCII, "PING", (s) => { cl_send_cb_called++; });
 			});
 
 			Assert.Equal(0, close_cb_called);
@@ -250,34 +264,31 @@ namespace LibuvSharp.Tests
 
 		public static async Task SimpleTestServerAsync<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IBindable<TListener, TEndPoint>, IListener<TClient>, IDisposable, new()
-			where TClient : IUVStream<ArraySegment<byte>>, IDisposable, new()
+			where TClient : IUVStream, IDisposable, new()
 		{
 			using (var server = new TListener()) {
 				server.Bind(endPoint);
 				server.Listen();
 				using (var client = await server.AcceptAsync()) {
-					var data = await client.ReadStructAsync();
-					if (data.HasValue) {
-						if (Encoding.Default.GetString(data.Value) == "PING") {
-							client.Write("PONG");
-							await client.ShutdownAsync();
-						}
+					var str = await client.ReadStringAsync();
+					if (str != null && str == "PING") {
+						client.Write("PONG");
+						await client.ShutdownAsync();
 					}
 				}
 			}
 		}
 
 		public static async Task SimpleTestClientAsync<TEndPoint, TClient>(TEndPoint endPoint)
-			where TClient : IConnectable<TClient, TEndPoint>, IUVStream<ArraySegment<byte>>, IDisposable, new()
+			where TClient : IConnectable<TClient, TEndPoint>, IUVStream, IDisposable, new()
 		{
 			using (var client = new TClient()) {
 				await client.ConnectAsync(endPoint);
 
 				client.Write("PING");
-				var data = await client.ReadStructAsync();
-				if (data.HasValue) {
-					var text = Encoding.Default.GetString(data.Value);
-					if (text != "PONG") {
+				var str = await client.ReadStringAsync();
+				if (str != null) {
+					if (str != "PONG") {
 						throw new Exception("Should be PONG");
 					}
 				} else {
@@ -289,7 +300,7 @@ namespace LibuvSharp.Tests
 
 		public static async Task SimpleTestAsync<TEndPoint, TListener, TClient>(TEndPoint endPoint)
 			where TListener : IBindable<TListener, TEndPoint>, IListener<TClient>, IDisposable, new()
-			where TClient : IConnectable<TClient, TEndPoint>, IUVStream<ArraySegment<byte>>, IDisposable, new()
+			where TClient : IConnectable<TClient, TEndPoint>, IUVStream, IDisposable, new()
 		{
 			await Task.WhenAll(
 				SimpleTestServerAsync<TEndPoint, TListener, TClient>(endPoint),

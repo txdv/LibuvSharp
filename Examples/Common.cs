@@ -17,21 +17,23 @@ public static class Default
 
 static class AsyncExtensions
 {
-	public static async Task<string> ReadStringAsync(this IUVStream<ArraySegment<byte>> stream)
+	public static async Task<string> ReadStringAsync(this IUVStream stream)
 	{
 		return await ReadStringAsync(stream, Encoding.Default);
 	}
 
-	public static async Task<string> ReadStringAsync(this IUVStream<ArraySegment<byte>> stream, Encoding encoding)
+	public static async Task<string> ReadStringAsync(this IUVStream stream, Encoding encoding)
 	{
 		if (encoding == null) {
 			throw new ArgumentException("encoding");
 		}
-		var buffer = await stream.ReadStructAsync();
-		if (!buffer.HasValue) {
+
+		var buf = new byte[1024];
+		var n = await stream.ReadAsync(buf);
+		if (n == 0) {
 			return null;
 		}
-		return encoding.GetString(buffer.Value);
+		return encoding.GetString(buf, 0, n);
 	}
 }
 
@@ -40,16 +42,6 @@ public static class EncodingExtensions
 	public static string GetString(this Encoding encoding, ArraySegment<byte> segment)
 	{
 		return encoding.GetString(segment.Array, segment.Offset, segment.Count);
-	}
-
-	public static string GetString(this Encoding encoding, ArraySegment<byte>? segment)
-	{
-		if (!segment.HasValue) {
-			return null;
-		} else {
-			var value = segment.Value;
-			return encoding.GetString(value.Array, value.Offset, value.Count);
-		}
 	}
 }
 
@@ -111,5 +103,13 @@ public static class HashAlgorithmExtensions
 	public static void TransformFinalBlock(this HashAlgorithm hashAlgorithm, byte[] buffer)
 	{
 		hashAlgorithm.TransformFinalBlock(buffer, 0, buffer.Length);
+	}
+}
+
+public static class ArraySegmentExtensions
+{
+	public static ArraySegment<T> Take<T>(this ArraySegment<T> segment, int count)
+	{
+		return new ArraySegment<T>(segment.Array, segment.Offset, count);
 	}
 }

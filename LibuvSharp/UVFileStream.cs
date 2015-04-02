@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	public class UVFileStream : IUVStream<ArraySegment<byte>>, IDisposable, IHandle
+	public class UVFileStream : IUVStream, IDisposable, IHandle
 	{
 		public void Ref()
 		{
@@ -87,79 +87,19 @@ namespace LibuvSharp
 			});
 		}
 
-		protected void OnComplete()
-		{
-			if (Complete != null) {
-				Complete();
-			}
-		}
-
-		public event Action Complete;
-
-		protected void OnError(Exception ex)
-		{
-			if (Error != null) {
-				Error(ex);
-			}
-		}
-
-		public event Action<Exception> Error;
-
 		public bool Readable { get; private set; }
 
-		byte[] buffer = new byte[0x1000];
-		bool reading = false;
+		public void Read(ArraySegment<byte> buffer, Action<Exception, int> callback)
+		{
+			uvfile.Read(Loop, readposition, buffer.Array, buffer.Offset, buffer.Count, (ex, n) => {
+				readposition += n;
+				if (callback != null) {
+					callback(ex, n);
+				}
+			});
+		}
+
 		int readposition = 0;
-
-		void HandleRead(Exception ex, int size)
-		{
-			if (!reading) {
-				return;
-			}
-
-			if (ex != null) {
-				OnError(ex);
-				return;
-			}
-
-			if (size == 0) {
-				uvfile.Close((ex2) => {
-					OnComplete();
-				});
-				return;
-			}
-
-			readposition += size;
-			OnData(new ArraySegment<byte>(buffer, 0, size));
-
-			if (reading) {
-				WorkRead();
-			}
-		}
-
-		void WorkRead()
-		{
-			uvfile.Read(Loop, readposition, new ArraySegment<byte>(buffer, 0, buffer.Length), HandleRead);
-		}
-
-		public void Resume()
-		{
-			reading = true;
-			WorkRead();
-		}
-
-		public void Pause()
-		{
-			reading = false;
-		}
-
-		void OnData(ArraySegment<byte> data)
-		{
-			if (Data != null) {
-				Data(data);
-			}
-		}
-		public event Action<ArraySegment<byte>> Data;
 
 		int writeoffset = 0;
 		Queue<Tuple<ArraySegment<byte>, Action<Exception>>> queue = new Queue<Tuple<ArraySegment<byte>, Action<Exception>>>();

@@ -30,7 +30,8 @@ namespace LibuvSharp.Tests
 			})) {
 				//for some reason this ain't working
 				//stdout.Read(Encoding.ASCII, (result) => Assert.Equal("Hello World!", result));
-				stdout.Resume();
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+				stdout.Read(buffer, (exception, nread) => { });
 
 				Loop.Default.Run();
 
@@ -50,8 +51,7 @@ namespace LibuvSharp.Tests
 					Arguments = Default.TestArguments,
 					Streams = new UVStream[] { null, stdout }
 				})) {
-					var segment = (await stdout.ReadStructAsync()).Value;
-					var output = Encoding.Default.GetString(segment.Array, segment.Offset, segment.Count);
+					var output = await stdout.ReadStringAsync();
 					Assert.Equal("Hello World!", output.TrimEnd('\r', '\n'));
 				}
 			});

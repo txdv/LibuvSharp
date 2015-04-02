@@ -26,19 +26,26 @@ namespace LibuvSharp.Tests
 				var handles = new Stack<Handle>();
 				var pipelistener = new IPCPipeListener();
 				pipelistener.Bind(pipename);
+				var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
 				pipelistener.Connection += () => {
 					var client = pipelistener.Accept();
-					client.Resume();
-					client.HandleData += (handle, data) => {
-						handles.Push(handle);
-						count++;
-						if (count == 3) {
-							foreach (var h in handles) {
-								h.Close();
+					Action<Exception, int> OnData = null;
+					OnData = (exception, nread) => {
+						while (client.PendingCount > 0) {
+							var handle = client.Accept();
+							handles.Push(handle);
+							count++;
+							if (count == 3) {
+								foreach (var h in handles) {
+									h.Close();
+								}
+								pipelistener.Close();
+							} else {
+								client.Read(buffer, OnData);
 							}
-							pipelistener.Close();
 						}
 					};
+					client.Read(buffer, OnData);
 				};
 				pipelistener.Listen();
 

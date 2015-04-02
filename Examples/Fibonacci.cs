@@ -34,7 +34,13 @@ namespace Test
 		public static void Main(string[] args)
 		{
 			var stdin = new TTY(0);
-			stdin.Read(Encoding.ASCII, (str) => {
+			var buffer = new ArraySegment<byte>(new byte[8 * 1024]);
+			Action<Exception, int> OnData = null;
+			OnData = (exception, nread) => {
+				if (nread == 0) {
+					return;
+				}
+				var str = Encoding.Default.GetString(buffer.Take(nread));
 				str = str.TrimEnd(new char[] { '\r', '\n' });
 				if (str.StartsWith("fib ")) {
 					int n;
@@ -64,8 +70,9 @@ namespace Test
 				} else {
 					Console.WriteLine("Unknown command");
 				}
-			});
-			stdin.Resume();
+				stdin.Read(buffer, OnData);
+			};
+			stdin.Read(buffer, OnData);
 			Loop.Default.Run();
 		}
 	}
