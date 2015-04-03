@@ -130,13 +130,13 @@
     <Compile Include="IFileDescriptor.cs" />
     <Compile Include="HandleFileDescriptor.cs" />
     <Compile Include="IFileDescriptorExtensions.cs" />
-    <Compile Include="IPCExtensions.cs" />
     <Compile Include="ITryWrite.cs" />
     <Compile Include="ITryWriteExtensions.cs" />
     <Compile Include="UVErrorCode.cs" />
     <Compile Include="HandleBase.cs" />
     <Compile Include="CallbackHandle.cs" />
     <Compile Include="Check.cs" />
+    <Compile Include="IPCPipeExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

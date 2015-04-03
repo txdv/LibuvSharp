@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LibuvSharp
 {
-	public static class IPCExtensions
+	public static class IPCPipeExtensions
 	{
 		public static void Write(this IPCPipe pipe, Handle handle, byte[] data, int index, int count, Action<Exception> callback)
 		{
