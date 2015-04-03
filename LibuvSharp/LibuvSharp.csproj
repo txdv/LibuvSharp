@@ -137,6 +137,7 @@
     <Compile Include="CallbackHandle.cs" />
     <Compile Include="Check.cs" />
     <Compile Include="IPCPipeExtensions.cs" />
+    <Compile Include="Threading\Tasks\IPCPipeExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
