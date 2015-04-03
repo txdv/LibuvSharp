@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 
 namespace LibuvSharp
 {
 	public static class IPCPipeExtensions
 	{
+		#region Write
+
 		public static void Write(this IPCPipe pipe, Handle handle, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			pipe.Write(handle, new ArraySegment<byte>(data, index, count), callback);
@@ -30,6 +33,32 @@ namespace LibuvSharp
 		{
 			pipe.Write(handle, data, null);
 		}
+
+		#endregion
+
+		#region Write string
+
+		public static int Write(this IPCPipe pipe, Handle handle, Encoding enc, string text, Action<Exception> callback)
+		{
+			var bytes = enc.GetBytes(text);
+			pipe.Write(handle, bytes, callback);
+			return bytes.Length;
+		}
+		public static int Write(this IPCPipe pipe, Handle handle, string text, Action<Exception> callback)
+		{
+			return pipe.Write(handle, Encoding.Default, text, callback);
+		}
+		public static int Write(this IPCPipe pipe, Handle handle, Encoding enc, string text)
+		{
+			return pipe.Write(enc, text, null);
+		}
+		public static int Write(this IPCPipe pipe, Handle handle, string text)
+		{
+			return pipe.Write(Encoding.Default, text);
+		}
+
+		#endregion
+
 	}
 }
 
