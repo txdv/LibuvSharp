@@ -11,6 +11,7 @@ namespace LibuvSharp
 		}
 
 		#region Write
+
 		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index, int count, Action<Exception> callback)
 		{
 			stream.Write(new ArraySegment<byte>(data, index, count), callback);
