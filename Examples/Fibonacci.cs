@@ -44,6 +44,7 @@ namespace Test
 					}
 					TimeSpan span = TimeSpan.Zero;
 					BigInteger res = 0;
+					Console.WriteLine("{0}: fib({1}) starting", span, n);
 					Loop.Default.QueueUserWorkItem(() => {
 						var stopwatch = Stopwatch.StartNew();
 						res = Fibonacci(n);
@@ -53,6 +54,7 @@ namespace Test
 						Console.WriteLine("{0}: fib({1}) = {2}", span, n, res);
 					});
 				} else if (str == "quit") {
+					Loop.Default.Stop();
 					stdin.Close();
 				} else if (str == "help") {
 					Console.WriteLine("Available commands: ");
