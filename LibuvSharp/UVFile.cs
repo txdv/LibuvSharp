@@ -128,6 +128,7 @@ namespace LibuvSharp
 		}
 		public void Read(Loop loop, byte[] data, int index)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Read(loop, data, index, data.Length - index);
 		}
 		public void Read(Loop loop, byte[] data)
@@ -268,6 +269,7 @@ namespace LibuvSharp
 		}
 		public void Write(Loop loop, int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Write(loop, offset, data, index, data.Length - index, callback);
 		}
 		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback)
@@ -292,6 +294,7 @@ namespace LibuvSharp
 		}
 		public void Write(Loop loop, byte[] data, int index)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Write(loop, data, index, data.Length - index);
 		}
 		public void Write(Loop loop, byte[] data)
@@ -309,6 +312,7 @@ namespace LibuvSharp
 		}
 		public void Write(int offset, byte[] data, int index, Action<Exception, int> callback)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Write(this.Loop, offset, data, index, data.Length - index, callback);
 		}
 		public void Write(byte[] data, int index, Action<Exception, int> callback)
@@ -333,6 +337,7 @@ namespace LibuvSharp
 		}
 		public void Write(byte[] data, int index)
 		{
+			Ensure.ArgumentNotNull(data, "data");
 			Write(data, index, data.Length - index);
 		}
 		public void Write(byte[] data)
