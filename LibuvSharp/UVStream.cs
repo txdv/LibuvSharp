@@ -113,33 +113,33 @@ namespace LibuvSharp
 		}
 
 		static read_callback_unix read_cb_unix;
-		static void read_callback_u(IntPtr stream, IntPtr size, UnixBufferStruct buf)
+		static void read_callback_u(IntPtr streamPointer, IntPtr size, UnixBufferStruct buf)
 		{
-			read_callback(stream, size);
+			var stream = FromIntPtr<UVStream>(streamPointer);
+			stream.read_callback(streamPointer, size);
 		}
 
 		static read_callback_win read_cb_win;
-		static void read_callback_w(IntPtr stream, IntPtr size, WindowsBufferStruct buf)
-		{
-			read_callback(stream, size);
-		}
-
-		static void read_callback(IntPtr streamPointer, IntPtr size)
+		static void read_callback_w(IntPtr streamPointer, IntPtr size, WindowsBufferStruct buf)
 		{
 			var stream = FromIntPtr<UVStream>(streamPointer);
+			stream.read_callback(streamPointer, size);
+		}
 
+		void read_callback(IntPtr streamPointer, IntPtr size)
+		{
 			long nread = size.ToInt64();
 			if (nread == 0) {
 				return;
 			} else if (nread < 0) {
 				if (UVException.Map((int)nread) == UVErrorCode.EOF) {
-					stream.Close(stream.Complete);
+					Close(Complete);
 				} else {
-					stream.OnError(Ensure.Map((int)nread));
-					stream.Close();
+					OnError(Ensure.Map((int)nread));
+					Close();
 				}
 			} else {
-				stream.OnData(stream.ByteBufferAllocator.Retrieve(size.ToInt32()));
+				OnData(ByteBufferAllocator.Retrieve(size.ToInt32()));
 			}
 		}
 
