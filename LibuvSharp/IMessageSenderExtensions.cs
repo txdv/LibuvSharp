@@ -133,7 +133,7 @@ namespace LibuvSharp
 
 		#endregion
 
-		#region TMEssage
+		#region TMessage
 
 		public static void Send<TMessage, TPayload>(this IMessageSender<TMessage> sender, string ipAddress, int port, TPayload payload, Action<Exception> callback)
 			where TMessage : IMessage<IPEndPoint, TPayload>, new()
