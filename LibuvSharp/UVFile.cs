@@ -101,18 +101,10 @@ namespace LibuvSharp
 		{
 			Read(loop, -1, data, index, count, callback);
 		}
-		public void Read(Loop loop, int offset, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Read(loop, offset, data, index, data.Length - index, callback);
-		}
-		public void Read(Loop loop, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Read(loop, -1, data, index, callback);
-		}
 		public void Read(Loop loop, int offset, byte[] data, Action<Exception, int> callback)
 		{
-			Read(loop, offset, data, 0, callback);
+			Ensure.ArgumentNotNull(data, "data");
+			Read(loop, offset, data, 0, data.Length, callback);
 		}
 		public void Read(Loop loop, byte[] data, Action<Exception, int> callback)
 		{
@@ -126,14 +118,10 @@ namespace LibuvSharp
 		{
 			Read(loop, -1, data, index, count);
 		}
-		public void Read(Loop loop, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Read(loop, data, index, data.Length - index);
-		}
 		public void Read(Loop loop, byte[] data)
 		{
-			Read(loop, data, 0);
+			Ensure.ArgumentNotNull(data, "data");
+			Read(loop, data, 0, data.Length);
 		}
 
 		public void Read(int offset, byte[] data, int index, int count, Action<Exception, int> callback)
@@ -143,14 +131,6 @@ namespace LibuvSharp
 		public void Read(byte[] data, int index, int count, Action<Exception, int> callback)
 		{
 			Read(this.Loop, data, index, count, callback);
-		}
-		public void Read(int offset, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Read(this.Loop, offset, data, index, callback);
-		}
-		public void Read(byte[] data, int index, Action<Exception, int> callback)
-		{
-			Read(this.Loop, data, index, callback);
 		}
 		public void Read(int offset, byte[] data, Action<Exception, int> callback)
 		{
@@ -167,10 +147,6 @@ namespace LibuvSharp
 		public void Read(byte[] data, int index, int count)
 		{
 			Read(this.Loop, data, index, count);
-		}
-		public void Read(byte[] data, int index)
-		{
-			Read(this.Loop, data, index);
 		}
 		public void Read(byte[] data)
 		{
@@ -267,15 +243,6 @@ namespace LibuvSharp
 		{
 			Write(loop, -1, data, index, count, callback);
 		}
-		public void Write(Loop loop, int offset, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Write(loop, offset, data, index, data.Length - index, callback);
-		}
-		public void Write(Loop loop, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Write(loop, -1, data, index, callback);
-		}
 		public void Write(Loop loop, int offset, byte[] data, Action<Exception, int> callback)
 		{
 			Write(loop, offset, data, 0, data.Length, callback);
@@ -292,14 +259,10 @@ namespace LibuvSharp
 		{
 			Write(loop, -1, data, index, count);
 		}
-		public void Write(Loop loop, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Write(loop, data, index, data.Length - index);
-		}
 		public void Write(Loop loop, byte[] data)
 		{
-			Write(loop, data, 0);
+			Ensure.ArgumentNotNull(data, "data");
+			Write(loop, data, 0, data.Length);
 		}
 
 		public void Write(int offset, byte[] data, int index, int count, Action<Exception, int> callback)
@@ -309,15 +272,6 @@ namespace LibuvSharp
 		public void Write(byte[] data, int index, int count, Action<Exception, int> callback)
 		{
 			Write(-1, data, index, count, callback);
-		}
-		public void Write(int offset, byte[] data, int index, Action<Exception, int> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Write(this.Loop, offset, data, index, data.Length - index, callback);
-		}
-		public void Write(byte[] data, int index, Action<Exception, int> callback)
-		{
-			Write(this.Loop, data, index, callback);
 		}
 		public void Write(int offset, byte[] data, Action<Exception, int> callback)
 		{
@@ -335,14 +289,10 @@ namespace LibuvSharp
 		{
 			Write(-1, data, index, count);
 		}
-		public void Write(byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			Write(data, index, data.Length - index);
-		}
 		public void Write(byte[] data)
 		{
-			Write(data, 0);
+			Ensure.ArgumentNotNull(data, "data");
+			Write(data, 0, data.Length);
 		}
 
 		public void Write(Loop loop, ArraySegment<byte> data, Action<Exception, int> callback)

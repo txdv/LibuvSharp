@@ -22,16 +22,6 @@ namespace LibuvSharp
 			stream.Write(data, index, count, null);
 		}
 
-		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index, Action<Exception> callback)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			stream.Write(data, index, data.Length - index, callback);
-		}
-		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index)
-		{
-			stream.Write(data, index, null);
-		}
-
 		public static void Write(this IUVStream<ArraySegment<byte>> stream, byte[] data, Action<Exception> callback)
 		{
 			Ensure.ArgumentNotNull(data, "data");
@@ -96,16 +86,6 @@ namespace LibuvSharp
 		public static void End(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index, int count)
 		{
 			stream.End(data, index, count, null);
-		}
-
-		public static void End(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index, Action<Exception> callback)
-		{
-			stream.Write(data, index);
-			stream.Shutdown(callback);
-		}
-		public static void End(this IUVStream<ArraySegment<byte>> stream, byte[] data, int index)
-		{
-			stream.Write(data, index, null);
 		}
 
 		public static void End(this IUVStream<ArraySegment<byte>> stream, byte[] data, Action<Exception> callback)

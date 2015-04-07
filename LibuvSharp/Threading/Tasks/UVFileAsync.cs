@@ -107,23 +107,6 @@ namespace LibuvSharp.Threading.Tasks
 			return HelperFunctions.Wrap<byte[], int, int, int>(data, index, count, file.Read);
 		}
 
-		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<Loop, int, byte[], int, int>(loop, offset, data, index, file.Read);
-		}
-		public static Task<int> ReadAsync(this UVFile file, int offset, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<int, byte[], int, int>(offset, data, index, file.Read);
-		}
-		public static Task<int> ReadAsync(this UVFile file, Loop loop, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<Loop, byte[], int, int>(loop, data, index, file.Read);
-		}
-		public static Task<int> ReadAsync(this UVFile file, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<byte[], int, int>(data, index, file.Read);
-		}
-
 		public static Task<int> ReadAsync(this UVFile file, Loop loop, int offset, byte[] data)
 		{
 			return HelperFunctions.Wrap<Loop, int, byte[], int>(loop, offset, data, file.Read);
@@ -178,23 +161,6 @@ namespace LibuvSharp.Threading.Tasks
 
 		{
 			return HelperFunctions.Wrap<byte[], int, int, int>(data, index, count, file.Write);
-		}
-
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<Loop, int, byte[], int, int>(loop, offset, data, index, file.Write);
-		}
-		public static Task<int> WriteAsync(this UVFile file, int offset, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<int, byte[], int, int>(offset, data, index, file.Write);
-		}
-		public static Task<int> WriteAsync(this UVFile file, Loop loop, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<Loop, byte[], int, int>(loop, data, index, file.Write);
-		}
-		public static Task<int> WriteAsync(this UVFile file, byte[] data, int index)
-		{
-			return HelperFunctions.Wrap<byte[], int, int>(data, index, file.Write);
 		}
 
 		public static Task<int> WriteAsync(this UVFile file, Loop loop, int offset, byte[] data)
