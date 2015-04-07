@@ -12,30 +12,28 @@ namespace LibuvSharp.Utilities
 
 		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
 		{
-			Pump(readStream, writeStream, (Action<Exception>)null);
+			Pump(readStream, writeStream, null);
 		}
 
 		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream, Action<Exception> callback)
 		{
-			readStream.Pump(writeStream, (ex1, ex2) => {
-				if (callback != null) {
-					callback(ex1 ?? ex2);
-				}
-			});
-		}
-
-		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream, Action<Exception, Exception> callback)
-		{
 			bool pending = false;
 			bool done = false;
 
-			Action<Exception, Exception> call = (ex1, ex2) => {
+			Action<Exception> call = null;
+			Action complete = () => call(null);
+
+			call = (ex) => {
 				if (done) {
 					return;
 				}
+
+				readStream.Error -= call;
+				readStream.Complete -= complete;
+
 				done = true;
 				if (callback != null) {
-					callback(ex1, ex2);
+					callback(ex);
 				}
 			};
 
@@ -54,12 +52,8 @@ namespace LibuvSharp.Utilities
 				}
 			};
 
-			readStream.Complete += () => {
-				writeStream.Shutdown((ex) => call(ex, null));
-			};
-
-			readStream.Error += (ex) => call(ex, null);
-			readStream.Error += (ex) => call(null, ex);
+			readStream.Error += call;
+			readStream.Complete += complete;
 
 			readStream.Resume();
 		}
