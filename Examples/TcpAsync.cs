@@ -21,9 +21,6 @@ namespace Test
 						client.Write("Hello World!");
 						var str = await client.ReadStringAsync();
 						Console.WriteLine("From Client: {0}", str);
-
-						client.Shutdown();
-						server.Close();
 					}
 				}
 			} catch (Exception e) {
