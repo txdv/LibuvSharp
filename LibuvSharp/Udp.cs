@@ -286,6 +286,18 @@ namespace LibuvSharp
 				Invoke(uv_udp_set_multicast_loop, value ? 1 : 0);
 			}
 		}
+
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_udp_getsockname(IntPtr handle, IntPtr addr, ref int length);
+
+		public IPEndPoint LocalAddress {
+			get {
+				CheckDisposed();
+
+				return UV.GetSockname(this, uv_udp_getsockname);
+			}
+		}
 	}
 }
 

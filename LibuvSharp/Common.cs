@@ -216,12 +216,14 @@ namespace LibuvSharp
 			}
 		}
 
-		unsafe internal static IPEndPoint GetSockname(Handle handle)
+		internal delegate int uv_getsockname(IntPtr handle, IntPtr addr, ref int length);
+
+		unsafe internal static IPEndPoint GetSockname(Handle handle, uv_getsockname getsockname)
 		{
 			sockaddr_in6 addr;
 			IntPtr ptr = new IntPtr(&addr);
 			int length = sizeof(sockaddr_in6);
-			int r = NativeMethods.uv_tcp_getsockname(handle.NativeHandle, ptr, ref length);
+			int r = getsockname(handle.NativeHandle, ptr, ref length);
 			Ensure.Success(r);
 			return UV.GetIPEndPoint(ptr);
 		}
