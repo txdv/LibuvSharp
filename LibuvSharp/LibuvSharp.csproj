@@ -138,6 +138,7 @@
     <Compile Include="Check.cs" />
     <Compile Include="IPCPipeExtensions.cs" />
     <Compile Include="Threading\Tasks\IPCPipeExtensions.cs" />
+    <Compile Include="Threading\Tasks\IMessageSenderExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
