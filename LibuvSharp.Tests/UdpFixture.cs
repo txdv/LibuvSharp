@@ -96,34 +96,22 @@ namespace LibuvSharp.Tests
 
 			// send
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPEndPoint, new byte[] { }, 0, cb));
 
 			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[]));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ep, null as byte[], 0, cb));
 
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as string, 0, new byte[] { }, 0, cb));
 
 			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[]));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ipstr, 0, null as byte[], 0, cb));
 
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(null as IPAddress, 0, new byte[] { }, 0, cb));
 
 			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[]));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], 0));
 			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], cb));
-			Assert.Throws<ArgumentNullException>(() => u.Send(ip, 0, null as byte[], 0, cb));
 
 			u.Close();
 
