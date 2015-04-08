@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>
+	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, ITrySend<UdpMessage>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -296,6 +296,53 @@ namespace LibuvSharp
 				CheckDisposed();
 
 				return UV.GetSockname(this, uv_udp_getsockname);
+			}
+		}
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_try_send(IntPtr handle, WindowsBufferStruct[] bufs, int nbufs, ref sockaddr_in addr);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_try_send(IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in addr);
+
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_try_send(IntPtr handle, WindowsBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		internal extern static int uv_udp_try_send(IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr);
+
+		unsafe public int TrySend(UdpMessage message)
+		{
+			Ensure.ArgumentNotNull(message, "message");
+
+			var data = message.Payload;
+			var ipEndPoint = message.EndPoint;
+
+			fixed (byte* bytePtr = data.Array) {
+				var ptr = (IntPtr)bytePtr + message.Payload.Offset;
+				int r;
+				if (UV.isUnix) {
+					UnixBufferStruct[] buf = new UnixBufferStruct[1];
+					buf[0] = new UnixBufferStruct(ptr, data.Count);
+
+					if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+						sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
+						r = uv_udp_try_send(NativeHandle, buf, 1, ref address);
+					} else {
+						sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
+						r = uv_udp_try_send(NativeHandle, buf, 1, ref address);
+					}
+				} else {
+					WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
+					buf[0] = new WindowsBufferStruct(ptr, data.Count);
+
+					if (ipEndPoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+						sockaddr_in address = UV.ToStruct(ipEndPoint.Address.ToString(), ipEndPoint.Port);
+						r = uv_udp_try_send(NativeHandle, buf, 1, ref address);
+					} else {
+						sockaddr_in6 address = UV.ToStruct6(ipEndPoint.Address.ToString(), ipEndPoint.Port);
+						r = uv_udp_try_send(NativeHandle, buf, 1, ref address);
+					}
+				}
+				return r;
 			}
 		}
 	}
