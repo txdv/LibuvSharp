@@ -112,11 +112,8 @@
     <Compile Include="AsyncWatcher.cs" />
     <Compile Include="AsyncCallback.cs" />
     <Compile Include="Threading\Tasks\IHandleExtensions.cs" />
-    <Compile Include="IMessageSender.cs" />
-    <Compile Include="IMessageSenderExtensions.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="UdpReceiveMessage.cs" />
-    <Compile Include="IMessageReceiver.cs" />
     <Compile Include="UVDirectoryEntity.cs" />
     <Compile Include="Internal\uv_dirent_t.cs" />
     <Compile Include="UVDirectoryEntityType.cs" />
@@ -136,9 +133,11 @@
     <Compile Include="Check.cs" />
     <Compile Include="IPCPipeExtensions.cs" />
     <Compile Include="Threading\Tasks\IPCPipeExtensions.cs" />
-    <Compile Include="Threading\Tasks\IMessageSenderExtensions.cs" />
     <Compile Include="ITrySend.cs" />
     <Compile Include="ITrySendExtensions.cs" />
+    <Compile Include="IDatagram.cs" />
+    <Compile Include="Threading\Tasks\IDatagramExtensions.cs" />
+    <Compile Include="IDatagramExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver, ITrySend<UdpMessage>, IBindable<Udp, IPEndPoint>
+	public class Udp : HandleBase, IDatagram<IPEndPoint>, ITrySend<IPEndPoint>, IBindable<Udp, IPEndPoint>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -70,15 +70,12 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr, callback callback);
 
-		public void Send(UdpMessage message, Action<Exception> callback)
+		public void Send(IPEndPoint ipEndPoint, ArraySegment<byte> data, Action<Exception> callback)
 		{
 			CheckDisposed();
 
-			Ensure.ArgumentNotNull(message.EndPoint, "message EndPoint");
-			Ensure.AddressFamily(message.EndPoint.Address);
-
-			var ipEndPoint = message.EndPoint;
-			var data = message.Payload;
+			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
+			Ensure.AddressFamily(ipEndPoint.Address);
 
 			GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
 			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_UDP_SEND);
@@ -267,15 +264,13 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_udp_try_send(IntPtr handle, UnixBufferStruct[] bufs, int nbufs, ref sockaddr_in6 addr);
 
-		unsafe public int TrySend(UdpMessage message)
+		unsafe public int TrySend(IPEndPoint ipEndPoint, ArraySegment<byte> data)
 		{
-			Ensure.ArgumentNotNull(message, "message");
-
-			var data = message.Payload;
-			var ipEndPoint = message.EndPoint;
+			Ensure.ArgumentNotNull(ipEndPoint, "ipEndPoint");
+			Ensure.AddressFamily(ipEndPoint.Address);
 
 			fixed (byte* bytePtr = data.Array) {
-				var ptr = (IntPtr)bytePtr + message.Payload.Offset;
+				var ptr = (IntPtr)bytePtr + data.Offset;
 				int r;
 				if (UV.isUnix) {
 					UnixBufferStruct[] buf = new UnixBufferStruct[1];
