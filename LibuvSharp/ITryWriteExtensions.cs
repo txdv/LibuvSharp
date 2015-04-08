@@ -10,15 +10,10 @@ namespace LibuvSharp
 			return handle.TryWrite(new ArraySegment<byte>(data, index, count));
 		}
 
-		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, byte[] data, int index)
-		{
-			Ensure.ArgumentNotNull(data, "data");
-			return handle.TryWrite(new ArraySegment<byte>(data, index, data.Length - index));
-		}
-
 		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, byte[] data)
 		{
-			return handle.TryWrite(data, 0);
+			Ensure.ArgumentNotNull(data, "data");
+			return handle.TryWrite(data, 0, data.Length);
 		}
 
 		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, Encoding encoding, string text)
