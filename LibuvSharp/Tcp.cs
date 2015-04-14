@@ -137,16 +137,11 @@ namespace LibuvSharp
 			}
 		}
 
-		unsafe public IPEndPoint RemoteAddress {
+		public IPEndPoint RemoteAddress {
 			get {
 				CheckDisposed();
 
-				sockaddr_in6 addr;
-				IntPtr ptr = new IntPtr(&addr);
-				int length = sizeof(sockaddr_in6);
-				int r = uv_tcp_getpeername(NativeHandle, ptr, ref length);
-				Ensure.Success(r);
-				return UV.GetIPEndPoint(ptr);
+				return UV.GetSockname(this, uv_tcp_getpeername);
 			}
 		}
 	}
