@@ -110,14 +110,37 @@ namespace LibuvSharp
 
 		#region Receive
 
-		public static void Receive<TEndPoint>(this IDatagram<TEndPoint> receiver, byte[] data, Action<Exception, UdpReceiveMessage> callback)
+		public static void Receive<TEndPoint>(this IDatagram<TEndPoint> receiver, byte[] data, Action<Exception, IPEndPoint, int, bool> callback)
 		{
 			receiver.Receive(new ArraySegment<byte>(data), callback);
 		}
 
-		public static void Receive<TEndPoint>(this IDatagram<TEndPoint> receiver, byte[] data, int index, int count, Action<Exception, UdpReceiveMessage> callback)
+		public static void Receive<TEndPoint>(this IDatagram<TEndPoint> receiver, byte[] data, int index, int count, Action<Exception, IPEndPoint, int, bool> callback)
 		{
 			receiver.Receive(new ArraySegment<byte>(data, index, count), callback);
+		}
+
+		public static void Receive(this IDatagram<IPEndPoint> receiver, ArraySegment<byte> data, Action<Exception, UdpReceiveMessage> callback)
+		{
+			receiver.Receive(data, (ex, endPoint, n, @partial) => {
+				if (callback != null) {
+					if (ex != null) {
+						callback(ex, null);
+					} else {
+						callback(null, new UdpReceiveMessage(endPoint, new ArraySegment<byte>(data.Array, data.Offset, n), @partial));
+					}
+				}
+			});
+		}
+
+		public static void Receive(this IDatagram<IPEndPoint> receiver, byte[] data, int index, int count, Action<Exception, UdpReceiveMessage> callback)
+		{
+			receiver.Receive(new ArraySegment<byte>(data, index, count), callback);
+		}
+
+		public static void Receive(this IDatagram<IPEndPoint> receiver, byte[] data, Action<Exception, UdpReceiveMessage> callback)
+		{
+			receiver.Receive(new ArraySegment<byte>(data), callback);
 		}
 
 		#endregion
