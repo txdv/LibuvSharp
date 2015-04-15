@@ -9,7 +9,6 @@ namespace LibuvSharp
 			: base(loop, type)
 		{
 			DefaultBacklog = 128;
-			listen_cb = listen_callback;
 		}
 
 		internal Listener(Loop loop, HandleType type, Func<IntPtr, IntPtr, int> constructor)
@@ -26,10 +25,11 @@ namespace LibuvSharp
 
 		public int DefaultBacklog { get; set; }
 
-		callback listen_cb;
-		void listen_callback(IntPtr handle, int status)
+		static callback listen_cb = listen_callback;
+
+		static void listen_callback(IntPtr handlePointer, int status)
 		{
-			OnConnection();
+			FromIntPtr<Listener<TStream>>(handlePointer).OnConnection();
 		}
 
 		protected abstract UVStream Create();
