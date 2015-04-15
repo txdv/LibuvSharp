@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, ITrySend<UdpMessage>
+	public class Udp : HandleBase, IMessageSender<UdpMessage>, IMessageReceiver<UdpReceiveMessage>, ITrySend<UdpMessage>, IBindable<Udp, IPEndPoint>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void recv_start_callback_win(IntPtr handle, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags);
@@ -18,10 +18,10 @@ namespace LibuvSharp
 		static extern int uv_udp_init(IntPtr loop, IntPtr handle);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, short flags);
+		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, uint flags);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, short flags);
+		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, uint flags);
 
 		ByteBufferAllocatorBase allocator;
 		public ByteBufferAllocatorBase ByteBufferAllocator {
@@ -52,55 +52,22 @@ namespace LibuvSharp
 		{
 		}
 
-		bool dualstack = false;
-		void Bind(IPAddress ipAddress, int port, short flags)
+		void Bind(IPAddress ipAddress, int port, bool dualstack)
 		{
 			CheckDisposed();
 
-			Ensure.AddressFamily(ipAddress);
-
-			dualstack = (flags & (short)uv_udp_flags.UV_UDP_IPV6ONLY) == 0
-				&& ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6;
-
-			int r;
-			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
-				sockaddr_in address = UV.ToStruct(ipAddress.ToString(), port);
-				r = uv_udp_bind(NativeHandle, ref address, 0);
-			} else {
-				sockaddr_in6 address = UV.ToStruct6(ipAddress.ToString(), port);
-				r = uv_udp_bind(NativeHandle, ref address , 0);
-			}
-			Ensure.Success(r);
+			UV.Bind(this, uv_udp_bind, uv_udp_bind, ipAddress, port, dualstack);
 		}
+
 		public void Bind(int port)
 		{
-			Bind(IPAddress.IPv6Any, port, 0);
+			Bind(IPAddress.IPv6Any, port, true);
 		}
-		public void Bind(IPAddress ipAddress, int port)
-		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
 
-			short flags;
-
-			switch (ipAddress.AddressFamily) {
-			case System.Net.Sockets.AddressFamily.InterNetworkV6:
-				flags = (short)uv_udp_flags.UV_UDP_IPV6ONLY;
-			break;
-			default:
-				flags = 0;
-				break;
-			}
-			Bind(ipAddress, port, flags);
-		}
-		public void Bind(string ipAddress, int port)
-		{
-			Ensure.ArgumentNotNull(ipAddress, "ipAddress");
-			Bind(IPAddress.Parse(ipAddress), port);
-		}
 		public void Bind(IPEndPoint endPoint)
 		{
 			Ensure.ArgumentNotNull(endPoint, "endPoint");
-			Bind(endPoint.Address, endPoint.Port);
+			Bind(endPoint.Address, endPoint.Port, false);
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -184,7 +151,7 @@ namespace LibuvSharp
 			}
 
 			if (Message != null) {
-				var ep = UV.GetIPEndPoint(sockaddr, dualstack);
+				var ep = UV.GetIPEndPoint(sockaddr, true);
 
 				var msg = new UdpReceiveMessage(
 					ep,

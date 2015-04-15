@@ -261,6 +261,24 @@ namespace LibuvSharp
 			return UV.GetIPEndPoint(ptr, false);
 		}
 
+		internal delegate int bind(IntPtr handle, ref sockaddr_in sockaddr, uint flags);
+		internal delegate int bind6(IntPtr handle, ref sockaddr_in6 sockaddr, uint flags);
+
+		internal static void Bind(Handle handle, bind bind, bind6 bind6, IPAddress ipAddress, int port, bool dualstack)
+		{
+			Ensure.AddressFamily(ipAddress);
+
+			int r;
+			if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+				sockaddr_in address = UV.ToStruct(ipAddress.ToString(), port);
+				r = bind(handle.NativeHandle, ref address, 0);
+			} else {
+				sockaddr_in6 address = UV.ToStruct6(ipAddress.ToString(), port);
+				r = bind6(handle.NativeHandle, ref address, (uint)(dualstack ? 0 : 1));
+			}
+			Ensure.Success(r);
+		}
+
 		internal delegate int callback(IntPtr handle, ref IntPtr size);
 
 		internal static string ToString(int size, callback func)
