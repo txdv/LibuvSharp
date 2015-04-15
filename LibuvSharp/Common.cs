@@ -258,7 +258,7 @@ namespace LibuvSharp
 			int length = sizeof(sockaddr_in6);
 			int r = getsockname(handle.NativeHandle, ptr, ref length);
 			Ensure.Success(r);
-			return UV.GetIPEndPoint(ptr, false);
+			return UV.GetIPEndPoint(ptr, true);
 		}
 
 		internal delegate int bind(IntPtr handle, ref sockaddr_in sockaddr, uint flags);
