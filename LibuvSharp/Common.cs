@@ -74,7 +74,32 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal extern static int uv_ip6_name(IntPtr src, byte[] dst, IntPtr size);
 
-		unsafe internal static IPEndPoint GetIPEndPoint(IntPtr sockaddr)
+
+		static bool IsMapping(byte[] data)
+		{
+			if (data.Length != 16) {
+				return false;
+			}
+
+			for (int i = 0; i < 10; i++) {
+				if (data[i] != 0) {
+					return false;
+				}
+			}
+
+			return data[10] == data[11] && data[11] == 0xff;
+		}
+
+		static IPAddress GetMapping(byte[] data)
+		{
+			var ip = new byte[4];
+			for (int i = 0; i < 4; i++) {
+				ip[i] = data[12 + i];
+			}
+			return new IPAddress(ip);
+		}
+
+		unsafe internal static IPEndPoint GetIPEndPoint(IntPtr sockaddr, bool map)
 		{
 			sockaddr *sa = (sockaddr *)sockaddr;
 			byte[] addr = new byte[64];
@@ -86,14 +111,22 @@ namespace LibuvSharp
 			}
 			Ensure.Success(r);
 
-			int i = 0;
-			while (i < addr.Length && addr[i] != 0) {
-				i++;
+			IPAddress ip = IPAddress.Parse(System.Text.Encoding.ASCII.GetString(addr, 0, strlen(addr)));
+
+			var bytes = ip.GetAddressBytes();
+			if (map && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && IsMapping(bytes)) {
+				ip = GetMapping(bytes);
 			}
 
-			IPAddress ip = IPAddress.Parse(System.Text.Encoding.ASCII.GetString(addr, 0, i));
-
 			return new IPEndPoint(ip, ntohs(sa->sin_port));
+		}
+
+		static int strlen(byte[] bytes) {
+			int i = 0;
+			while (i < bytes.Length && bytes[i] != 0) {
+				i++;
+			}
+			return i;
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
@@ -225,7 +258,7 @@ namespace LibuvSharp
 			int length = sizeof(sockaddr_in6);
 			int r = getsockname(handle.NativeHandle, ptr, ref length);
 			Ensure.Success(r);
-			return UV.GetIPEndPoint(ptr);
+			return UV.GetIPEndPoint(ptr, false);
 		}
 
 		internal delegate int callback(IntPtr handle, ref IntPtr size);

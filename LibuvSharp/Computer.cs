@@ -99,8 +99,8 @@ namespace LibuvSharp
 				phys_addr[i] = iface->phys_addr[i];
 			}
 			PhysicalAddress = new PhysicalAddress(phys_addr);
-			Address = UV.GetIPEndPoint(new IntPtr(&iface->sockaddr)).Address;
-			Netmask = UV.GetIPEndPoint(new IntPtr(&iface->netmask)).Address;
+			Address = UV.GetIPEndPoint(new IntPtr(&iface->sockaddr), false).Address;
+			Netmask = UV.GetIPEndPoint(new IntPtr(&iface->netmask), false).Address;
 		}
 
 		public string Name { get; protected set; }

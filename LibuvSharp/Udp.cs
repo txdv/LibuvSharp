@@ -184,14 +184,7 @@ namespace LibuvSharp
 			}
 
 			if (Message != null) {
-				var ep = UV.GetIPEndPoint(sockaddr);
-
-				if (dualstack && ep.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6) {
-					var data = ep.Address.GetAddressBytes();
-					if (IsMapping(data)) {
-						ep = new IPEndPoint(GetMapping(data), ep.Port);
-					}
-				}
+				var ep = UV.GetIPEndPoint(sockaddr, dualstack);
 
 				var msg = new UdpReceiveMessage(
 					ep,
@@ -203,29 +196,6 @@ namespace LibuvSharp
 			}
 		}
 
-		bool IsMapping(byte[] data)
-		{
-			if (data.Length != 16) {
-				return false;
-			}
-
-			for (int i = 0; i < 10; i++) {
-				if (data[i] != 0) {
-					return false;
-				}
-			}
-
-			return data[10] == data[11] && data[11] == 0xff;
-		}
-
-		IPAddress GetMapping(byte[] data)
-		{
-			var ip = new byte[4];
-			for (int i = 0; i < 4; i++) {
-				ip[i] = data[12 + i];
-			}
-			return new IPAddress(data);
-		}
 
 		public void Resume()
 		{
