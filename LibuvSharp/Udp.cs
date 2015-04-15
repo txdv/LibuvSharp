@@ -253,8 +253,7 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_ttl(IntPtr handle, int ttl);
 
-		public byte TTL
-		{
+		public byte TTL {
 			set {
 				Invoke(uv_udp_set_ttl, (int)value);
 			}
