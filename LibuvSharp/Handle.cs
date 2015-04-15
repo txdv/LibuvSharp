@@ -109,12 +109,14 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void close_callback(IntPtr handle);
 
-		close_callback close_cb;
 		Action closeCallback;
 
-		void CloseCallback(IntPtr handle)
+		static close_callback close_cb = CloseCallback;
+
+		static void CloseCallback(IntPtr handlePointer)
 		{
-			Cleanup(handle, closeCallback);
+			var handle = Handle.FromIntPtr<Handle>(handlePointer);
+			handle.Cleanup(handlePointer, handle.closeCallback);
 		}
 
 		public void Cleanup(IntPtr nativeHandle, Action callback)

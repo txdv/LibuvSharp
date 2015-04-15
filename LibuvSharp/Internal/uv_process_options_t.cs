@@ -46,7 +46,7 @@ namespace LibuvSharp
 
 		// functions
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		delegate void uv_exit_cb(ref uv_handle_t handle, long exit_status, int term_signal);
+		delegate void uv_exit_cb(IntPtr handle, long exit_status, int term_signal);
 
 		public uv_process_options_t(Process process, ProcessOptions options)
 		{
@@ -84,7 +84,6 @@ namespace LibuvSharp
 				gid = options.GID.Value;
 			}
 
-			process.DataPointer = GCHandle.ToIntPtr(process.GCHandle);
 			exit_cb = Marshal.GetFunctionPointerForDelegate(cb);
 
 			stdio_count = (options.Streams == null && !(options.Streams is UVStream[]) ? 0 : options.Streams.Count);
@@ -118,11 +117,9 @@ namespace LibuvSharp
 
 		static uv_exit_cb cb = exit;
 
-		static void exit(ref uv_handle_t handle, long exit_status, int term_signal)
+		static void exit(IntPtr handlePointer, long exit_status, int term_signal)
 		{
-			var gchandle = GCHandle.FromIntPtr(handle.data);
-			var process = (gchandle.Target as Process);
-			gchandle.Free();
+			var process = Handle.FromIntPtr<Process>(handlePointer);
 			process.OnExit(exit_status, term_signal);
 		}
 
