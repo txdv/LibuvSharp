@@ -54,12 +54,6 @@ namespace LibuvSharp
 			}
 		}
 
-		static UVStream()
-		{
-			read_cb_unix = read_callback_u;
-			read_cb_win = read_callback_w;
-		}
-
 		internal UVStream(Loop loop, IntPtr handle)
 			: base(loop, handle)
 		{
@@ -112,14 +106,14 @@ namespace LibuvSharp
 			Invoke(uv_read_stop);
 		}
 
-		static read_callback_unix read_cb_unix;
+		static read_callback_unix read_cb_unix = read_callback_u;
 		static void read_callback_u(IntPtr streamPointer, IntPtr size, UnixBufferStruct buf)
 		{
 			var stream = FromIntPtr<UVStream>(streamPointer);
 			stream.read_callback(streamPointer, size);
 		}
 
-		static read_callback_win read_cb_win;
+		static read_callback_win read_cb_win = read_callback_w;
 		static void read_callback_w(IntPtr streamPointer, IntPtr size, WindowsBufferStruct buf)
 		{
 			var stream = FromIntPtr<UVStream>(streamPointer);

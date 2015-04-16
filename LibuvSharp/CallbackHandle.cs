@@ -8,12 +8,7 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		protected delegate void uv_handle_cb(IntPtr handle);
 
-		protected static uv_handle_cb uv_callback;
-
-		static CallbackHandle()
-		{
-			uv_callback = uv_handle;
-		}
+		protected static uv_handle_cb uv_callback = uv_handle;
 
 		public CallbackHandle(Loop loop, HandleType handleType)
 			: base(loop, handleType)

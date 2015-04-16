@@ -33,15 +33,6 @@ namespace LibuvSharp
 			}
 		}
 
-		static recv_start_callback_win recv_start_cb_win;
-		static recv_start_callback_unix recv_start_cb_unix;
-
-		static Udp()
-		{
-			recv_start_cb_win = recv_start_callback_w;
-			recv_start_cb_unix = recv_start_callback_u;
-		}
-
 		public Udp()
 			: this(Loop.Constructor)
 		{
@@ -132,11 +123,13 @@ namespace LibuvSharp
 		[DllImport("uv", EntryPoint = "uv_udp_recv_start", CallingConvention = CallingConvention.Cdecl)]
 		extern static int uv_udp_recv_start_unix(IntPtr handle, alloc_callback_unix alloc_callback, recv_start_callback_unix callback);
 
+		static recv_start_callback_win recv_start_cb_win = recv_start_callback_w;
 		static void recv_start_callback_w(IntPtr handlePointer, IntPtr nread, ref WindowsBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
 			var handle = FromIntPtr<Udp>(handlePointer);
 			handle.recv_start_callback(handlePointer, nread, sockaddr, flags);
 		}
+		static recv_start_callback_unix recv_start_cb_unix = recv_start_callback_u;
 		static void recv_start_callback_u(IntPtr handlePointer, IntPtr nread, ref UnixBufferStruct buf, IntPtr sockaddr, ushort flags)
 		{
 			var handle = FromIntPtr<Udp>(handlePointer);
