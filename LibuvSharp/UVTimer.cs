@@ -23,7 +23,6 @@ namespace LibuvSharp
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern ulong uv_timer_get_repeat(IntPtr timer);
 
-		callback cb;
 		Action onehit;
 
 		public UVTimer()
@@ -34,7 +33,6 @@ namespace LibuvSharp
 		public UVTimer(Loop loop)
 			: base(loop, HandleType.UV_TIMER, uv_timer_init)
 		{
-			cb = OnTick;
 		}
 
 		public ulong LongRepeat {
@@ -73,7 +71,14 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		void OnTick(IntPtr handle, int status)
+		static callback cb = OnTick;
+
+		static void OnTick(IntPtr handle, int status)
+		{
+			FromIntPtr<UVTimer>(handle).OnTick();
+		}
+
+		void OnTick()
 		{
 			var cb = onehit;
 			if (cb != null) {
