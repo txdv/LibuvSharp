@@ -9,7 +9,9 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task<TData?> ReadStructAsync<TData>(this IUVStream<TData> stream) where TData : struct
 		{
 			var tcs = new TaskCompletionSource<TData?>();
+			#if TASK_STATUS
 			HelperFunctions.SetStatus(tcs.Task, TaskStatus.Running);
+			#endif
 
 			Action<Exception, TData?> finish = null;
 

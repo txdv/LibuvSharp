@@ -11,7 +11,9 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task QueueUserWorkItemAsync(this Loop loop, Action action)
 		{
 			var tcs = new TaskCompletionSource<object>();
+			#if TASK_STATUS
 			HelperFunctions.SetStatus(tcs.Task, TaskStatus.Running);
+			#endif
 			Exception exception = null;
 			try {
 				loop.QueueUserWorkItem(() => {
@@ -36,7 +38,9 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task<T> QueueUserWorkItemAsync<T>(this Loop loop, Func<T> action)
 		{
 			var tcs = new TaskCompletionSource<T>();
+			#if TASK_STATUS
 			HelperFunctions.SetStatus(tcs.Task, TaskStatus.Running);
+			#endif
 			Exception exception = null;
 			T res = default(T);
 			try {
