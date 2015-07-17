@@ -21,14 +21,29 @@ namespace Test
 
 	public static class ConnectResolverAsyncExtesions
 	{
+		public async static Task ConnectAsync(this Tcp tcp, Func<string, IPAddress[]> resolveFunction, DnsEndPoint dnsEndPoint)
+		{
+			await tcp.ConnectAsync(resolveFunction, dnsEndPoint.Host, dnsEndPoint.Port);
+		}
+
 		public async static Task ConnectAsync(this Tcp tcp, Func<string, IPAddress[]> resolveFunction, string hostNameOrAddress, int port)
 		{
 			await tcp.ConnectAsync(tcp.Loop.QueueUserWorkItemAsync(() => resolveFunction(hostNameOrAddress)), port);
 		}
 
+		public async static Task ConnectAsync(this Tcp tcp, Func<string, Task<IPAddress[]>> resolveFunctionAsync, DnsEndPoint dnsEndPoint)
+		{
+			await tcp.ConnectAsync(resolveFunctionAsync, dnsEndPoint.Host, dnsEndPoint.Port);
+		}
+
 		public async static Task ConnectAsync(this Tcp tcp, Func<string, Task<IPAddress[]>> resolveFunctionAsync, string hostNameOrAddress, int port)
 		{
 			await tcp.ConnectAsync(resolveFunctionAsync(hostNameOrAddress), port);
+		}
+
+		public async static Task ConnectAsync(this Tcp tcp, Func<string, Task<IEnumerable<IPAddress>>> resolveFunctionAsync, DnsEndPoint dnsEndPoint)
+		{
+			await tcp.ConnectAsync(resolveFunctionAsync, dnsEndPoint.Host, dnsEndPoint.Port);
 		}
 
 		public async static Task ConnectAsync(this Tcp tcp, Func<string, Task<IEnumerable<IPAddress>>> resolveFunctionAsync, string hostNameOrAddress, int port)
