@@ -49,13 +49,13 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task SendAsync<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data)
 			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
-			return HelperFunctions.Wrap(endPoint, data, sender.Send<TMessage, TEndPoint>);
+			return HelperFunctions.Wrap(endPoint, data, sender.Send);
 		}
 
 		public static Task SendAsync<TMessage, TEndPoint>(this IMessageSender<TMessage> sender, TEndPoint endPoint, byte[] data, int index, int count)
 			where TMessage : IMessage<TEndPoint, ArraySegment<byte>>, new()
 		{
-			return HelperFunctions.Wrap(endPoint, data, index, count, sender.Send<TMessage, TEndPoint>);
+			return HelperFunctions.Wrap(endPoint, data, index, count, sender.Send);
 		}
 
 		#endregion
@@ -65,13 +65,13 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task SendAsync<TMessage, TPayload>(this IMessageSender<TMessage> sender, string ipAddress, int port, TPayload payload)
 			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
-			return HelperFunctions.Wrap(ipAddress, port, payload, sender.Send<TMessage, TPayload>);
+			return HelperFunctions.Wrap(ipAddress, port, payload, sender.Send);
 		}
 
 		public static Task SendAsync<TMessage, TPayload>(this IMessageSender<TMessage> sender, IPAddress ipAddress, int port, TPayload payload)
 			where TMessage : IMessage<IPEndPoint, TPayload>, new()
 		{
-			return HelperFunctions.Wrap(ipAddress, port, payload, sender.Send<TMessage, TPayload>);
+			return HelperFunctions.Wrap(ipAddress, port, payload, sender.Send);
 		}
 
 		#endregion
@@ -79,7 +79,7 @@ namespace LibuvSharp.Threading.Tasks
 		public static Task SendAsync<TMessage, TEndPoint, TPayload>(this IMessageSender<TMessage> sender, TEndPoint endPoint, TPayload payload)
 			where TMessage : IMessage<TEndPoint, TPayload>, new()
 		{
-			return HelperFunctions.Wrap(endPoint, payload, sender.Send<TMessage, TEndPoint, TPayload>);
+			return HelperFunctions.Wrap(endPoint, payload, sender.Send);
 		}
 	}
 }

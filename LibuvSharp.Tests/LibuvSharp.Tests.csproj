@@ -74,7 +74,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="LibuvSharp.Tests.dll.config">
-      <DeployService.Deploy>true</DeployService.Deploy>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
