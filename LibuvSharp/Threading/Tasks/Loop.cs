@@ -66,6 +66,16 @@ namespace LibuvSharp
 				return null;
 			}
 		}
+
+		/// <summary>
+		/// Returns Default Loop value when creating LibuvSharp objects.
+		/// </summary>
+		/// <value>A loop.</value>
+		internal static Loop Constructor {
+			get {
+				return Loop.Current ?? Loop.Default;
+			}
+		}
 	}
 }
 

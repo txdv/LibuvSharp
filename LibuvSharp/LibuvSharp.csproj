@@ -145,6 +145,7 @@
     <Compile Include="Threading\Tasks\IMessageSenderExtensions.cs" />
     <Compile Include="ITrySend.cs" />
     <Compile Include="ITrySendExtensions.cs" />
+    <Compile Include="Threading\Tasks\Utilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

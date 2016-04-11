@@ -1,15 +1,9 @@
 using System;
-using System.Threading.Tasks;
 
 namespace LibuvSharp.Utilities
 {
-	public static class UtilitiesExtensions
+	public static partial class UtilitiesExtensions
 	{
-		public static Task PumpAsync<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
-		{
-			return HelperFunctions.Wrap(writeStream, readStream.Pump);
-		}
-
 		public static void Pump<T>(this IUVStream<T> readStream, IUVStream<T> writeStream)
 		{
 			Pump(readStream, writeStream, null);
