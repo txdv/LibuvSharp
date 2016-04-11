@@ -246,7 +246,7 @@ namespace LibuvSharp
 			var ipEndPoint = message.EndPoint;
 
 			fixed (byte* bytePtr = data.Array) {
-				var ptr = (IntPtr)bytePtr + message.Payload.Offset;
+				var ptr = (IntPtr)(bytePtr + message.Payload.Offset);
 				int r;
 				if (UV.isUnix) {
 					UnixBufferStruct[] buf = new UnixBufferStruct[1];

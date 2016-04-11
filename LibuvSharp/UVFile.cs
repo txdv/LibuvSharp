@@ -88,7 +88,7 @@ namespace LibuvSharp
 				datagchandle.Free();
 			};
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject() + segment.Offset, segment.Count);
+			buf[0] = new UnixBufferStruct(new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset), segment.Count);
 			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, 1, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}
@@ -230,7 +230,7 @@ namespace LibuvSharp
 				datagchandle.Free();
 			};
 			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(datagchandle.AddrOfPinnedObject() + segment.Offset, segment.Count);
+			buf[0] = new UnixBufferStruct(new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset), segment.Count);
 			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, segment.Count, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}

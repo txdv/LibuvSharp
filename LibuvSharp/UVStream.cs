@@ -269,7 +269,7 @@ namespace LibuvSharp
 			Ensure.ArgumentNotNull(data.Array, "data");
 
 			fixed (byte* bytePtr = data.Array) {
-				IntPtr ptr = (IntPtr)bytePtr + data.Offset;
+				IntPtr ptr = (IntPtr)(bytePtr + data.Offset);
 				int r;
 				if (UV.isUnix) {
 					UnixBufferStruct[] buf = new UnixBufferStruct[1];
