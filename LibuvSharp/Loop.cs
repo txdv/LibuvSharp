@@ -228,7 +228,12 @@ namespace LibuvSharp
 			}
 
 			// make sure the callbacks of close are called
-			RunOnce();
+            try {
+                Console.WriteLine("allowing callbacks to run");
+            } catch(NotSupportedException) {
+
+            }
+			Run();
 
 			if (disposing) {
 				if (ByteBufferAllocator != null) {
@@ -238,6 +243,7 @@ namespace LibuvSharp
 			}
 
 			int r = uv_loop_close(NativeHandle);
+            GC.SuppressFinalize (this);
 			Ensure.Success(r);
 		}
 
