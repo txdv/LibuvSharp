@@ -5,11 +5,14 @@ namespace LibuvSharp
 {
 	public class UVTimer : Handle
 	{
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		delegate void uv_timer_cb(IntPtr loop);
+
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_timer_init(IntPtr loop, IntPtr timer);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_timer_start(IntPtr timer, callback callback, ulong timeout, ulong repeat);
+		static extern int uv_timer_start(IntPtr timer, uv_timer_cb callback, ulong timeout, ulong repeat);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_timer_stop(IntPtr timer);
@@ -71,9 +74,9 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		static callback cb = OnTick;
+		static uv_timer_cb cb = OnTick;
 
-		static void OnTick(IntPtr handle, int status)
+		static void OnTick(IntPtr handle)
 		{
 			FromIntPtr<UVTimer>(handle).OnTick();
 		}
