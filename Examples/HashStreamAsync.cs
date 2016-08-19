@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using System.Net.Http;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Web;
 using LibuvSharp;
-using LibuvSharp.Threading;
 using LibuvSharp.Threading.Tasks;
+using LibuvSharp.Threading;
 
 public class MainClass
 {
@@ -45,14 +46,12 @@ public class MainClass
 		return hashAlgorithm.Hash;
 	}
 
-	static IEnumerable<string> files;
-
 	public static async Task<byte[]> Differentiate(string argument)
 	{
-		if (files.Contains(argument)) {
-			return await Compute(argument);
-		} else {
+		try {
 			return await Compute(new Uri(argument));
+		} catch {
+			return await Compute(argument);
 		}
 	}
 
@@ -63,15 +62,12 @@ public class MainClass
 			return;
 		}
 
-		// initiating app state, so blocking calls are ok,
-		// because we will wait for this in any case
-		// in this small app
-		files = new System.IO.DirectoryInfo("./").GetFiles().Select((di) => di.Name);
+		var files = args.Where(arg => File.GetAttributes(arg) == FileAttributes.Normal);
 
 		var stopwatch = new Stopwatch();
 		stopwatch.Start();
 		Loop.Default.Run(async () => {
-			foreach (var file in await Task.WhenAll(args.Select(async (file) => Tuple.Create(file, await Differentiate(file))))) {
+			foreach (var file in await Task.WhenAll(files.Select(async (file) => Tuple.Create(file, await Differentiate(file))))) {
 				Console.WriteLine("{1} {0}", file.Item1, file.Item2.ToHex());
 			}
 		});
