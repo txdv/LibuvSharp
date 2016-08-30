@@ -212,58 +212,59 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-        public void Write(IList<ArraySegment<byte>> buffers, Action<Exception> callback)
-        {
-            CheckDisposed();
+		public void Write(IList<ArraySegment<byte>> buffers, Action<Exception> callback)
+		{
+			CheckDisposed();
 
-            PendingWrites++;
+			PendingWrites++;
 
-            int n = buffers.Count;
-            GCHandle[] datagchandles = new GCHandle[n];
-            CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
-            cpr.Callback = (status, cpr2) => {
-                foreach (var datagchandle in datagchandles) {
-                    datagchandle.Free();
-                }
-                PendingWrites--;
+			int i;
+			int n = buffers.Count;
+			GCHandle[] datagchandles = new GCHandle[n];
+			CallbackPermaRequest cpr = new CallbackPermaRequest(RequestType.UV_WRITE);
+			cpr.Callback = (status, cpr2) => {
+				for (i = 0; i < n; ++i)
+					datagchandles[i].Free();
 
-                Ensure.Success(status, callback);
+				PendingWrites--;
 
-                if (PendingWrites == 0) {
-                    OnDrain();
-                }
-            };
-            int r;
-            if (UV.isUnix) {
-                UnixBufferStruct[] bufs = new UnixBufferStruct[n];
-                for (var i = 0; i < n; ++i) {
-                    ArraySegment<byte> data = buffers[i];
-                    int index = data.Offset;
-                    int count = data.Count;
-                    GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
-                    var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-                    bufs[i] = new UnixBufferStruct(ptr, count);
-                    datagchandles[i] = datagchandle;
-                }
-                r = uv_write_unix(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
-            } else {
-                WindowsBufferStruct[] bufs = new WindowsBufferStruct[n];
-                for (var i = 0; i < n; ++i) {
-                    ArraySegment<byte> data = buffers[i];
-                    int index = data.Offset;
-                    int count = data.Count;
-                    GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
-                    var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-                    bufs[i] = new WindowsBufferStruct(ptr, count);
-                    datagchandles[i] = datagchandle;
-                }
-                r = uv_write_win(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
-            }
+				Ensure.Success(status, callback);
 
-            Ensure.Success(r);
-        }
+				if (PendingWrites == 0) {
+					OnDrain();
+				}
+			};
+			int r;
+			if (UV.isUnix) {
+				UnixBufferStruct[] bufs = new UnixBufferStruct[n];
+				for (i = 0; i < n; ++i) {
+					ArraySegment<byte> data = buffers[i];
+					int index = data.Offset;
+					int count = data.Count;
+					GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
+					var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
+					bufs[i] = new UnixBufferStruct(ptr, count);
+					datagchandles[i] = datagchandle;
+				}
+				r = uv_write_unix(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
+			} else {
+				WindowsBufferStruct[] bufs = new WindowsBufferStruct[n];
+				for (i = 0; i < n; ++i) {
+					ArraySegment<byte> data = buffers[i];
+					int index = data.Offset;
+					int count = data.Count;
+					GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
+					var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
+					bufs[i] = new WindowsBufferStruct(ptr, count);
+					datagchandles[i] = datagchandle;
+				}
+				r = uv_write_win(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
+			}
 
-        public void Shutdown(Action<Exception> callback)
+			Ensure.Success(r);
+		}
+
+		public void Shutdown(Action<Exception> callback)
 		{
 			CheckDisposed();
 
