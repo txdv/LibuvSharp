@@ -4,54 +4,21 @@ using System.Runtime.InteropServices;
 namespace LibuvSharp
 {
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct WindowsBufferStruct
+	internal struct uv_buf_t
 	{
-		internal WindowsBufferStruct(IntPtr @base, int length)
-			: this(@base, (uint)length)
+		public IntPtr field0;
+		public IntPtr field1;
+
+		internal uv_buf_t(IntPtr pointer, int length)
 		{
+			if (UV.isUnix) {
+				field0 = pointer;
+				field1 = (IntPtr)length;
+			} else {
+				field0 = (IntPtr)length;
+				field1 = pointer;
+			}
 		}
-
-		internal WindowsBufferStruct(IntPtr @base, long length)
-			: this(@base, (uint)length)
-		{
-		}
-
-		internal WindowsBufferStruct(IntPtr @base, IntPtr length)
-			: this(@base, length.ToInt64())
-		{
-		}
-
-		internal WindowsBufferStruct(IntPtr @base, uint length)
-		{
-			this.@base = @base;
-			this.length = length;
-		}
-
-		internal uint length;
-		internal IntPtr @base;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct UnixBufferStruct
-	{
-		internal UnixBufferStruct(IntPtr @base, int length)
-			: this(@base, (IntPtr)length)
-		{
-		}
-
-		internal UnixBufferStruct(IntPtr @base, long length)
-			: this(@base, (IntPtr)length)
-		{
-		}
-
-		internal UnixBufferStruct(IntPtr @base, IntPtr length)
-		{
-			this.@base = @base;
-			this.length = length;
-		}
-
-		internal IntPtr @base;
-		internal IntPtr length;
 	}
 }
 

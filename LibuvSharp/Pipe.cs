@@ -130,11 +130,8 @@ namespace LibuvSharp
 		{
 		}
 
-		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_write2_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
-
-		[DllImport("uv", EntryPoint = "uv_write2", CallingConvention = CallingConvention.Cdecl)]
-		static extern int uv_write2_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
+		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		static extern int uv_write2(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int bufcnt, IntPtr sendHandle, callback callback);
 
 		public void Write(Handle handle, ArraySegment<byte> segment, Action<Exception> callback)
 		{
@@ -149,17 +146,8 @@ namespace LibuvSharp
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset);
 
-			int r;
-			if (UV.isUnix) {
-				UnixBufferStruct[] buf = new UnixBufferStruct[1];
-				buf[0] = new UnixBufferStruct(ptr, segment.Count);
-				r = uv_write2_unix(cpr.Handle, NativeHandle, buf, 1, handle.NativeHandle, CallbackPermaRequest.CallbackDelegate);
-			} else {
-				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-				buf[0] = new WindowsBufferStruct(ptr, segment.Count);
-				r = uv_write2_win(cpr.Handle, NativeHandle, buf, 1, handle.NativeHandle, CallbackPermaRequest.CallbackDelegate);
-			}
-
+			var buf = new uv_buf_t[] { new uv_buf_t(ptr, segment.Count) };
+			int r = uv_write2(cpr.Handle, NativeHandle, buf, 1, handle.NativeHandle, CallbackPermaRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}
 

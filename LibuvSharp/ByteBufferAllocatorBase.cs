@@ -5,13 +5,11 @@ namespace LibuvSharp
 {
 	public abstract class ByteBufferAllocatorBase : IDisposable
 	{
-		internal Handle.alloc_callback_unix AllocCallbackUnix { get; set; }
-		internal Handle.alloc_callback_win AllocCallbackWin { get; set; }
+		internal Handle.alloc_callback AllocCallback { get; set; }
 
 		public ByteBufferAllocatorBase()
 		{
-			AllocCallbackUnix = AllocUnix;
-			AllocCallbackWin = AllocWin;
+			AllocCallback = Alloc;
 		}
 
 		~ByteBufferAllocatorBase()
@@ -25,18 +23,11 @@ namespace LibuvSharp
 			GC.SuppressFinalize(this);
 		}
 
-		void AllocUnix(IntPtr data, int size, out UnixBufferStruct buf)
+		void Alloc(IntPtr data, int size, out uv_buf_t buf)
 		{
 			IntPtr ptr;
 			size = Alloc(size, out ptr);
-			buf = new UnixBufferStruct(ptr, size);
-		}
-
-		void AllocWin(IntPtr data, int size, out WindowsBufferStruct buf)
-		{
-			IntPtr ptr;
-			size = Alloc(size, out ptr);
-			buf = new WindowsBufferStruct(ptr, size);
+			buf = new uv_buf_t(ptr, size);
 		}
 
 		public abstract int Alloc(int size, out IntPtr pointer);

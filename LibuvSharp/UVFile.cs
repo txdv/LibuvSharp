@@ -77,7 +77,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, UnixBufferStruct[] buf, int nbufs, long offset, NativeMethods.uv_fs_cb callback);
+		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, uv_buf_t[] buf, int nbufs, long offset, NativeMethods.uv_fs_cb callback);
 
 		public void Read(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
 		{
@@ -87,8 +87,8 @@ namespace LibuvSharp
 				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset), segment.Count);
+			var ptr = new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset);
+			var buf = new uv_buf_t[] { new uv_buf_t(ptr, segment.Count) };
 			int r = uv_fs_read(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, 1, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}
@@ -219,7 +219,7 @@ namespace LibuvSharp
 		}
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, UnixBufferStruct[] bufs, int nbufs, long offset, NativeMethods.uv_fs_cb fs_cb);
+		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, uv_buf_t[] bufs, int nbufs, long offset, NativeMethods.uv_fs_cb fs_cb);
 
 		public void Write(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
 		{
@@ -229,8 +229,8 @@ namespace LibuvSharp
 				Ensure.Success(ex, callback, fsr.Result.ToInt32());
 				datagchandle.Free();
 			};
-			UnixBufferStruct[] buf = new UnixBufferStruct[1];
-			buf[0] = new UnixBufferStruct(new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset), segment.Count);
+			var ptr = new IntPtr(datagchandle.AddrOfPinnedObject().ToInt64() + segment.Offset);
+			var buf = new uv_buf_t[] { new uv_buf_t(ptr, segment.Count) };
 			int r = uv_fs_write(loop.NativeHandle, fsr.Handle, FileDescriptor, buf, segment.Count, offset, FileSystemRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}

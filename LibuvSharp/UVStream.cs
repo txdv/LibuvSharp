@@ -8,15 +8,10 @@ namespace LibuvSharp
 	unsafe public abstract class UVStream : HandleBase, IUVStream<ArraySegment<byte>>, ITryWrite<ArraySegment<byte>>
 	{
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void read_callback_unix(IntPtr stream, IntPtr size, UnixBufferStruct buf);
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void read_callback_win(IntPtr stream, IntPtr size, WindowsBufferStruct buf);
+		internal delegate void read_callback(IntPtr stream, IntPtr size, uv_buf_t buf);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_read_start(IntPtr stream, alloc_callback_unix alloc_callback, read_callback_unix read_callback);
-
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_read_start(IntPtr stream, alloc_callback_win alloc_callback, read_callback_win read_callback);
+		internal static extern int uv_read_start(IntPtr stream, alloc_callback alloc_callback, read_callback rcallback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_read_watcher_start(IntPtr stream, Action<IntPtr> read_watcher_callback);
@@ -25,10 +20,7 @@ namespace LibuvSharp
 		internal static extern int uv_read_stop(IntPtr stream);
 
 		[DllImport("uv", EntryPoint = "uv_write", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_write_unix(IntPtr req, IntPtr handle, UnixBufferStruct[] bufs, int bufcnt, callback callback);
-
-		[DllImport("uv", EntryPoint = "uv_write", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int uv_write_win(IntPtr req, IntPtr handle, WindowsBufferStruct[] bufs, int bufcnt, callback callback);
+		internal static extern int uv_write(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int bufcnt, callback callback);
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_shutdown(IntPtr req, IntPtr handle, callback callback);
@@ -93,12 +85,7 @@ namespace LibuvSharp
 		{
 			CheckDisposed();
 
-			int r;
-			if (UV.isUnix) {
-				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackUnix, read_cb_unix);
-			} else {
-				r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallbackWin, read_cb_win);
-			}
+			int r = uv_read_start(NativeHandle, ByteBufferAllocator.AllocCallback, read_cb);
 			Ensure.Success(r);
 		}
 
@@ -107,21 +94,14 @@ namespace LibuvSharp
 			Invoke(uv_read_stop);
 		}
 
-		static read_callback_unix read_cb_unix = read_callback_u;
-		static void read_callback_u(IntPtr streamPointer, IntPtr size, UnixBufferStruct buf)
+		static read_callback read_cb = rcallback;
+		static void rcallback(IntPtr streamPointer, IntPtr size, uv_buf_t buf)
 		{
 			var stream = FromIntPtr<UVStream>(streamPointer);
-			stream.read_callback(streamPointer, size);
+			stream.rcallback(streamPointer, size);
 		}
 
-		static read_callback_win read_cb_win = read_callback_w;
-		static void read_callback_w(IntPtr streamPointer, IntPtr size, WindowsBufferStruct buf)
-		{
-			var stream = FromIntPtr<UVStream>(streamPointer);
-			stream.read_callback(streamPointer, size);
-		}
-
-		void read_callback(IntPtr streamPointer, IntPtr size)
+		void rcallback(IntPtr streamPointer, IntPtr size)
 		{
 			long nread = size.ToInt64();
 			if (nread == 0) {
@@ -198,17 +178,8 @@ namespace LibuvSharp
 
 			var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
 
-			int r;
-			if (UV.isUnix) {
-				UnixBufferStruct[] buf = new UnixBufferStruct[1];
-				buf[0] = new UnixBufferStruct(ptr, count);
-				r = uv_write_unix(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.CallbackDelegate);
-			} else {
-				WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-				buf[0] = new WindowsBufferStruct(ptr, count);
-				r = uv_write_win(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.CallbackDelegate);
-			}
-
+			var buf = new uv_buf_t[] { new uv_buf_t(ptr, count) };
+			int r = uv_write(cpr.Handle, NativeHandle, buf, 1, CallbackPermaRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}
 
@@ -234,33 +205,17 @@ namespace LibuvSharp
 					OnDrain();
 				}
 			};
-			int r;
-			if (UV.isUnix) {
-				UnixBufferStruct[] bufs = new UnixBufferStruct[n];
-				for (i = 0; i < n; ++i) {
-					ArraySegment<byte> data = buffers[i];
-					int index = data.Offset;
-					int count = data.Count;
-					GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
-					var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-					bufs[i] = new UnixBufferStruct(ptr, count);
-					datagchandles[i] = datagchandle;
-				}
-				r = uv_write_unix(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
-			} else {
-				WindowsBufferStruct[] bufs = new WindowsBufferStruct[n];
-				for (i = 0; i < n; ++i) {
-					ArraySegment<byte> data = buffers[i];
-					int index = data.Offset;
-					int count = data.Count;
-					GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
-					var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
-					bufs[i] = new WindowsBufferStruct(ptr, count);
-					datagchandles[i] = datagchandle;
-				}
-				r = uv_write_win(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
+			var bufs = new uv_buf_t[n];
+			for (i = 0; i < n; ++i) {
+				ArraySegment<byte> data = buffers[i];
+				int index = data.Offset;
+				int count = data.Count;
+				GCHandle datagchandle = GCHandle.Alloc(data.Array, GCHandleType.Pinned);
+				var ptr = (IntPtr)(datagchandle.AddrOfPinnedObject().ToInt64() + index);
+				bufs[i] = new uv_buf_t(ptr, count);
+				datagchandles[i] = datagchandle;
 			}
-
+			int r = uv_write(cpr.Handle, NativeHandle, bufs, n, CallbackPermaRequest.CallbackDelegate);
 			Ensure.Success(r);
 		}
 
@@ -311,9 +266,7 @@ namespace LibuvSharp
 
 
 		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_try_write(IntPtr handle, WindowsBufferStruct[] bufs, int nbufs);
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_try_write(IntPtr handle, UnixBufferStruct[] bufs, int nbufs);
+		internal extern static int uv_try_write(IntPtr handle, uv_buf_t[] bufs, int nbufs);
 
 		unsafe public int TryWrite(ArraySegment<byte> data)
 		{
@@ -323,16 +276,8 @@ namespace LibuvSharp
 
 			fixed (byte* bytePtr = data.Array) {
 				IntPtr ptr = (IntPtr)(bytePtr + data.Offset);
-				int r;
-				if (UV.isUnix) {
-					UnixBufferStruct[] buf = new UnixBufferStruct[1];
-					buf[0] = new UnixBufferStruct(ptr, data.Count);
-					r = uv_try_write(NativeHandle, buf, 1);
-				} else {
-					WindowsBufferStruct[] buf = new WindowsBufferStruct[1];
-					buf[0] = new WindowsBufferStruct(ptr, data.Count);
-					r = uv_try_write(NativeHandle, buf, 1);
-				}
+				var buf = new uv_buf_t[] { new uv_buf_t(ptr, data.Count) };
+				int r = uv_try_write(NativeHandle, buf, 1);
 				Ensure.Success(r);
 				return r;
 			}
