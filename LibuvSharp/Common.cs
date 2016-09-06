@@ -173,31 +173,11 @@ namespace LibuvSharp
 			Marshal.FreeHGlobal(ptr);
 #endif
 		}
-
-		unsafe internal static UnixBufferStruct Alloc(IntPtr handle, int size)
-		{
-			UnixBufferStruct buf;
-			buf.@base = Alloc(size);
-			buf.length = (IntPtr)size;
-			return buf;
-		}
-
-		internal static void Free(UnixBufferStruct buf)
-		{
-			Free(buf.@base);
-		}
 #if DEBUG
 		public static int PointerCount {
 			get {
 				return pointers.Count;
 			}
-		}
-
-		unsafe internal static UnixBufferStruct DebugAlloc(IntPtr handle, int size)
-		{
-			UnixBufferStruct tmp = UV.Alloc(handle, size);
-			Console.WriteLine (tmp.@base);
-			return tmp;
 		}
 
 		public static void PrintPointers()
