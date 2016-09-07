@@ -21,6 +21,9 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void ProcessSpawn()
 		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				return;
+			}
 			string file = Default.TestExecutable;
 			using (var stdout = new Pipe() { Writeable = true })
 			using (var process = Process.Spawn(new ProcessOptions() {
@@ -42,6 +45,9 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void ProcessSpawnAsync()
 		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				return;
+			}
 			Loop.Default.Run(async () => {
 				string file = Default.TestExecutable;
 				using (var stdout = new Pipe() { Writeable = true })
