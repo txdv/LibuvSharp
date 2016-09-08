@@ -10,7 +10,6 @@ namespace LibuvSharp.Tests
 {
 	public class TimeoutFixture
 	{
-		[Fact]
 		public void TimeoutsWork()
 		{
 			WorksWith<IPEndPoint, TcpListener, Tcp>(Default.IPv4.IPEndPoint);
