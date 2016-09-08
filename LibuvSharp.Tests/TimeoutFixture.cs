@@ -21,17 +21,9 @@ namespace LibuvSharp.Tests
 			{
 			}
 
-			public bool HasRef {
-				get {
-					return true;
-				}
-			}
+			public bool HasRef { get; } = true;
 
-			public bool IsClosed {
-				get {
-					return true;
-				}
-			}
+			public bool IsClosed { get; } = true;
 
 			public void Close(Action callback)
 			{
