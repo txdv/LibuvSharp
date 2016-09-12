@@ -217,8 +217,9 @@ namespace LibuvSharp
 				}
 			}
 
+
 			// make sure the callbacks of close are called
-			RunOnce();
+			RunAsync();
 
 			if (disposing) {
 				if (ByteBufferAllocator != null) {
