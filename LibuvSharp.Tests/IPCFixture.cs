@@ -17,8 +17,8 @@ namespace LibuvSharp.Tests
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
 				return;
 			}
-			TestCanSendHandles(Default.Pipename, Default.IPv4.IPEndPoint);
-			TestCanSendHandles(Default.Pipename, Default.IPv6.IPEndPoint);
+			TestCanSendHandles(Default.Pipename, Default.IPv4);
+			TestCanSendHandles(Default.Pipename, Default.IPv6);
 		}
 
 		void TestCanSendHandles(string pipename, IPEndPoint ipep)

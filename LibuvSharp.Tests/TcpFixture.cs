@@ -12,8 +12,8 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void Simple()
 		{
-			SimpleTest(Default.IPv4.IPEndPoint);
-			SimpleTest(Default.IPv6.IPEndPoint);
+			SimpleTest(Default.IPv4);
+			SimpleTest(Default.IPv6);
 		}
 
 		public void SimpleTest(IPEndPoint ep)
@@ -26,8 +26,8 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void Stress()
 		{
-			StressTest(Default.IPv4.IPEndPoint);
-			StressTest(Default.IPv6.IPEndPoint);
+			StressTest(Default.IPv4);
+			StressTest(Default.IPv6);
 		}
 
 		public void StressTest(IPEndPoint ep)
@@ -38,8 +38,8 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void OneSideClose()
 		{
-			OneSideCloseTest(Default.IPv4.IPEndPoint);
-			OneSideCloseTest(Default.IPv6.IPEndPoint);
+			OneSideCloseTest(Default.IPv4);
+			OneSideCloseTest(Default.IPv6);
 		}
 
 		public void OneSideCloseTest(IPEndPoint ep)
@@ -50,12 +50,14 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void TakenPort()
 		{
+			var ep = Default.IPv4;
+
 			TcpListener s1 = new TcpListener();
 			TcpListener s2 = new TcpListener();
 
-			s1.Bind(IPAddress.Any, Default.Port);
+			s1.Bind(ep);
 			s1.Listen();
-			s2.Bind(IPAddress.Any, Default.Port);
+			s2.Bind(ep);
 
 			Assert.Throws<UVException>(() => s2.Listen());
 
@@ -72,10 +74,10 @@ namespace LibuvSharp.Tests
 		public void NotNullConnect()
 		{
 			Action<Exception> cb = (_) => { };
-			int port = 8000;
-			var ipstr = "127.0.0.1";
-			var ip = IPAddress.Parse(ipstr);
-			var ep = new IPEndPoint(ip, 8000);
+			var ep = Default.IPv4;
+			int port = ep.Port;
+			var ip = ep.Address;
+			var ipstr = ip.ToString();
 
 			Assert.Throws<ArgumentNullException>(() => Create().Connect(null as IPEndPoint, cb));
 			Assert.Throws<ArgumentNullException>(() => Create().Connect(null as string, port, cb));

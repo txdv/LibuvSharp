@@ -10,8 +10,8 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void Run()
 		{
-			RunTest(Default.IPv4.IPEndPoint);
-			RunTest(Default.IPv6.IPEndPoint);
+			RunTest(Default.IPv4);
+			RunTest(Default.IPv6);
 		}
 
 		public void RunTest(IPEndPoint ep)
@@ -74,8 +74,8 @@ namespace LibuvSharp.Tests
 		[Fact]
 		public void NotNullUdp()
 		{
-			NotNullUdpTest(Default.IPv4.IPEndPoint);
-			NotNullUdpTest(Default.IPv6.IPEndPoint);
+			NotNullUdpTest(Default.IPv4);
+			NotNullUdpTest(Default.IPv6);
 		}
 
 		public void NotNullUdpTest(IPEndPoint ep)

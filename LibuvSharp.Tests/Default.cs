@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using LibuvSharp.Threading.Tasks;
@@ -7,30 +8,10 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class IPInfo
-	{
-		public IPInfo(string str, int port)
-		{
-			IPAddressString = str;
-			IPAddress = IPAddress.Parse(IPAddressString);
-			Port = port;
-			IPEndPoint = new IPEndPoint(IPAddress, Port);
-		}
-
-		public string IPAddressString { get; private set; }
-		public IPAddress IPAddress { get; private set; }
-		public int Port { get; private set; }
-		public IPEndPoint IPEndPoint { get; private set; }
-	}
-
 	public static class Default
 	{
 		static Default()
 		{
-			Port = 8000;
-			IPv4 = new IPInfo("127.0.0.1", Port);
-			IPv6 = new IPInfo("::1", Port);
-
 			if (Environment.OSVersion.Platform == PlatformID.Unix) {
 				Pipename = "testpipe";
 			} else {
@@ -50,9 +31,25 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		public static int Port { get; private set; }
-		public static IPInfo IPv4 { get; private set; }
-		public static IPInfo IPv6 { get; private set; }
+		public static IPEndPoint IPv4 {
+			get {
+				return GetFreePort(IPAddress.Any);
+			}
+		}
+		public static IPEndPoint IPv6 {
+			get {
+				return GetFreePort(IPAddress.IPv6Any);
+			}
+		}
+
+		static IPEndPoint GetFreePort(IPAddress address)
+		{
+			using (var sock = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp)) {
+				sock.Bind(new IPEndPoint(address, 0));
+				int port = ((IPEndPoint)sock.LocalEndPoint).Port;
+				return new IPEndPoint(address, port);
+			}
+		}
 
 		public static string Pipename { get; private set; }
 
