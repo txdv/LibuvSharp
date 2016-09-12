@@ -7,7 +7,7 @@ using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	public class TcpFixture
+	public class TcpFixture : Fixture
 	{
 		[Fact]
 		public void Simple()
@@ -20,7 +20,7 @@ namespace LibuvSharp.Tests
 		{
 			Default.SimpleTest<IPEndPoint, TcpListener, Tcp>(ep);
 
-			Loop.Default.Run(async () => await Default.SimpleTestAsync<IPEndPoint, TcpListener, Tcp>(ep));
+			Loop.Current.Run(async () => await Default.SimpleTestAsync<IPEndPoint, TcpListener, Tcp>(ep));
 		}
 
 		[Fact]
@@ -94,7 +94,7 @@ namespace LibuvSharp.Tests
 				Assert.NotNull(e);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]
@@ -135,7 +135,7 @@ namespace LibuvSharp.Tests
 				check();
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 
 			Assert.True(called);
 		}

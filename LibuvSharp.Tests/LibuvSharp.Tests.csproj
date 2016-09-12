@@ -47,21 +47,22 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="AsyncFixture.cs" />
-    <Compile Include="PipeFixture.cs" />
-    <Compile Include="TcpFixture.cs" />
-    <Compile Include="TimerFixture.cs" />
-    <Compile Include="UdpFixture.cs" />
-    <Compile Include="DynamicLibraryFixture.cs" />
-    <Compile Include="LoopFixture.cs" />
+    <Compile Include="ComputerFixture.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="DirectoryFixture.cs" />
+    <Compile Include="DynamicLibraryFixture.cs" />
+    <Compile Include="EncodingExtensions.cs" />
     <Compile Include="FileFixture.cs" />
-    <Compile Include="ComputerFixture.cs" />
+    <Compile Include="Fixture.cs" />
+    <Compile Include="IPCFixture.cs" />
+    <Compile Include="LoopFixture.cs" />
+    <Compile Include="PipeFixture.cs" />
     <Compile Include="ProcessFixture.cs" />
+    <Compile Include="TcpFixture.cs" />
     <Compile Include="ThreadingFixture.cs" />
     <Compile Include="TimeoutFixture.cs" />
-    <Compile Include="IPCFixture.cs" />
-    <Compile Include="EncodingExtensions.cs" />
+    <Compile Include="TimerFixture.cs" />
+    <Compile Include="UdpFixture.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\xunit.core.2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props')" />

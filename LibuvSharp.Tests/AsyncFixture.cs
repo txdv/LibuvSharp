@@ -5,7 +5,7 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class AsyncFixture
+	public class AsyncFixture : Fixture
 	{
 		[Fact]
 		public void ArgumentNullExceptions()
@@ -50,7 +50,7 @@ namespace LibuvSharp.Tests
 				}
 			}).Start();
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 	}
 }

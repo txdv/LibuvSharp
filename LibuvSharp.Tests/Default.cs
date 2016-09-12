@@ -122,7 +122,7 @@ namespace LibuvSharp.Tests
 				Assert.Equal(0, sv_send_cb_called);
 				Assert.Equal(0, sv_recv_cb_called);
 
-				Loop.Default.Run();
+				Loop.Current.Run();
 
 				Assert.Equal(3, close_cb_called);
 				Assert.Equal(times, cl_send_cb_called);
@@ -179,7 +179,7 @@ namespace LibuvSharp.Tests
 			Assert.Equal(0, sv_send_cb_called);
 			Assert.Equal(0, sv_recv_cb_called);
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 
 			Assert.Equal(3, close_cb_called);
 			Assert.Equal(1, cl_send_cb_called);
@@ -235,7 +235,7 @@ namespace LibuvSharp.Tests
 			Assert.Equal(0, sv_send_cb_called);
 			Assert.Equal(0, sv_recv_cb_called);
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 
 			Assert.Equal(3, close_cb_called);
 			Assert.Equal(1, cl_send_cb_called);

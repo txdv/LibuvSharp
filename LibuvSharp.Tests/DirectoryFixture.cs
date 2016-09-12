@@ -5,7 +5,7 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class DirectoryFixture
+	public class DirectoryFixture : Fixture
 	{
 		[Fact]
 		public void CreateDirectory()
@@ -20,7 +20,7 @@ namespace LibuvSharp.Tests
 				Directory.Delete(Default.Directory);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		public void DeleteDirectory()
@@ -33,7 +33,7 @@ namespace LibuvSharp.Tests
 				Assert.Null(e);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		public void RenameDirectory()
@@ -49,7 +49,7 @@ namespace LibuvSharp.Tests
 				Directory.Delete(Default.SecondDirectory);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]
@@ -66,7 +66,7 @@ namespace LibuvSharp.Tests
 				Directory.Delete(Default.Directory);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]
@@ -88,7 +88,7 @@ namespace LibuvSharp.Tests
 				Directory.Delete(Default.Directory, true);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 	}
 }

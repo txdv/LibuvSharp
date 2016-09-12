@@ -4,7 +4,7 @@ using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	public class TimerFixture
+	public class TimerFixture : Fixture
 	{
 		[Theory]
 		[InlineData(10, 10)]
@@ -21,9 +21,9 @@ namespace LibuvSharp.Tests
 				}
 			};
 			t.Start(TimeSpan.FromMilliseconds(spawn));
-			var now = Loop.Default.Now;
-			Loop.Default.Run();
-			Assert.True(Loop.Default.Now - now >= (ulong)(times * spawn));
+			var now = Loop.Current.Now;
+			Loop.Current.Run();
+			Assert.True(Loop.Current.Now - now >= (ulong)(times * spawn));
 			Assert.True(t.IsClosed);
 		}
 	}

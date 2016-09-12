@@ -5,14 +5,14 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class PipeFixture
+	public class PipeFixture : Fixture
 	{
 		[Fact]
 		public void Simple()
 		{
 			Default.SimpleTest<string, PipeListener, Pipe>(Default.Pipename);
 
-			Loop.Default.Run(async () => await Default.SimpleTestAsync<string, PipeListener, Pipe>(Default.Pipename));
+			Loop.Current.Run(async () => await Default.SimpleTestAsync<string, PipeListener, Pipe>(Default.Pipename));
 		}
 
 		[Fact]
@@ -35,7 +35,7 @@ namespace LibuvSharp.Tests
 				Assert.NotNull(e);
 				Assert.IsType<System.IO.FileNotFoundException>(e);
 			});
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]

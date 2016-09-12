@@ -9,7 +9,7 @@ using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	public class IPCFixture
+	public class IPCFixture : Fixture
 	{
 		[Fact]
 		public void CanSendHandles()
@@ -25,7 +25,7 @@ namespace LibuvSharp.Tests
 		{
 			int count = 0;
 
-			Loop.Default.Run(async () => {
+			Loop.Current.Run(async () => {
 				var handles = new Stack<Handle>();
 				var pipelistener = new IPCPipeListener();
 				pipelistener.Bind(pipename);

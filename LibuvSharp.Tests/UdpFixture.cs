@@ -5,7 +5,7 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class UdpFixture
+	public class UdpFixture : Fixture
 	{
 		[Fact]
 		public void Run()
@@ -57,7 +57,7 @@ namespace LibuvSharp.Tests
 			Assert.Equal(0, sv_send_cb_called);
 			Assert.Equal(0, sv_recv_cb_called);
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 
 			Assert.Equal(2, close_cb_called);
 			Assert.Equal(1, cl_send_cb_called);
@@ -115,7 +115,7 @@ namespace LibuvSharp.Tests
 
 			u.Close();
 
-			Loop.Default.RunOnce();
+			Loop.Current.RunOnce();
 		}
 	}
 }

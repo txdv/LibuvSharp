@@ -5,7 +5,7 @@ using Xunit;
 namespace LibuvSharp.Tests
 {
 
-	public class FileFixture
+	public class FileFixture : Fixture
 	{
 		public void CreateNotexistingFile()
 		{
@@ -18,7 +18,7 @@ namespace LibuvSharp.Tests
 				Assert.NotNull(file);
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 	}
 }

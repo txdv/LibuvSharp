@@ -7,7 +7,7 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class ProcessFixture
+	public class ProcessFixture : Fixture
 	{
 		[Fact]
 		public void Base()
@@ -35,11 +35,11 @@ namespace LibuvSharp.Tests
 				//stdout.Read(Encoding.ASCII, (result) => Assert.Equal("Hello World!", result));
 				stdout.Resume();
 
-				Loop.Default.Run();
+				Loop.Current.Run();
 
 				Assert.Equal(0, process.ExitCode);
 			}
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]
@@ -48,7 +48,7 @@ namespace LibuvSharp.Tests
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
 				return;
 			}
-			Loop.Default.Run(async () => {
+			Loop.Current.Run(async () => {
 				string file = Default.TestExecutable;
 				using (var stdout = new Pipe() { Writeable = true })
 				using (Process.Spawn(new ProcessOptions() {

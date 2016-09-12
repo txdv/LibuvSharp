@@ -8,7 +8,7 @@ using Xunit.Extensions;
 
 namespace LibuvSharp.Tests
 {
-	public class TimeoutFixture
+	public class TimeoutFixture : Fixture
 	{
 		class EmptyHandle : IHandle, IDisposable
 		{
@@ -104,9 +104,7 @@ namespace LibuvSharp.Tests
 			var ep = TimeSpan.FromSeconds(1);
 
 			WorksWith<TimeSpan, TimeoutListener, TimeoutClient>(ep);
-			WorksWith<TimeSpan, TimeoutListener, TimeoutClient>(ep);
 
-			WorksWithAsync<TimeSpan, TimeoutListener, TimeoutClient>(ep);
 			WorksWithAsync<TimeSpan, TimeoutListener, TimeoutClient>(ep);
 		}
 
@@ -136,7 +134,7 @@ namespace LibuvSharp.Tests
 				callbacks++;
 			});
 
-			Loop.Default.Run();
+			Loop.Current.Run();
 
 			server.Dispose();
 
@@ -147,7 +145,7 @@ namespace LibuvSharp.Tests
 			where TListener : IListener<TClient>, IBindable<TListener, TEndPoint>, IHandle, IDisposable, new()
 			where TClient : IUVStream<ArraySegment<byte>>, IConnectable<TClient, TEndPoint>, IHandle, IDisposable, new()
 		{
-			Loop.Default.Run(async () => {
+			Loop.Current.Run(async () => {
 				using (var server = new TListener()) {
 					server.Unref();
 					server.Bind(endPoint);

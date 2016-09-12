@@ -65,6 +65,9 @@ namespace LibuvSharp
 				// TODO: Think about returning exception
 				return null;
 			}
+			set {
+				currentLoop = value;
+			}
 		}
 
 		/// <summary>

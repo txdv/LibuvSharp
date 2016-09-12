@@ -3,41 +3,41 @@ using Xunit;
 
 namespace LibuvSharp.Tests
 {
-	public class LoopFixture
+	public class LoopFixture : Fixture
 	{
 		[Fact]
 		public void NoAdditionalResources()
 		{
-			Loop.Default.Run();
+			Loop.Current.Run();
 		}
 
 		[Fact]
 		public void RunAsync()
 		{
 			var timer = new UVTimer();
-			Loop.Default.RunAsync();
+			Loop.Current.RunAsync();
 			timer.Close();
 		}
 
 		[Fact]
 		public void Handles()
 		{
-			Assert.True(Loop.Default.Handles.Length > 0);
+			Assert.True(Loop.Current.Handles.Length > 0);
 		}
 
 		public void ActiveHandlesCount()
 		{
-			Assert.True(Loop.Default.ActiveHandlesCount > 0);
+			Assert.True(Loop.Current.ActiveHandlesCount > 0);
 		}
 
 		[Fact]
 		public void Data()
 		{
-			Assert.True(Loop.Default.Data == IntPtr.Zero);
-			Loop.Default.Data = new IntPtr(42);
-			Assert.Equal(Loop.Default.Data.ToInt32(), 42);
-			Loop.Default.Data = IntPtr.Zero;
-			Assert.True(Loop.Default.Data == IntPtr.Zero);
+			Assert.True(Loop.Current.Data == IntPtr.Zero);
+			Loop.Current.Data = new IntPtr(42);
+			Assert.Equal(Loop.Current.Data.ToInt32(), 42);
+			Loop.Current.Data = IntPtr.Zero;
+			Assert.True(Loop.Current.Data == IntPtr.Zero);
 		}
 	}
 }
