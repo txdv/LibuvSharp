@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{281B560A-E3B1-437C-9274-DD655E860E6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LibuvSharp</RootNamespace>
+    <AssemblyName>LibuvSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>..\bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>DEBUG</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>..\bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="Handle.cs" />
+    <Compile Include="Idle.cs" />
+    <Compile Include="Prepare.cs" />
+    <Compile Include="Loop.cs" />
+    <Compile Include="Udp.cs" />
+    <Compile Include="Tcp.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="DynamicLibrary.cs" />
+    <Compile Include="Computer.cs" />
+    <Compile Include="Async.cs" />
+    <Compile Include="Internal\BufferPin.cs" />
+    <Compile Include="Internal\CAction.cs" />
+    <Compile Include="Internal\uv_buf_t.cs" />
+    <Compile Include="Listener.cs" />
+    <Compile Include="Pipe.cs" />
+    <Compile Include="TTY.cs" />
+    <Compile Include="IListener.cs" />
+    <Compile Include="Process.cs" />
+    <Compile Include="Internal\Ensure.cs" />
+    <Compile Include="Poll.cs" />
+    <Compile Include="Internal\FileSystemRequest.cs" />
+    <Compile Include="Internal\PermaRequest.cs" />
+    <Compile Include="Internal\uv_fs_t.cs" />
+    <Compile Include="UVDirectory.cs" />
+    <Compile Include="IUVStream.cs" />
+    <Compile Include="UVFile.cs" />
+    <Compile Include="Internal\uv_req_t.cs" />
+    <Compile Include="Internal\uv_loop_t.cs" />
+    <Compile Include="UVStream.cs" />
+    <Compile Include="Internal\uv_pipe_t.cs" />
+    <Compile Include="Internal\CallbackPermaRequest.cs" />
+    <Compile Include="Internal\ConnectRequest.cs" />
+    <Compile Include="Internal\uv_process_options_t.cs" />
+    <Compile Include="Internal\uv_handle_t.cs" />
+    <Compile Include="HandleType.cs" />
+    <Compile Include="Internal\uv_process_t.cs" />
+    <Compile Include="Internal\WorkRequest.cs" />
+    <Compile Include="Internal\uv_work_t.cs" />
+    <Compile Include="Threading\LoopExtensions.cs" />
+    <Compile Include="Threading\Tasks\LoopTaskScheduler.cs" />
+    <Compile Include="Threading\Tasks\Loop.cs" />
+    <Compile Include="Threading\Tasks\IUVStreamExtensions.cs" />
+    <Compile Include="Threading\Tasks\LoopExtensions.cs" />
+    <Compile Include="Threading\Tasks\UVDirectoryAsync.cs" />
+    <Compile Include="Threading\Tasks\UVFileAsync.cs" />
+    <Compile Include="UVFileStat.cs" />
+    <Compile Include="IUVStreamExtensions.cs" />
+    <Compile Include="UVFileStream.cs" />
+    <Compile Include="FileSystemWatcher.cs" />
+    <Compile Include="UVTimer.cs" />
+    <Compile Include="Threading\Tasks\UVTimerExtensions.cs" />
+    <Compile Include="Internal\RequestType.cs" />
+    <Compile Include="Internal\NativeMethods.cs" />
+    <Compile Include="Internal\uv_stream_t.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="UdpMessage.cs" />
+    <Compile Include="Internal\uv_udp_flags.cs" />
+    <Compile Include="CopyingByteBufferAllocator.cs" />
+    <Compile Include="LoopBackend.cs" />
+    <Compile Include="ByteBufferAllocatorBase.cs" />
+    <Compile Include="Threading\Tasks\ListenerExtensions.cs" />
+    <Compile Include="Threading\Tasks\LoopSynchronizationContext.cs" />
+    <Compile Include="Threading\HelperFunctions.cs" />
+    <Compile Include="Threading\Tasks\UVFileStreamExtensions.cs" />
+    <Compile Include="IConnectable.cs" />
+    <Compile Include="IConnectableExtensions.cs" />
+    <Compile Include="ILocalAddress.cs" />
+    <Compile Include="IRemoteAddress.cs" />
+    <Compile Include="IBindable.cs" />
+    <Compile Include="IBindableExtensions.cs" />
+    <Compile Include="Timeout.cs" />
+    <Compile Include="IHandle.cs" />
+    <Compile Include="IHandleExtensions.cs" />
+    <Compile Include="Threading\Tasks\IConnectableExtensions.cs" />
+    <Compile Include="Threading\Tasks\IConnectableTimeoutExtensions.cs" />
+    <Compile Include="AsyncWatcher.cs" />
+    <Compile Include="AsyncCallback.cs" />
+    <Compile Include="Threading\Tasks\IHandleExtensions.cs" />
+    <Compile Include="IMessageSender.cs" />
+    <Compile Include="IMessageSenderExtensions.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="UdpReceiveMessage.cs" />
+    <Compile Include="IMessageReceiver.cs" />
+    <Compile Include="UVDirectoryEntity.cs" />
+    <Compile Include="Internal\uv_dirent_t.cs" />
+    <Compile Include="UVDirectoryEntityType.cs" />
+    <Compile Include="Internal\uv_stat_t.cs" />
+    <Compile Include="Internal\uv_timespec_t.cs" />
+    <Compile Include="ISendBufferSize.cs" />
+    <Compile Include="IReceiveBufferSize.cs" />
+    <Compile Include="HandleBufferSize.cs" />
+    <Compile Include="IFileDescriptor.cs" />
+    <Compile Include="HandleFileDescriptor.cs" />
+    <Compile Include="IFileDescriptorExtensions.cs" />
+    <Compile Include="ITryWrite.cs" />
+    <Compile Include="ITryWriteExtensions.cs" />
+    <Compile Include="UVErrorCode.cs" />
+    <Compile Include="HandleBase.cs" />
+    <Compile Include="CallbackHandle.cs" />
+    <Compile Include="Check.cs" />
+    <Compile Include="IPCPipeExtensions.cs" />
+    <Compile Include="Threading\Tasks\IPCPipeExtensions.cs" />
+    <Compile Include="Threading\Tasks\IMessageSenderExtensions.cs" />
+    <Compile Include="ITrySend.cs" />
+    <Compile Include="ITrySendExtensions.cs" />
+    <Compile Include="Threading\Tasks\Utilities.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
+</Project>
