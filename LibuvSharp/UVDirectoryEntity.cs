@@ -5,9 +5,9 @@ namespace LibuvSharp
 {
 	public class UVDirectoryEntity
 	{
-		unsafe internal UVDirectoryEntity(uv_dirent_t entity)
+		internal unsafe UVDirectoryEntity(uv_dirent_t entity)
 		{
-			Name = new string(entity.name);
+			Name = PlatformApis.NewString(entity.name);
 			Type = entity.type;
 		}
 

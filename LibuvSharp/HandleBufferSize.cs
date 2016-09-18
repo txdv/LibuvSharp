@@ -8,10 +8,10 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate int buffer_size_function(IntPtr handle, out int value);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_send_buffer_size(IntPtr handle, out int value);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_recv_buffer_size(IntPtr handle, out int value);
 
 		int Invoke(buffer_size_function function, int value)

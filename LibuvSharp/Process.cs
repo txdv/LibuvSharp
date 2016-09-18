@@ -61,10 +61,10 @@ namespace LibuvSharp
 		public long ExitCode { get; private set; }
 		public int TermSignal { get; private set; }
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_get_process_title(IntPtr buffer, IntPtr size);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_set_process_title(string title);
 
 		public static string Title {
@@ -76,7 +76,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_exepath(IntPtr buffer, ref IntPtr size);
 
 		public static string ExecutablePath {
@@ -85,7 +85,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_spawn(IntPtr loop, IntPtr handle, ref uv_process_options_t options);
 
 		uv_process_options_t process_options;
@@ -146,7 +146,7 @@ namespace LibuvSharp
 			return process;
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_process_kill(IntPtr handle, int signum);
 
 		public void Kill(int signum)
@@ -159,7 +159,7 @@ namespace LibuvSharp
 			Kill((int)signum);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_disable_stdio_inheritance();
 
 		public static void DisableStdioInheritance()

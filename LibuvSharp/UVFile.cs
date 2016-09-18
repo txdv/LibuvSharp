@@ -32,7 +32,7 @@ namespace LibuvSharp
 		public int FileDescriptor { get; protected set; }
 		public Encoding Encoding { get; set; }
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_open(IntPtr loop, IntPtr req, string path, int flags, int mode, NativeMethods.uv_fs_cb callback);
 
 		public static void Open(Loop loop, string path, UVFileAccess access, Action<Exception, UVFile> callback)
@@ -53,7 +53,7 @@ namespace LibuvSharp
 			Open(Loop.Constructor, path, access, callback);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_close(IntPtr loop, IntPtr req, int fd, NativeMethods.uv_fs_cb callback);
 
 		public void Close(Loop loop, Action<Exception> callback)
@@ -76,7 +76,7 @@ namespace LibuvSharp
 			Close(Loop);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_read(IntPtr loop, IntPtr req, int fd, uv_buf_t[] buf, int nbufs, long offset, NativeMethods.uv_fs_cb callback);
 
 		public void Read(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
@@ -203,7 +203,7 @@ namespace LibuvSharp
 		}
 		public int Read(Loop loop, int offset, string text, Action<Exception, int> callback)
 		{
-			return Read(loop, offset, Encoding ?? Encoding.Default, text, callback);
+			return Read(loop, offset, Encoding ?? PlatformApis.DefaultEncoding, text, callback);
 		}
 		public int Read(Loop loop, string text, Action<Exception, int> callback)
 		{
@@ -218,7 +218,7 @@ namespace LibuvSharp
 			return Read(loop, -1, text);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_write(IntPtr loop, IntPtr req, int fd, uv_buf_t[] bufs, int nbufs, long offset, NativeMethods.uv_fs_cb fs_cb);
 
 		public void Write(Loop loop, int offset, ArraySegment<byte> segment, Action<Exception, int> callback)
@@ -345,7 +345,7 @@ namespace LibuvSharp
 		}
 		public int Write(Loop loop, int offset, string text, Action<Exception, int> callback)
 		{
-			return Write(loop, offset, Encoding ?? Encoding.Default, text, callback);
+			return Write(loop, offset, Encoding ?? PlatformApis.DefaultEncoding, text, callback);
 		}
 		public int Write(Loop loop, string text, Action<Exception, int> callback)
 		{
@@ -393,7 +393,7 @@ namespace LibuvSharp
 			return Write(this.Loop, text);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_stat(IntPtr loop, IntPtr req, string path, NativeMethods.uv_fs_cb callback);
 
 		public static void Stat(Loop loop, string path, Action<Exception, UVFileStat> callback)
@@ -413,7 +413,7 @@ namespace LibuvSharp
 			Stat(Loop.Constructor, path, callback);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fstat(IntPtr loop, IntPtr req, int fd, NativeMethods.uv_fs_cb callback);
 
 		public void Stat(Loop loop, Action<Exception, UVFileStat> callback)
@@ -428,7 +428,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fsync(IntPtr loop, IntPtr req, int fd, NativeMethods.uv_fs_cb callback);
 
 		public void Sync(Loop loop, Action<Exception> callback)
@@ -451,7 +451,7 @@ namespace LibuvSharp
 			Sync((Action<Exception>)null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fdatasync(IntPtr loop, IntPtr req, int fd, NativeMethods.uv_fs_cb callback);
 
 		public void DataSync(Loop loop, Action<Exception> callback)
@@ -474,7 +474,7 @@ namespace LibuvSharp
 			DataSync((Action<Exception>)null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_ftruncate(IntPtr loop, IntPtr req, int file, long offset, NativeMethods.uv_fs_cb callback);
 
 		public void Truncate(Loop loop, int offset, Action<Exception> callback)
@@ -497,7 +497,7 @@ namespace LibuvSharp
 			Truncate(offset, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fchmod(IntPtr loop, IntPtr req, int fd, int mode, NativeMethods.uv_fs_cb callback);
 
 		public void Chmod(Loop loop, int mode, Action<Exception> callback)
@@ -520,7 +520,7 @@ namespace LibuvSharp
 			Chmod(mode, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_chmod(IntPtr loop, IntPtr req, string path, int mode, NativeMethods.uv_fs_cb callback);
 
 		public static void Chmod(Loop loop, string path, int mode, Action<Exception> callback)
@@ -543,7 +543,7 @@ namespace LibuvSharp
 			Chmod(path, mode, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_chown(IntPtr loop, IntPtr req, string path, int uid, int gid, NativeMethods.uv_fs_cb callback);
 
 		public static void Chown(Loop loop, string path, int uid, int gid, Action<Exception> callback)
@@ -566,7 +566,7 @@ namespace LibuvSharp
 			Chown(path, uid, gid, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_fchown(IntPtr loop, IntPtr req, int fd, int uid, int gid, NativeMethods.uv_fs_cb callback);
 
 		public void Chown(Loop loop, int uid, int gid, Action<Exception> callback)
@@ -589,7 +589,7 @@ namespace LibuvSharp
 			Chown(uid, gid, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_unlink(IntPtr loop, IntPtr req, string path, NativeMethods.uv_fs_cb callback);
 
 		public static void Unlink(Loop loop, string path, Action<Exception> callback)
@@ -612,7 +612,7 @@ namespace LibuvSharp
 			Unlink(path, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_link(IntPtr loop, IntPtr req, string path, string newPath, NativeMethods.uv_fs_cb callback);
 
 		public static void Link(Loop loop, string path, string newPath, Action<Exception> callback)
@@ -635,7 +635,7 @@ namespace LibuvSharp
 			Link(path, newPath, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_symlink(IntPtr loop, IntPtr req, string path, string newPath, int flags, NativeMethods.uv_fs_cb callback);
 
 		public static void Symlink(Loop loop, string path, string newPath, Action<Exception> callback)
@@ -659,7 +659,7 @@ namespace LibuvSharp
 			Symlink(path, newPath, null);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int uv_fs_readlink(IntPtr loop, IntPtr req, string path, NativeMethods.uv_fs_cb callback);
 
 		public static void Readlink(Loop loop, string path, Action<Exception, string> callback)
@@ -668,7 +668,7 @@ namespace LibuvSharp
 			fsr.Callback = (ex) => {
 				string res = null;
 				if (ex == null) {
-					res = Marshal.PtrToStringAuto(fsr.Pointer);
+					res = PlatformApis.PtrToStringAuto(fsr.Pointer);
 				}
 				Ensure.Success(ex, callback, res);
 			};

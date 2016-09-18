@@ -5,7 +5,7 @@ namespace LibuvSharp
 {
 	public class Async : CallbackHandle
 	{
-		[DllImport("uv", CallingConvention=CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention=CallingConvention.Cdecl)]
 		static extern int uv_async_init(IntPtr loop, IntPtr handle, uv_handle_cb callback);
 
 		public Async()
@@ -20,7 +20,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_async_send(IntPtr handle);
 
 		public void Send()

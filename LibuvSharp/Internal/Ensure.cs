@@ -10,8 +10,8 @@ namespace LibuvSharp
 	{
 		internal static Exception Map(int systemErrorCode, string name = null)
 		{
-			// no error, just return null
-			if (!(systemErrorCode < 0)) {
+            // no error, just return null
+            if (!(systemErrorCode < 0)) {
 				return null;
 			}
 
@@ -45,16 +45,12 @@ namespace LibuvSharp
 
 		internal static void Success(int errorCode, Action<Exception> callback, string name = null)
 		{
-			if (callback != null) {
-				callback(Map(errorCode));
-			}
+		    callback?.Invoke(Map(errorCode));
 		}
 
 		internal static void Success<T>(Exception ex, Action<Exception, T> callback, T arg)
 		{
-			if (callback != null) {
-				callback(ex, arg);
-			}
+		    callback?.Invoke(ex, arg);
 		}
 
 		public static void ArgumentNotNull(object argumentValue, string argumentName)

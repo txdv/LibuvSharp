@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace LibuvSharp
 {
-	unsafe internal struct uv_cpu_times_t
+	internal unsafe struct uv_cpu_times_t
 	{
 		public ulong user;
 		public ulong nice;
@@ -14,7 +14,7 @@ namespace LibuvSharp
 		public ulong irq;
 	}
 
-	unsafe internal struct uv_cpu_info_t
+	internal unsafe struct uv_cpu_info_t
 	{
 		public IntPtr model;
 		public int speed;
@@ -52,10 +52,10 @@ namespace LibuvSharp
 		public int Speed { get; protected set; }
 		public CpuTimes Times { get; protected set; }
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_cpu_info(out IntPtr info, out int count);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_free_cpu_info(IntPtr info, int count);
 
 		internal static CpuInformation[] GetInfo()
@@ -110,10 +110,10 @@ namespace LibuvSharp
 		public IPAddress Netmask { get; protected set; }
 
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_interface_addresses(out IntPtr address, out int count);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_free_interface_addresses(IntPtr address, int count);
 
 		internal static NetworkInterface[] GetInterfaces()
@@ -137,7 +137,7 @@ namespace LibuvSharp
 
 	unsafe public class LoadAverage
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void uv_loadavg(IntPtr avg);
 
 		internal LoadAverage()
@@ -160,7 +160,7 @@ namespace LibuvSharp
 	{
 		public static class Memory
 		{
-			[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+			[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern long uv_get_free_memory();
 
 			public static long Free {
@@ -169,7 +169,7 @@ namespace LibuvSharp
 				}
 			}
 
-			[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+			[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern long uv_get_total_memory();
 
 			public static long Total {
@@ -185,7 +185,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern ulong uv_hrtime();
 
 		public static ulong HighResolutionTime {
@@ -212,7 +212,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_uptime(out double uptime);
 
 		public static double Uptime {

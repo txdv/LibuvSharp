@@ -13,25 +13,25 @@ namespace LibuvSharp
 
 	public partial class Loop : IDisposable
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr uv_default_loop();
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_loop_init(IntPtr handle);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_loop_close(IntPtr ptr);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern IntPtr uv_loop_size();
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_run(IntPtr loop, uv_run_mode mode);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_update_time(IntPtr loop);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern ulong uv_now(IntPtr loop);
 
 		static Loop @default;
@@ -234,7 +234,7 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void walk_cb(IntPtr handle, IntPtr arg);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_walk(IntPtr loop, walk_cb cb, IntPtr arg);
 
 		static walk_cb walk_callback = WalkCallback;
@@ -311,7 +311,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern void uv_stop(IntPtr loop);
 
 		public void Stop()
@@ -319,7 +319,7 @@ namespace LibuvSharp
 			uv_stop(NativeHandle);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_loop_alive(IntPtr loop);
 
 		public bool IsAlive {

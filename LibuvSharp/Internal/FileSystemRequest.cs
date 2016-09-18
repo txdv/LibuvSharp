@@ -25,7 +25,7 @@ namespace LibuvSharp
 
 		public Action<Exception> Callback { get; set; }
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern void uv_fs_req_cleanup(IntPtr req);
 
 		public override void Dispose(bool disposing)

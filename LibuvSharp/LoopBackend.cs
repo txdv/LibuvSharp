@@ -12,7 +12,7 @@ namespace LibuvSharp
 			nativeHandle = loop.NativeHandle;
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_backend_fd(IntPtr loop);
 
 		public int FileDescriptor {
@@ -21,7 +21,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_backend_timeout(IntPtr loop);
 
 		public int Timeout {

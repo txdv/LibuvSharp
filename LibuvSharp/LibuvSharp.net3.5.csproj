@@ -79,6 +79,7 @@
     <Compile Include="IUVStream.cs" />
     <Compile Include="IUVStreamExtensions.cs" />
     <Compile Include="Idle.cs" />
+    <Compile Include="Internal\PlatformApis.cs" />
     <Compile Include="Internal\BufferPin.cs" />
     <Compile Include="Internal\CAction.cs" />
     <Compile Include="Internal\CallbackPermaRequest.cs" />

@@ -38,20 +38,20 @@ namespace LibuvSharp
 		}
 
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_strerror(int systemErrorCode);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		private static extern sbyte *uv_err_name(int systemErrorCode);
 
 		internal static string StringError(int systemErrorCode)
 		{
-			return new string(uv_strerror(systemErrorCode));
+			return PlatformApis.NewString(uv_strerror(systemErrorCode));
 		}
 
 		internal static string ErrorName(int systemErrorCode)
 		{
-			return new string(uv_err_name(systemErrorCode));
+			return PlatformApis.NewString(uv_err_name(systemErrorCode));
 		}
 
 		public static UVErrorCode Map(int systemErrorCode)

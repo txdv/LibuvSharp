@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace LibuvSharp
@@ -14,9 +15,13 @@ namespace LibuvSharp
 		}
 
 		public BufferPin(byte[] buffer)
-			: this(buffer, 0, buffer.LongLength)
-		{
-		}
+#if NETSTANDARD1_3
+            : this(buffer, 0, buffer.LongCount())
+#else
+            : this(buffer, 0, buffer.LongLength)
+#endif
+        {
+        }
 
 		public BufferPin(byte[] buffer, int offset, int count)
 			: this(buffer, (IntPtr)offset, (IntPtr)count)

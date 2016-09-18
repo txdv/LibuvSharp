@@ -28,14 +28,12 @@ namespace LibuvSharp
 	{
 		unsafe internal static readonly int PointerSize = sizeof(IntPtr) / 4;
 
-		internal static bool isUnix = (System.Environment.OSVersion.Platform == PlatformID.Unix) || (System.Environment.OSVersion.Platform == PlatformID.MacOSX);
-		internal static bool IsUnix { get { return isUnix; } }
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_ip4_addr(string ip, int port, out sockaddr_in address);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_ip4_addr(string ip, int port, out sockaddr_in address);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_ip6_addr(string ip, int port, out sockaddr_in6 address);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_ip6_addr(string ip, int port, out sockaddr_in6 address);
 
 		internal static sockaddr_in ToStruct(string ip, int port)
 		{
@@ -54,25 +52,25 @@ namespace LibuvSharp
 		}
 
 		[DllImport("__Internal", EntryPoint = "ntohs", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static ushort ntohs_unix(ushort bytes);
+		internal static extern ushort ntohs_unix(ushort bytes);
 
 		[DllImport("Ws2_32", EntryPoint = "ntohs")]
-		internal extern static ushort ntohs_win(ushort bytes);
+		internal static extern ushort ntohs_win(ushort bytes);
 
 		internal static ushort ntohs(ushort bytes)
 		{
-			if (isUnix) {
+			if (PlatformApis.IsDarwin || PlatformApis.IsLinux) {
 				return ntohs_unix(bytes);
 			} else {
 				return ntohs_win(bytes);
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_ip4_name(IntPtr src, byte[] dst, IntPtr size);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_ip4_name(IntPtr src, byte[] dst, IntPtr size);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_ip6_name(IntPtr src, byte[] dst, IntPtr size);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_ip6_name(IntPtr src, byte[] dst, IntPtr size);
 
 
 		static bool IsMapping(byte[] data)
@@ -129,7 +127,7 @@ namespace LibuvSharp
 			return i;
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		internal static extern int uv_req_size(RequestType type);
 
 		internal static int Sizeof(RequestType type)
@@ -174,13 +172,9 @@ namespace LibuvSharp
 #endif
 		}
 #if DEBUG
-		public static int PointerCount {
-			get {
-				return pointers.Count;
-			}
-		}
+		public static int PointerCount => pointers.Count;
 
-		public static void PrintPointers()
+	    public static void PrintPointers()
 		{
 			var e = pointers.GetEnumerator();
 			Console.Write("[");
@@ -195,8 +189,8 @@ namespace LibuvSharp
 		}
 #endif
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static uint uv_version();
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern uint uv_version();
 
 		public static void GetVersion(out int major, out int minor, out int patch)
 		{
@@ -214,24 +208,16 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		unsafe internal extern static sbyte *uv_version_string();
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern unsafe sbyte *uv_version_string();
 
-		unsafe public static string VersionString {
-			get {
-				return new string(uv_version_string());
-			}
-		}
+		public static unsafe string VersionString => PlatformApis.NewString(uv_version_string());
 
-		public static bool IsPreRelease {
-			get {
-				return VersionString.EndsWith("-pre");
-			}
-		}
+	    public static bool IsPreRelease => VersionString.EndsWith("-pre");
 
-		internal delegate int uv_getsockname(IntPtr handle, IntPtr addr, ref int length);
+	    internal delegate int uv_getsockname(IntPtr handle, IntPtr addr, ref int length);
 
-		unsafe internal static IPEndPoint GetSockname(Handle handle, uv_getsockname getsockname)
+		internal static unsafe IPEndPoint GetSockname(Handle handle, uv_getsockname getsockname)
 		{
 			sockaddr_in6 addr;
 			IntPtr ptr = new IntPtr(&addr);
@@ -269,7 +255,7 @@ namespace LibuvSharp
 				IntPtr sizePointer = (IntPtr)size;
 				int r = func(ptr, ref sizePointer);
 				Ensure.Success(r);
-				return Marshal.PtrToStringAuto(ptr, sizePointer.ToInt32());
+				return PlatformApis.PtrToStringAuto(ptr, sizePointer.ToInt32());
 			} finally {
 				if (ptr != IntPtr.Zero) {
 					Marshal.FreeHGlobal(ptr);
@@ -284,7 +270,7 @@ namespace LibuvSharp
 				ptr = Marshal.AllocHGlobal(size);
 				int r = func(ptr, (IntPtr)size);
 				Ensure.Success(r);
-				return Marshal.PtrToStringAuto(ptr);
+				return PlatformApis.PtrToStringAuto(ptr);
 			} finally {
 				if (ptr != IntPtr.Zero) {
 					Marshal.FreeHGlobal(ptr);

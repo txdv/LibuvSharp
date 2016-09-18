@@ -46,7 +46,7 @@ namespace LibuvSharp
 		}
 		public static int Write(this IPCPipe pipe, Handle handle, string text, Action<Exception> callback)
 		{
-			return pipe.Write(handle, Encoding.Default, text, callback);
+			return pipe.Write(handle, PlatformApis.DefaultEncoding, text, callback);
 		}
 		public static int Write(this IPCPipe pipe, Handle handle, Encoding enc, string text)
 		{
@@ -54,7 +54,7 @@ namespace LibuvSharp
 		}
 		public static int Write(this IPCPipe pipe, Handle handle, string text)
 		{
-			return pipe.Write(Encoding.Default, text);
+			return pipe.Write(PlatformApis.DefaultEncoding, text);
 		}
 
 		#endregion

@@ -11,7 +11,7 @@ namespace LibuvSharp
 
 		internal uv_buf_t(IntPtr pointer, int length)
 		{
-			if (UV.isUnix) {
+			if (PlatformApis.IsUnix) {
 				field0 = pointer;
 				field1 = (IntPtr)length;
 			} else {

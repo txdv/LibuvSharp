@@ -49,7 +49,7 @@ namespace LibuvSharp
 		}
 		public static int Write(this IUVStream<ArraySegment<byte>> stream, string text, Action<Exception> callback)
 		{
-			return stream.Write(Encoding.Default, text, callback);
+			return stream.Write(PlatformApis.DefaultEncoding, text, callback);
 		}
 		public static int Write(this IUVStream<ArraySegment<byte>> stream, Encoding enc, string text)
 		{
@@ -57,7 +57,7 @@ namespace LibuvSharp
 		}
 		public static int Write(this IUVStream<ArraySegment<byte>> stream, string text)
 		{
-			return stream.Write(Encoding.Default, text);
+			return stream.Write(PlatformApis.DefaultEncoding, text);
 		}
 
 		#endregion
@@ -116,7 +116,7 @@ namespace LibuvSharp
 		}
 		public static int End(this IUVStream<ArraySegment<byte>> stream, string text, Action<Exception> callback)
 		{
-			return stream.End(Encoding.Default, text, callback);
+			return stream.End(PlatformApis.DefaultEncoding, text, callback);
 		}
 		public static int End(this IUVStream<ArraySegment<byte>> stream, Encoding encoding, string text)
 		{
@@ -124,7 +124,7 @@ namespace LibuvSharp
 		}
 		public static int End(this IUVStream<ArraySegment<byte>> stream, string text)
 		{
-			return stream.End(Encoding.Default, text);
+			return stream.End(PlatformApis.DefaultEncoding, text);
 		}
 
 		#endregion

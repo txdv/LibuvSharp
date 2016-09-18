@@ -23,7 +23,7 @@ namespace LibuvSharp
 
 		public static int TryWrite(this ITryWrite<ArraySegment<byte>> handle, string text)
 		{
-			return handle.TryWrite(Encoding.Default, text);
+			return handle.TryWrite(PlatformApis.DefaultEncoding, text);
 		}
 	}
 }

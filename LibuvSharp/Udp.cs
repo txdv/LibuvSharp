@@ -11,13 +11,13 @@ namespace LibuvSharp
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		delegate void recv_start_callback(IntPtr handle, IntPtr nread, ref uv_buf_t buf, IntPtr sockaddr, ushort flags);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_init(IntPtr loop, IntPtr handle);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in sockaddr, uint flags);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_bind(IntPtr handle, ref sockaddr_in6 sockaddr, uint flags);
 
 		ByteBufferAllocatorBase allocator;
@@ -58,11 +58,11 @@ namespace LibuvSharp
 			Bind(endPoint.Address, endPoint.Port, false);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in addr, callback callback);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_send(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in addr, callback callback);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_send(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in6 addr, callback callback);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_send(IntPtr req, IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in6 addr, callback callback);
 
 		public void Send(UdpMessage message, Action<Exception> callback)
 		{
@@ -96,7 +96,7 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		extern static int uv_udp_recv_start(IntPtr handle, alloc_callback alloc_callback, recv_start_callback callback);
 
 		static recv_start_callback recv_start_cb = recv_callback;
@@ -135,8 +135,8 @@ namespace LibuvSharp
 			Ensure.Success(r);
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_recv_stop(IntPtr handle);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_recv_stop(IntPtr handle);
 
 		public void Pause()
 		{
@@ -145,7 +145,7 @@ namespace LibuvSharp
 
 		public event Action<UdpReceiveMessage> Message;
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_ttl(IntPtr handle, int ttl);
 
 		public byte TTL {
@@ -154,7 +154,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_broadcast(IntPtr handle, int on);
 
 		public bool Broadcast {
@@ -163,7 +163,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_multicast_ttl(IntPtr handle, int ttl);
 
 		public byte MulticastTTL {
@@ -172,7 +172,7 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_set_multicast_loop(IntPtr handle, int on);
 
 		public bool MulticastLoop {
@@ -182,7 +182,7 @@ namespace LibuvSharp
 		}
 
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
 		static extern int uv_udp_getsockname(IntPtr handle, IntPtr addr, ref int length);
 
 		public IPEndPoint LocalAddress {
@@ -193,11 +193,11 @@ namespace LibuvSharp
 			}
 		}
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_try_send(IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in addr);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_try_send(IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in addr);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_udp_try_send(IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in6 addr);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_udp_try_send(IntPtr handle, uv_buf_t[] bufs, int nbufs, ref sockaddr_in6 addr);
 
 		unsafe public int TrySend(UdpMessage message)
 		{

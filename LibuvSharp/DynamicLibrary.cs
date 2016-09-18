@@ -7,7 +7,7 @@ namespace LibuvSharp
 	{
 		public static string Decorate(string name)
 		{
-			if (UV.isUnix) {
+			if (PlatformApis.IsUnix) {
 				return string.Format("lib{0}.so", name);
 			} else {
 				return string.Format("{0}.dll", name);
@@ -16,7 +16,7 @@ namespace LibuvSharp
 
 		public static DynamicLibrary Open(string name)
 		{
-			if (UV.isUnix) {
+			if (PlatformApis.IsUnix) {
 				return new LibuvDynamicLibrary(name);
 			} else {
 				return new WindowsDynamicLibrary(name);
@@ -25,7 +25,7 @@ namespace LibuvSharp
 
 		public static DynamicLibrary Open()
 		{
-			if (UV.isUnix) {
+			if (PlatformApis.IsUnix) {
 				return new LibuvDynamicLibrary();
 			} else {
 				return new WindowsDynamicLibrary();
@@ -40,23 +40,23 @@ namespace LibuvSharp
 
 	class LibuvDynamicLibrary : DynamicLibrary
 	{
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_dlopen(IntPtr name, IntPtr handle);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_dlopen(IntPtr name, IntPtr handle);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_dlopen(string name, IntPtr handle);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_dlopen(string name, IntPtr handle);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static void uv_dlclose(IntPtr handle);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern void uv_dlclose(IntPtr handle);
 
-		[DllImport("uv", CallingConvention = CallingConvention.Cdecl)]
-		internal extern static int uv_dlsym(IntPtr handle, string name, out IntPtr ptr);
+		[DllImport(PlatformApis.LIBUV, CallingConvention = CallingConvention.Cdecl)]
+		internal static extern int uv_dlsym(IntPtr handle, string name, out IntPtr ptr);
 
-		[DllImport("uv")]
-		internal extern static IntPtr uv_dlerror(IntPtr handle);
+		[DllImport(PlatformApis.LIBUV)]
+		internal static extern IntPtr uv_dlerror(IntPtr handle);
 
-		[DllImport("uv")]
-		internal extern static IntPtr uv_dlerror_free(IntPtr handle);
+		[DllImport(PlatformApis.LIBUV)]
+		internal static extern IntPtr uv_dlerror_free(IntPtr handle);
 
 		IntPtr handle = IntPtr.Zero;
 
