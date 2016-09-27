@@ -1,6 +1,0 @@
-// vs will restore nuget package automatic when project.josn was exist, so we need add a projectname.project.josn file to ignore this operation.
-// look https://github.com/Microsoft/msbuild/issues/394
-{
-  "runtimes": { "win": { } },
-  "frameworks": { "net35": { } }
-}
