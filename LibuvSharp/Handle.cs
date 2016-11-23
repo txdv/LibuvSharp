@@ -54,8 +54,6 @@ namespace LibuvSharp
 
 			Loop.handles[NativeHandle] = this;
 
-			close_cb = CloseCallback;
-
 			DataPointer = GCHandle.ToIntPtr(GCHandle);
 		}
 
