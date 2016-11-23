@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LibuvSharp.Threading.Tasks;
@@ -42,12 +43,18 @@ namespace LibuvSharp.Tests
 			}
 		}
 
-		static IPEndPoint GetFreePort(IPAddress address)
+		static object getFreePortLock = new object();
+		static IPEndPoint GetFreePort(IPAddress address, int startPort = 10000, int endPort = 20000)
 		{
-			using (var sock = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp)) {
-				sock.Bind(new IPEndPoint(address, 0));
-				int port = ((IPEndPoint)sock.LocalEndPoint).Port;
-				return new IPEndPoint(address, port);
+			lock (getFreePortLock) {
+				var cons = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpConnections();
+				var ports = cons.Where(c => c.LocalEndPoint.AddressFamily == address.AddressFamily).Select(c => c.LocalEndPoint.Port);
+				for (var port = startPort; port < endPort; port++) {
+					if (!ports.Contains(port)) {
+						return new IPEndPoint(address, port);
+					}
+				}
+				throw new Exception("No free port available");
 			}
 		}
 
